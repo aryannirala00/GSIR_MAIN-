@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.gsir.workflow.goal.GoalServiceIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.256 s -- in com.gsir.workflow.goal.GoalServiceIntegrationTest

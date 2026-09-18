@@ -1,0 +1,2441 @@
+﻿PART 73 — SCIENTIFIC METADATA, SEMANTIC INTEROPERABILITY, AND RESEARCH OBJECT CATALOG ENGINE
+
+73.1 PURPOSE
+
+The GSIR Metadata and Semantic Interoperability Engine shall provide the machine-readable descriptive layer connecting datasets, documents, experiments, models, workflows, software, evidence, claims, publications, agents, and knowledge.
+
+The engine shall ensure that GSIR research objects are:
+
+Findable
+
+Accessible
+
+Interoperable
+
+Reusable
+
+Machine-Readable
+
+Semantically Connected
+
+Versioned
+
+Provenance-Aware
+
+The FAIR principles explicitly emphasize persistent identifiers, rich metadata, interoperable vocabularies, qualified relationships, licensing, provenance, and domain standards. 
+
+END OF 73.1
+
+73.2 CORE METADATA ARCHITECTURE
+
+RESEARCH OBJECT
+
+      │
+
+      ▼
+
+METADATA
+
+      │
+
+ ┌────┼──────────────┐
+
+ ▼    ▼              ▼
+
+IDENTITY  SEMANTICS  PROVENANCE
+
+ │        │          │
+
+ ▼        ▼          ▼
+
+VERSION  ONTOLOGY   LINEAGE
+
+      │
+
+      ▼
+
+RESEARCH OBJECT CATALOG
+
+END OF 73.2
+
+73.3 METADATA DIRECTORY
+
+backend/src/metadata/
+
+metadata.module.ts
+
+metadata.controller.ts
+
+metadata.service.ts
+
+metadata.repository.ts
+
+metadata.types.ts
+
+metadata.constants.ts
+
+catalog/
+
+catalog.service.ts
+
+catalog.repository.ts
+
+catalog-index.service.ts
+
+schema/
+
+metadata-schema.service.ts
+
+schema-registry.ts
+
+schema-validator.ts
+
+semantic/
+
+semantic-mapping.service.ts
+
+concept-mapper.ts
+
+vocabulary-service.ts
+
+ontology-linker.ts
+
+identity/
+
+identifier.service.ts
+
+persistent-id.service.ts
+
+relationships/
+
+metadata-relation.service.ts
+
+reference-resolver.ts
+
+profiles/
+
+dataset-profile.ts
+
+document-profile.ts
+
+model-profile.ts
+
+workflow-profile.ts
+
+experiment-profile.ts
+
+software-profile.ts
+
+index.ts
+
+END OF 73.3
+
+73.4 RESEARCH OBJECT MODEL
+
+GSIR shall treat the following as first-class research objects:
+
+Dataset
+
+Document
+
+Experiment
+
+Observation
+
+Measurement
+
+Model
+
+Prediction
+
+Software
+
+Workflow
+
+Notebook
+
+Figure
+
+Table
+
+Claim
+
+Evidence
+
+Publication
+
+Knowledge Graph
+
+Knowledge Snapshot
+
+END OF 73.4
+
+73.5 UNIVERSAL RESEARCH OBJECT IDENTITY
+
+Every persistent research object shall have:
+
+object_id
+
+object_type
+
+persistent_identifier
+
+version_id
+
+created_at
+
+updated_at
+
+status
+
+owner
+
+provenance_id
+
+END OF 73.5
+
+73.6 PERSISTENT IDENTIFIERS
+
+GSIR shall support persistent identifiers where available.
+
+Examples:
+
+DOI
+
+ORCID
+
+Accession ID
+
+Repository ID
+
+Internal GSIR PID
+
+External Dataset ID
+
+Publication ID
+
+Persistent identifiers improve machine and human findability and allow research objects to remain addressable independently of changing storage locations. 
+
+END OF 73.6
+
+73.7 IDENTIFIER MAPPING
+
+External identifiers shall be mapped to GSIR identities.
+
+External Identifier
+
+        ↓
+
+Identifier Resolver
+
+        ↓
+
+GSIR Object ID
+
+        ↓
+
+Version
+
+Multiple identifiers may refer to the same logical object while retaining their original namespaces.
+
+END OF 73.7
+
+73.8 METADATA PROFILE
+
+Every object type shall have a profile.
+
+Dataset
+
+├── Identity
+
+├── Description
+
+├── Schema
+
+├── Variables
+
+├── Units
+
+├── Source
+
+├── License
+
+├── Quality
+
+├── Provenance
+
+└── Version
+
+Model
+
+├── Identity
+
+├── Architecture
+
+├── Training Data
+
+├── Parameters
+
+├── Evaluation
+
+├── License
+
+├── Version
+
+└── Provenance
+
+END OF 73.8
+
+73.9 CORE METADATA
+
+Common metadata fields shall include:
+
+title
+
+description
+
+type
+
+identifier
+
+version
+
+creator
+
+contributor
+
+organization
+
+created_at
+
+updated_at
+
+language
+
+domain
+
+keywords
+
+license
+
+access_policy
+
+source
+
+provenance
+
+relationships
+
+END OF 73.9
+
+73.10 DOMAIN METADATA
+
+Domain-specific metadata shall extend the common profile.
+
+CORE METADATA
+
+      +
+
+DOMAIN PROFILE
+
+      +
+
+LOCAL EXTENSIONS
+
+GSIR shall avoid forcing every scientific domain into one rigid schema.
+
+END OF 73.10
+
+73.11 METADATA SCHEMA REGISTRY
+
+The system shall maintain:
+
+schema_id
+
+schema_version
+
+object_type
+
+fields
+
+constraints
+
+vocabulary
+
+validation_rules
+
+status
+
+Published schemas shall be versioned.
+
+END OF 73.11
+
+73.12 SCHEMA VERSIONING
+
+Schema V1
+
+↓
+
+Schema V2
+
+↓
+
+Schema V3
+
+Historical objects shall retain the schema version under which their metadata was created.
+
+END OF 73.12
+
+73.13 SCHEMA EVOLUTION
+
+Schema changes shall support:
+
+Add Field
+
+Deprecate Field
+
+Rename Field
+
+Change Constraint
+
+Add Vocabulary
+
+Change Relationship
+
+Breaking changes shall require a new schema version.
+
+END OF 73.13
+
+73.14 METADATA VALIDATION
+
+Metadata shall be validated for:
+
+Required Fields
+
+Data Types
+
+Identifier Format
+
+Relationship Validity
+
+Vocabulary Validity
+
+Date Format
+
+License
+
+Provenance
+
+Domain Constraints
+
+END OF 73.14
+
+73.15 METADATA COMPLETENESS
+
+GSIR shall calculate metadata completeness independently of scientific quality.
+
+Metadata Completeness
+
+=
+
+Completed Required Metadata Fields
+
+/
+
+Total Required Metadata Fields
+
+END OF 73.15
+
+73.16 METADATA QUALITY
+
+Quality dimensions shall include:
+
+Completeness
+
+Accuracy
+
+Consistency
+
+Currency
+
+Machine-Readability
+
+Semantic Precision
+
+Provenance Coverage
+
+END OF 73.16
+
+73.17 MACHINE-ACTIONABLE METADATA
+
+Metadata shall be structured so software can interpret it without requiring human interpretation wherever practical.
+
+Human Description
+
+        +
+
+Machine Representation
+
+        +
+
+Persistent Identifiers
+
+        +
+
+Semantic Vocabulary
+
+FAIR guidance emphasizes machine-readable metadata and standardized representations for discovery, interoperability, and reuse. 
+
+END OF 73.17
+
+73.18 SEMANTIC INTEROPERABILITY
+
+GSIR shall distinguish:
+
+Syntactic Interoperability
+
+        ↓
+
+Structural Interoperability
+
+        ↓
+
+Semantic Interoperability
+
+        ↓
+
+Scientific Interoperability
+
+END OF 73.18
+
+73.19 SYNTAX INTEROPERABILITY
+
+The system shall support common machine-readable representations where appropriate:
+
+JSON
+
+JSON-LD
+
+RDF
+
+CSV
+
+XML
+
+Parquet
+
+Domain-Specific Formats
+
+The representation shall be selected according to the research object and interoperability requirements.
+
+END OF 73.19
+
+73.20 SEMANTIC VOCABULARIES
+
+Metadata fields shall be mapped to controlled vocabularies when available.
+
+Field
+
+ ↓
+
+Vocabulary Term
+
+ ↓
+
+Persistent Concept ID
+
+This reduces ambiguity between different representations of the same scientific concept.
+
+END OF 73.20
+
+73.21 ONTOLOGY INTEGRATION
+
+The metadata engine shall connect research objects to the GSIR ontology layer.
+
+Research Object
+
+      ↓
+
+Metadata Field
+
+      ↓
+
+Scientific Concept
+
+      ↓
+
+Ontology
+
+      ↓
+
+Concept Identifier
+
+END OF 73.21
+
+73.22 CONCEPT NORMALIZATION
+
+Different source terms may map to a common concept.
+
+Source A: "temperature"
+
+Source B: "temp"
+
+Source C: "thermal temperature"
+
+             ↓
+
+       GSIR Concept
+
+Original source terminology shall remain available.
+
+END OF 73.22
+
+73.23 SYNONYM MANAGEMENT
+
+GSIR shall maintain:
+
+Preferred Term
+
+Synonyms
+
+Abbreviations
+
+Historical Terms
+
+Source Terms
+
+Translations
+
+END OF 73.23
+
+73.24 CONCEPT MAPPING CONFIDENCE
+
+Semantic mappings may have:
+
+EXACT
+
+HIGH
+
+MEDIUM
+
+LOW
+
+AMBIGUOUS
+
+UNMAPPED
+
+Low-confidence mappings shall not silently become authoritative scientific equivalences.
+
+END OF 73.24
+
+73.25 SEMANTIC MAPPING ENGINE
+
+Source Term
+
+↓
+
+Normalization
+
+↓
+
+Candidate Concepts
+
+↓
+
+Context Analysis
+
+↓
+
+Ontology Matching
+
+↓
+
+Confidence
+
+↓
+
+Human / Automated Validation
+
+↓
+
+Mapping
+
+END OF 73.25
+
+73.26 CONTEXT-AWARE MAPPING
+
+The same term may have different meanings across domains.
+
+Therefore:
+
+Term
+
++
+
+Domain
+
++
+
+Context
+
++
+
+Unit
+
++
+
+Relationship
+
+shall be considered before establishing a semantic mapping.
+
+END OF 73.26
+
+73.27 UNIT SEMANTICS
+
+Units shall be represented as semantic concepts.
+
+Value
+
++
+
+Unit
+
++
+
+Quantity Type
+
+Example:
+
+5
+
++
+
+°C
+
++
+
+Temperature
+
+END OF 73.27
+
+73.28 QUANTITY SEMANTICS
+
+The system shall distinguish:
+
+Measurement
+
+Observation
+
+Calculated Value
+
+Estimated Value
+
+Predicted Value
+
+Simulated Value
+
+These shall not be treated as interchangeable.
+
+END OF 73.28
+
+73.29 TEMPORAL SEMANTICS
+
+Temporal metadata shall represent:
+
+Instant
+
+Interval
+
+Duration
+
+Frequency
+
+Sequence
+
+Temporal Relation
+
+END OF 73.29
+
+73.30 SPATIAL SEMANTICS
+
+Where relevant:
+
+Location
+
+Coordinate System
+
+Region
+
+Geometry
+
+Spatial Resolution
+
+Reference Frame
+
+shall be represented explicitly.
+
+END OF 73.30
+
+73.31 RELATIONSHIP MODEL
+
+Research objects shall support typed relationships.
+
+createdBy
+
+derivedFrom
+
+usedBy
+
+generatedBy
+
+basedOn
+
+supports
+
+contradicts
+
+supersedes
+
+reproduces
+
+references
+
+partOf
+
+versionOf
+
+END OF 73.31
+
+73.32 QUALIFIED RELATIONSHIPS
+
+Relationships shall carry metadata when necessary.
+
+Object A
+
+   │
+
+   └── derivedFrom
+
+         │
+
+         ├── Activity
+
+         ├── Timestamp
+
+         └── Confidence
+
+This avoids reducing complex scientific relationships to simple unqualified edges.
+
+END OF 73.32
+
+73.33 CROSS-OBJECT REFERENCES
+
+GSIR shall support references between:
+
+Dataset → Publication
+
+Dataset → Experiment
+
+Model → Dataset
+
+Claim → Evidence
+
+Workflow → Software
+
+Experiment → Hypothesis
+
+Result → Claim
+
+Claim → Knowledge
+
+END OF 73.33
+
+73.34 RESEARCH OBJECT CATALOG
+
+The catalog shall provide a unified index.
+
+                 RESEARCH OBJECT CATALOG
+
+                          │
+
+       ┌──────────────────┼──────────────────┐
+
+       ▼                  ▼                  ▼
+
+    DATASETS           MODELS           WORKFLOWS
+
+       │                  │                  │
+
+       ▼                  ▼                  ▼
+
+   EXPERIMENTS        SOFTWARE          DOCUMENTS
+
+       │                  │                  │
+
+       └──────────────────┼──────────────────┘
+
+                          ▼
+
+                    KNOWLEDGE GRAPH
+
+END OF 73.34
+
+73.35 CATALOG SEARCH
+
+Users and agents shall search by:
+
+Identifier
+
+Title
+
+Author
+
+Domain
+
+Concept
+
+Variable
+
+Unit
+
+Source
+
+Publication
+
+Experiment
+
+Model
+
+Workflow
+
+Quality
+
+License
+
+Date
+
+END OF 73.35
+
+73.36 SEMANTIC SEARCH
+
+Semantic search shall support:
+
+"datasets measuring soil moisture"
+
+rather than requiring exact dataset names.
+
+The search engine shall use metadata, ontology concepts, relationships, and indexed content.
+
+END OF 73.36
+
+73.37 FACETED SEARCH
+
+Results shall support filters:
+
+Domain
+
+Date
+
+Source
+
+Object Type
+
+Quality
+
+License
+
+Access
+
+Version
+
+Scientific Concept
+
+Experiment
+
+END OF 73.37
+
+73.38 AGENT DISCOVERY
+
+AI agents shall be able to query the catalog programmatically.
+
+Agent
+
+↓
+
+Catalog Query
+
+↓
+
+Candidate Objects
+
+↓
+
+Metadata
+
+↓
+
+Quality
+
+↓
+
+Provenance
+
+↓
+
+Selection
+
+END OF 73.38
+
+73.39 MACHINE DISCOVERY
+
+The catalog shall expose machine-readable metadata APIs.
+
+GET Object
+
+GET Metadata
+
+GET Schema
+
+GET Version
+
+GET Relationships
+
+GET Provenance
+
+GET Download Information
+
+END OF 73.39
+
+73.40 METADATA NEGOTIATION
+
+Where practical, the same object shall be representable in multiple formats.
+
+Research Object
+
+ ├── JSON
+
+ ├── JSON-LD
+
+ ├── RDF
+
+ └── Human-readable representation
+
+This improves interoperability across tools.
+
+END OF 73.40
+
+73.41 JSON-LD REPRESENTATION
+
+GSIR may use JSON-LD for metadata requiring linked semantic representation.
+
+{
+
+  "@id": "gsir:object/123",
+
+  "@type": "Dataset",
+
+  "name": "...",
+
+  "variable": "...",
+
+  "derivedFrom": "..."
+
+}
+
+The implementation shall maintain compatibility with the underlying semantic model.
+
+END OF 73.41
+
+73.42 RDF REPRESENTATION
+
+Knowledge-oriented metadata may be represented using RDF where graph semantics and linked references are required.
+
+RDF provides a machine-readable framework for representing knowledge and relationships between identified resources. 
+
+END OF 73.42
+
+73.43 METADATA-LINKED PROVENANCE
+
+Metadata shall link to Part 70 provenance.
+
+Research Object
+
+      ↓
+
+Metadata
+
+      ↓
+
+Provenance ID
+
+      ↓
+
+Activity
+
+      ↓
+
+Inputs
+
+      ↓
+
+Outputs
+
+END OF 73.43
+
+73.44 METADATA-LINKED WORKFLOW
+
+Metadata shall link to Part 71 workflow executions.
+
+Dataset
+
+↓
+
+Workflow
+
+↓
+
+Workflow Version
+
+↓
+
+Execution
+
+↓
+
+Result
+
+Modern FAIR workflow guidance explicitly treats workflow specifications, execution details, intermediate outputs, and run provenance as interoperability and reuse concerns. 
+
+END OF 73.44
+
+73.45 METADATA-LINKED DATA QUALITY
+
+Dataset
+
+↓
+
+Quality Report
+
+↓
+
+Quality Rules
+
+↓
+
+Validation Execution
+
+↓
+
+Quality Version
+
+This allows an agent to assess dataset suitability before using it.
+
+END OF 73.45
+
+73.46 METADATA-LINKED LICENSE
+
+Every distributable research object shall expose:
+
+License
+
+Usage Restrictions
+
+Attribution Requirements
+
+Access Conditions
+
+Derivative Restrictions
+
+FAIR guidance includes clear and accessible usage licensing as part of reusability. 
+
+END OF 73.46
+
+73.47 ACCESS METADATA
+
+Metadata shall distinguish:
+
+Public
+
+Authenticated
+
+Restricted
+
+Project-only
+
+Private
+
+Embargoed
+
+Unavailable
+
+Metadata may remain discoverable even when the underlying data cannot be directly accessed.
+
+END OF 73.47
+
+73.48 METADATA FOR UNAVAILABLE DATA
+
+When a dataset becomes unavailable, GSIR shall preserve:
+
+Object Identity
+
+Title
+
+Description
+
+Source
+
+Version
+
+Provenance
+
+Former Location
+
+License
+
+Availability Status
+
+FAIR principles specifically call for metadata to remain accessible even when the underlying data are no longer available. 
+
+END OF 73.48
+
+73.49 DATA CITATION
+
+GSIR shall generate machine-readable citation metadata for research objects.
+
+Creator
+
+Title
+
+Version
+
+Publisher
+
+Date
+
+Persistent Identifier
+
+END OF 73.49
+
+73.50 CITATION VERSIONING
+
+A citation shall identify the exact version where scientifically relevant.
+
+Dataset
+
+↓
+
+Version 3
+
+↓
+
+Persistent Identifier
+
+This prevents ambiguity between evolving dataset states.
+
+END OF 73.50
+
+73.51 PUBLICATION METADATA
+
+Publication records shall include:
+
+Title
+
+Authors
+
+Affiliations
+
+Journal
+
+Year
+
+DOI
+
+Abstract
+
+Keywords
+
+References
+
+Datasets
+
+Software
+
+Experiments
+
+Claims
+
+END OF 73.51
+
+73.52 EXPERIMENT METADATA
+
+Experiment metadata shall include:
+
+Experiment ID
+
+Hypothesis
+
+Protocol
+
+Inputs
+
+Parameters
+
+Instrument
+
+Environment
+
+Operator
+
+Timestamp
+
+Outputs
+
+Replication
+
+Provenance
+
+END OF 73.52
+
+73.53 MODEL METADATA
+
+Model metadata shall include:
+
+Model ID
+
+Architecture
+
+Version
+
+Training Data
+
+Training Procedure
+
+Parameters
+
+Hyperparameters
+
+Evaluation
+
+Known Limitations
+
+License
+
+Runtime Requirements
+
+Provenance
+
+END OF 73.53
+
+73.54 SOFTWARE METADATA
+
+Software metadata shall include:
+
+Repository
+
+Version
+
+Commit
+
+License
+
+Dependencies
+
+Runtime
+
+Documentation
+
+Authors
+
+Inputs
+
+Outputs
+
+Execution Environment
+
+END OF 73.54
+
+73.55 WORKFLOW METADATA
+
+Workflow metadata shall include:
+
+Workflow ID
+
+Version
+
+Purpose
+
+Inputs
+
+Outputs
+
+Tasks
+
+Dependencies
+
+Software
+
+Models
+
+Environment
+
+License
+
+Provenance
+
+FAIR workflow guidance recommends detailed descriptions of workflow versions, components, inputs, outputs, standards, and provenance. 
+
+END OF 73.55
+
+73.56 DOCUMENT METADATA
+
+Document metadata shall include:
+
+Document ID
+
+Title
+
+Authors
+
+Source
+
+Publication
+
+Date
+
+Language
+
+Pages
+
+Sections
+
+Version
+
+Content Hash
+
+Extraction Status
+
+END OF 73.56
+
+73.57 EVIDENCE METADATA
+
+Evidence objects shall include:
+
+Evidence ID
+
+Source
+
+Location
+
+Evidence Type
+
+Extracted Text
+
+Context
+
+Extraction Method
+
+Confidence
+
+Validation
+
+END OF 73.57
+
+73.58 CLAIM METADATA
+
+Claims shall include:
+
+Claim ID
+
+Statement
+
+Claim Type
+
+Source
+
+Evidence
+
+Author
+
+Creation Method
+
+Confidence
+
+Validation
+
+Version
+
+Status
+
+END OF 73.58
+
+73.59 KNOWLEDGE SNAPSHOT METADATA
+
+Snapshot ID
+
+Graph Version
+
+Ontology Version
+
+Source Versions
+
+Creation Time
+
+Creator
+
+Change Set
+
+Provenance
+
+Integrity Hash
+
+END OF 73.59
+
+73.60 METADATA CHANGE TRACKING
+
+Every important metadata modification shall record:
+
+Field
+
+Old Value
+
+New Value
+
+Changed By
+
+Timestamp
+
+Reason
+
+Version
+
+END OF 73.60
+
+73.61 METADATA PROVENANCE
+
+Metadata itself shall have provenance.
+
+Metadata Field
+
+↓
+
+Source
+
+↓
+
+Extraction
+
+↓
+
+Transformation
+
+↓
+
+Validation
+
+This prevents metadata from becoming an unexplained authoritative layer.
+
+END OF 73.61
+
+73.62 AUTOMATIC METADATA EXTRACTION
+
+GSIR may automatically extract metadata from:
+
+Documents
+
+Datasets
+
+Code
+
+Repositories
+
+Models
+
+Images
+
+Workflows
+
+Experiment Files
+
+Automatically extracted fields shall be marked with their extraction method.
+
+END OF 73.62
+
+73.63 AI METADATA EXTRACTION
+
+AI may propose:
+
+Title
+
+Keywords
+
+Domain
+
+Scientific Concepts
+
+Summary
+
+Relationships
+
+Candidate Ontology Terms
+
+AI-generated metadata shall be distinguishable from authoritative metadata.
+
+END OF 73.63
+
+73.64 METADATA CONFIDENCE
+
+Automatically inferred metadata shall carry:
+
+confidence
+
+method
+
+model
+
+model_version
+
+validation_status
+
+END OF 73.64
+
+73.65 HUMAN METADATA REVIEW
+
+Researchers shall be able to:
+
+Accept
+
+Reject
+
+Edit
+
+Merge
+
+Split
+
+Map
+
+Mark Authoritative
+
+AI-proposed metadata.
+
+END OF 73.65
+
+73.66 METADATA CONFLICTS
+
+If sources disagree:
+
+Source A → Term X
+
+Source B → Term Y
+
+GSIR shall preserve both source assertions and determine whether they are:
+
+Equivalent
+
+Related
+
+Different
+
+Conflicting
+
+Unresolved
+
+END OF 73.66
+
+73.67 SEMANTIC CONFLICT MANAGEMENT
+
+The ontology layer shall never force two concepts to become identical merely because their labels are similar.
+
+Similar Label
+
+≠
+
+Same Concept
+
+Context and evidence shall determine equivalence.
+
+END OF 73.67
+
+73.68 CROSS-DOMAIN MAPPING
+
+GSIR shall support mappings between domain ontologies.
+
+Ontology A
+
+     │
+
+     ▼
+
+Mapping Layer
+
+     │
+
+     ▼
+
+Ontology B
+
+Mappings shall include:
+
+equivalentTo
+
+broaderThan
+
+narrowerThan
+
+relatedTo
+
+approximateMatch
+
+END OF 73.68
+
+73.69 SEMANTIC VERSIONING
+
+Ontology concepts and mappings shall be versioned.
+
+Ontology V1
+
+↓
+
+Ontology V2
+
+↓
+
+Ontology V3
+
+Historical knowledge shall retain the semantic version under which it was created.
+
+END OF 73.69
+
+73.70 ONTOLOGY CHANGE IMPACT
+
+If a concept changes:
+
+Ontology Concept
+
+↓
+
+Metadata
+
+↓
+
+Dataset
+
+↓
+
+Workflow
+
+↓
+
+Claim
+
+↓
+
+Knowledge
+
+GSIR shall identify affected objects.
+
+END OF 73.70
+
+73.71 METADATA INTEROPERABILITY GATE
+
+Before publishing or exchanging a research object:
+
+Metadata
+
+↓
+
+Schema Validation
+
+↓
+
+Identifier Validation
+
+↓
+
+Vocabulary Validation
+
+↓
+
+Relationship Validation
+
+↓
+
+License Validation
+
+↓
+
+Provenance Validation
+
+↓
+
+INTEROPERABLE
+
+END OF 73.71
+
+73.72 EXTERNAL SYSTEM INTEROPERABILITY
+
+GSIR shall support adapters for external repositories, catalogs, workflow systems, and research platforms.
+
+External System
+
+↓
+
+Adapter
+
+↓
+
+Mapping
+
+↓
+
+Canonical Metadata
+
+↓
+
+GSIR Catalog
+
+END OF 73.72
+
+73.73 METADATA IMPORT
+
+Imported metadata shall preserve:
+
+Original Source
+
+Original Identifier
+
+Original Field Names
+
+Original Values
+
+Mapping
+
+Transformation
+
+Import Timestamp
+
+END OF 73.73
+
+73.74 METADATA EXPORT
+
+Exports shall support:
+
+Canonical GSIR Metadata
+
++
+
+External Standard Mapping
+
++
+
+Persistent Identifiers
+
++
+
+Provenance References
+
+END OF 73.74
+
+73.75 RESEARCH OBJECT PACKAGING
+
+Important objects may be packaged with:
+
+Object
+
+Metadata
+
+Schema
+
+Provenance
+
+License
+
+Checksums
+
+Relationships
+
+Dependencies
+
+This supports transfer between environments.
+
+END OF 73.75
+
+73.76 WORKFLOW PORTABILITY
+
+A workflow package shall include enough metadata to identify:
+
+Inputs
+
+Outputs
+
+Components
+
+Versions
+
+Dependencies
+
+Execution Requirements
+
+Provenance
+
+Modern FAIR workflow guidance explicitly connects portability and interoperability with standardized workflow descriptions, component interfaces, data formats, and run provenance. 
+
+END OF 73.76
+
+73.77 METADATA API
+
+Core APIs:
+
+createMetadata()
+
+getMetadata()
+
+updateMetadata()
+
+validateMetadata()
+
+registerSchema()
+
+getSchema()
+
+validateAgainstSchema()
+
+registerVocabulary()
+
+resolveConcept()
+
+mapConcept()
+
+createIdentifier()
+
+resolveIdentifier()
+
+createRelationship()
+
+getRelationships()
+
+searchCatalog()
+
+semanticSearch()
+
+getResearchObject()
+
+compareMetadataVersions()
+
+END OF 73.77
+
+73.78 CATALOG EVENTS
+
+ObjectRegistered
+
+MetadataCreated
+
+MetadataUpdated
+
+SchemaPublished
+
+VocabularyUpdated
+
+ConceptMapped
+
+IdentifierResolved
+
+RelationshipCreated
+
+MetadataValidated
+
+MetadataRejected
+
+ObjectIndexed
+
+ObjectArchived
+
+END OF 73.78
+
+73.79 METADATA INDEXING
+
+The catalog shall index:
+
+Identifiers
+
+Titles
+
+Descriptions
+
+Keywords
+
+Concepts
+
+Variables
+
+Authors
+
+Sources
+
+Relationships
+
+Versions
+
+Quality
+
+Provenance
+
+Search indexes shall be separated from authoritative metadata storage.
+
+END OF 73.79
+
+73.80 SEMANTIC INDEX
+
+The semantic index shall support:
+
+Exact Concepts
+
+Synonyms
+
+Ontology Relationships
+
+Embeddings
+
+Entity References
+
+Scientific Terms
+
+Cross-Domain Mappings
+
+Semantic similarity shall assist discovery but shall not automatically establish scientific equivalence.
+
+END OF 73.80
+
+73.81 METADATA + KNOWLEDGE GRAPH
+
+CATALOG
+
+   │
+
+   ├── DATASET
+
+   ├── MODEL
+
+   ├── WORKFLOW
+
+   ├── EXPERIMENT
+
+   └── DOCUMENT
+
+        │
+
+        ▼
+
+KNOWLEDGE GRAPH
+
+        │
+
+        ▼
+
+CONCEPTS
+
+        │
+
+        ▼
+
+ONTOLOGY
+
+The catalog describes research objects while the knowledge graph represents scientific entities, relationships, observations, and claims.
+
+END OF 73.81
+
+73.82 METADATA + AGENT REASONING
+
+Before an AI agent uses a research object:
+
+Object
+
+↓
+
+Metadata
+
+↓
+
+Schema
+
+↓
+
+Quality
+
+↓
+
+License
+
+↓
+
+Provenance
+
+↓
+
+Semantic Compatibility
+
+↓
+
+Agent Decision
+
+The agent shall avoid blindly consuming objects whose semantics or provenance are insufficient.
+
+END OF 73.82
+
+73.83 METADATA + RESEARCH MEMORY
+
+Long-term memory entries shall retain:
+
+Memory ID
+
+Knowledge
+
+Concepts
+
+Source
+
+Version
+
+Evidence
+
+Provenance
+
+Confidence
+
+Validation
+
+Expiration / Review Policy
+
+END OF 73.83
+
+73.84 METADATA + SELF-IMPROVEMENT
+
+GSIR shall analyze metadata failures to identify:
+
+Frequently Missing Fields
+
+Poor Vocabulary Mappings
+
+Repeated Schema Conflicts
+
+Poor Dataset Descriptions
+
+Broken Relationships
+
+Ambiguous Concepts
+
+The system may propose improved metadata policies.
+
+END OF 73.84
+
+73.85 METADATA GOVERNANCE
+
+Each production schema and vocabulary shall have:
+
+Owner
+
+Version
+
+Status
+
+Description
+
+Change Policy
+
+Validation Policy
+
+Deprecation Policy
+
+END OF 73.85
+
+73.86 DEPRECATION
+
+Deprecated concepts and fields shall not disappear immediately.
+
+ACTIVE
+
+↓
+
+DEPRECATED
+
+↓
+
+REPLACEMENT PROVIDED
+
+↓
+
+RETIRED
+
+Historical metadata shall continue to resolve.
+
+END OF 73.86
+
+73.87 METADATA SECURITY
+
+Metadata access shall respect:
+
+Object Permissions
+
+Project Permissions
+
+Sensitive Fields
+
+Source Restrictions
+
+License Restrictions
+
+Sensitive metadata shall not become public merely because metadata is generally intended to be discoverable.
+
+END OF 73.87
+
+73.88 METADATA AUDIT
+
+The system shall answer:
+
+Where did this metadata come from?
+
+Who changed it?
+
+Which schema was used?
+
+Which vocabulary was used?
+
+Which ontology version was active?
+
+Was it AI-generated?
+
+Was it reviewed?
+
+END OF 73.88
+
+73.89 METADATA REPRODUCIBILITY
+
+Metadata reconstruction shall depend on:
+
+Object Version
+
+Schema Version
+
+Vocabulary Version
+
+Ontology Version
+
+Extraction Method
+
+Transformation Rules
+
+Source Version
+
+END OF 73.89
+
+73.90 METADATA TESTING
+
+Tests shall include:
+
+Schema Validation
+
+Identifier Resolution
+
+Vocabulary Mapping
+
+Ontology Mapping
+
+Relationship Integrity
+
+Versioning
+
+Import
+
+Export
+
+Search
+
+Semantic Search
+
+Access Control
+
+Metadata Reconstruction
+
+END OF 73.90
+
+73.91 INTEROPERABILITY TESTING
+
+GSIR shall test whether an exported object can be correctly interpreted by a compatible external system.
+
+GSIR Export
+
+↓
+
+External Parser
+
+↓
+
+Interpretation
+
+↓
+
+Semantic Comparison
+
+↓
+
+Compatibility Result
+
+END OF 73.91
+
+73.92 METADATA DRIFT
+
+The engine shall detect:
+
+Schema Drift
+
+Vocabulary Drift
+
+Ontology Drift
+
+Source Metadata Drift
+
+Identifier Drift
+
+Semantic Drift
+
+END OF 73.92
+
+73.93 METADATA IMPACT ANALYSIS
+
+A metadata change shall identify affected:
+
+Datasets
+
+Workflows
+
+Models
+
+Experiments
+
+Claims
+
+Knowledge
+
+Agents
+
+Search Indexes
+
+END OF 73.93
+
+73.94 METADATA RECOVERY
+
+Recovery shall restore:
+
+Schemas
+
+Metadata
+
+Mappings
+
+Identifiers
+
+Relationships
+
+Catalog Indexes
+
+Ontology Versions
+
+Integrity shall be verified before catalog availability is restored.
+
+END OF 73.94
+
+73.95 FINAL SEMANTIC INTEROPERABILITY ARCHITECTURE
+
+                    RESEARCH OBJECTS
+
+                           │
+
+                           ▼
+
+                      METADATA LAYER
+
+                           │
+
+             ┌─────────────┼─────────────┐
+
+             ▼             ▼             ▼
+
+         IDENTITY       SCHEMA       PROVENANCE
+
+             │             │             │
+
+             ▼             ▼             ▼
+
+       PERSISTENT IDs  VALIDATION     LINEAGE
+
+             │
+
+             ▼
+
+       SEMANTIC LAYER
+
+             │
+
+       ┌─────┼─────────┐
+
+       ▼     ▼         ▼
+
+   VOCABULARY ONTOLOGY MAPPINGS
+
+       │     │         │
+
+       └─────┼─────────┘
+
+             ▼
+
+       RESEARCH OBJECT
+
+          CATALOG
+
+             │
+
+       ┌─────┼─────────────┐
+
+       ▼     ▼             ▼
+
+    SEARCH  AGENTS     KNOWLEDGE GRAPH
+
+       │     │             │
+
+       └─────┼─────────────┘
+
+             ▼
+
+        RESEARCH REUSE
+
+END OF 73.95
+
+73.96 FINAL ARCHITECTURAL REQUIREMENT
+
+The GSIR Metadata and Semantic Interoperability Engine shall enforce:
+
+EVERY RESEARCH OBJECT MUST HAVE AN IDENTITY.
+
+EVERY IMPORTANT OBJECT MUST HAVE VERSIONED METADATA.
+
+EVERY IMPORTANT RELATIONSHIP MUST BE EXPLICIT.
+
+EVERY SEMANTIC MAPPING MUST HAVE A DEFINED CONFIDENCE.
+
+EVERY EXTERNAL TERM MUST RETAIN ITS ORIGINAL FORM.
+
+EVERY ONTOLOGY DEPENDENCY MUST BE VERSIONED.
+
+EVERY IMPORTANT OBJECT MUST BE DISCOVERABLE BY MACHINES.
+
+EVERY EXPORTED OBJECT MUST RETAIN ENOUGH METADATA FOR INTERPRETATION.
+
+EVERY METADATA CHANGE MUST BE TRACEABLE.
+
+EVERY SCIENTIFIC OBJECT MUST REMAIN LINKED TO ITS PROVENANCE.
+
+The resulting architecture shall make GSIR's scientific data, software, workflows, experiments, models, evidence, claims, and knowledge machine-discoverable, semantically interoperable, version-aware, provenance-linked, and reusable across research environments. FAIR guidance applies these principles not only to datasets but also to workflows and other research objects, making metadata and interoperability foundational to the complete GSIR architecture. 
+
+END OF PART 73.
+
+PART 74 — SCIENTIFIC KNOWLEDGE GRAPH AND ONTOLOGY ENGINE

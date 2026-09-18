@@ -1,0 +1,17 @@
+package com.gsir.execution.adapter;
+
+import com.gsir.execution.model.ExecutionCostEntity;
+import com.gsir.execution.model.HumanReviewTaskEntity;
+import com.gsir.execution.model.ProjectSecretEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface ExecutionCostRepository extends JpaRepository<ExecutionCostEntity, UUID> {
+    List<ExecutionCostEntity> findByProjectId(UUID projectId);
+    List<ExecutionCostEntity> findByWorkflowId(UUID workflowId);
+}

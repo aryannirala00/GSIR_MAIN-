@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.gsir.projects.ProjectCommandServiceTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.184 s -- in com.gsir.projects.ProjectCommandServiceTest

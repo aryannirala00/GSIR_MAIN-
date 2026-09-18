@@ -1,0 +1,1991 @@
+﻿## PART 21 — CHAT, CONVERSATION TABS, MESSAGE ARCHITECTURE AND CONTEXT MANAGEMENT
+
+### 21.1 PURPOSE
+
+The GSIR Chat system shall provide the primary interactive interface between the user and the GSIR AI system.
+
+It shall support:
+
+- Standard conversations
+
+- Scientific research conversations
+
+- Project conversations
+
+- Multiple simultaneous conversation tabs
+
+- Search
+
+- AI modes
+
+- Model selection
+
+- File attachments
+
+- Web research
+
+- Scientific evidence retrieval
+
+- AI reasoning
+
+- Streaming responses
+
+- Message editing
+
+- Regeneration
+
+- Branching
+
+- Conversation history
+
+- Conversation export
+
+- Conversation memory
+
+- Conversation-to-Project integration
+
+- Conversation-to-Notes integration
+
+The Chat subsystem must remain modular and must communicate with the AI Gateway rather than directly implementing model-provider logic.
+
+END OF 21.1
+
+### 21.2 CHAT ARCHITECTURE
+
+The basic architecture shall be:
+
+Frontend Chat
+
+↓
+
+Chat API
+
+↓
+
+Authentication / Authorization
+
+↓
+
+Conversation Service
+
+↓
+
+Context Manager
+
+↓
+
+AI Gateway
+
+↓
+
+Model Router
+
+↓
+
+Provider / Local Model
+
+↓
+
+Streaming Response
+
+↓
+
+Message Persistence
+
+↓
+
+Frontend
+
+Scientific research requests may additionally use:
+
+Research Request
+
+↓
+
+Research Orchestrator
+
+↓
+
+Search / Retrieval
+
+↓
+
+Evidence Validation
+
+↓
+
+Reasoning
+
+↓
+
+Scientific Response
+
+END OF 21.2
+
+### 21.3 CONVERSATION IDENTIFIER
+
+Every conversation shall have a stable:
+
+conversation_id
+
+Recommended format:
+
+conversation_<unique_identifier>
+
+The identifier must remain unchanged throughout the conversation lifecycle.
+
+END OF 21.3
+
+### 21.4 MESSAGE IDENTIFIER
+
+Every message shall have:
+
+message_id
+
+Recommended format:
+
+message_<unique_identifier>
+
+Every message must reference its conversation_id.
+
+END OF 21.4
+
+### 21.5 MESSAGE ROLES
+
+The message architecture shall support:
+
+SYSTEM
+
+DEVELOPER
+
+USER
+
+ASSISTANT
+
+TOOL
+
+RESEARCH
+
+The internal roles may not all be directly exposed to the user.
+
+END OF 21.5
+
+### 21.6 CONVERSATION RECORD
+
+Minimum fields:
+
+conversation_id
+
+user_id
+
+workspace_id
+
+project_id
+
+title
+
+mode
+
+model_id
+
+status
+
+created_at
+
+updated_at
+
+archived_at
+
+metadata
+
+END OF 21.6
+
+### 21.7 MESSAGE RECORD
+
+Minimum fields:
+
+message_id
+
+conversation_id
+
+parent_message_id
+
+role
+
+content
+
+content_format
+
+status
+
+model_id
+
+created_at
+
+updated_at
+
+metadata
+
+END OF 21.7
+
+### 21.8 MESSAGE TREE
+
+The architecture must support branching conversations.
+
+Example:
+
+User Message
+
+     │
+
+     └── AI Response A
+
+           │
+
+           ├── User Follow-up
+
+           │
+
+           └── Regenerated Response B
+
+Therefore messages should support:
+
+parent_message_id
+
+This allows multiple response branches without destroying previous responses.
+
+END OF 21.8
+
+### 21.9 CHAT TAB ARCHITECTURE
+
+The frontend shall support browser-like conversation tabs.
+
+Example:
+
+[ Solved Problem × ]
+
+[ Number Systems × ]
+
+[ Research Hypothesis × ]
+
+[ New Chat + ]
+
+Each tab must maintain:
+
+conversation_id
+
+title
+
+selected model
+
+selected mode
+
+project_id
+
+draft message
+
+UI state
+
+END OF 21.9
+
+### 21.10 TAB STATE
+
+Tab state should remain primarily client-side.
+
+Example:
+
+{
+
+  "conversationId": "...",
+
+  "title": "Research Hypothesis",
+
+  "modelId": "...",
+
+  "mode": "research",
+
+  "projectId": "...",
+
+  "draft": "..."
+
+}
+
+The backend remains authoritative for persisted conversation and message data.
+
+END OF 21.10
+
+### 21.11 NEW CHAT
+
+New Chat flow:
+
+NEW CHAT
+
+↓
+
+Create local conversation state
+
+↓
+
+User enters first message
+
+↓
+
+Create persistent conversation
+
+↓
+
+Persist message
+
+↓
+
+Send AI request
+
+A completely empty tab does not need to create unnecessary database records immediately.
+
+END OF 21.11
+
+### 21.12 CHAT MODES
+
+The Chat subsystem shall support a configurable mode architecture.
+
+Initial modes:
+
+AUTOMATIC
+
+CHAT
+
+ANALYSIS
+
+RESEARCH
+
+SCIENTIFIC
+
+PROJECT
+
+The mode determines orchestration behavior rather than merely changing the visual interface.
+
+END OF 21.12
+
+### 21.13 AUTOMATIC MODE
+
+Automatic mode shall determine the appropriate execution strategy based on the request.
+
+Conceptually:
+
+User Request
+
+↓
+
+Intent Detection
+
+↓
+
+Complexity Assessment
+
+↓
+
+Required Tools
+
+↓
+
+Required Context
+
+↓
+
+Select Execution Strategy
+
+Automatic mode must not unnecessarily invoke expensive tools or models.
+
+END OF 21.13
+
+### 21.14 CHAT MODE
+
+Chat mode is intended for ordinary conversational requests.
+
+It should minimize unnecessary:
+
+web searches
+
+retrieval
+
+long reasoning chains
+
+tool calls
+
+expensive models
+
+END OF 21.14
+
+### 21.15 ANALYSIS MODE
+
+Analysis mode should support deeper structured analysis.
+
+Possible operations:
+
+problem decomposition
+
+comparison
+
+reasoning
+
+data interpretation
+
+structured synthesis
+
+The mode should use the AI Gateway and reasoning architecture defined elsewhere.
+
+END OF 21.15
+
+### 21.16 RESEARCH MODE
+
+Research mode shall support:
+
+question decomposition
+
+web/source retrieval
+
+source comparison
+
+evidence extraction
+
+citation tracking
+
+conflict detection
+
+synthesis
+
+uncertainty identification
+
+Research mode must not treat search results as automatically validated scientific facts.
+
+END OF 21.16
+
+### 21.17 SCIENTIFIC MODE
+
+Scientific mode shall support the broader GSIR scientific workflow:
+
+Question
+
+↓
+
+Research
+
+↓
+
+Evidence
+
+↓
+
+Analysis
+
+↓
+
+Hypothesis
+
+↓
+
+Prediction
+
+↓
+
+Validation Plan
+
+↓
+
+Conclusion
+
+The scientific reasoning architecture shall remain separate from ordinary chat behavior.
+
+END OF 21.17
+
+### 21.18 PROJECT MODE
+
+Project mode shall use the active Project context.
+
+It may retrieve:
+
+Project Notes
+
+Project Files
+
+Project Sources
+
+Project Knowledge
+
+Research Questions
+
+Hypotheses
+
+Experiments
+
+Datasets
+
+Results
+
+The authorization layer must filter all retrieved information before AI context construction.
+
+END OF 21.18
+
+### 21.19 MESSAGE STATUS
+
+Messages shall support:
+
+PENDING
+
+PROCESSING
+
+STREAMING
+
+COMPLETED
+
+FAILED
+
+CANCELLED
+
+EDITED
+
+DELETED
+
+The frontend must display the appropriate state.
+
+END OF 21.19
+
+### 21.20 USER MESSAGE FLOW
+
+USER
+
+↓
+
+Validate Input
+
+↓
+
+Create Message
+
+↓
+
+Persist Message
+
+↓
+
+Create AI Request
+
+↓
+
+Context Assembly
+
+↓
+
+AI Gateway
+
+The user message must be persisted before or atomically with request processing so that failed AI execution does not lose the user's input.
+
+END OF 21.20
+
+### 21.21 AI RESPONSE FLOW
+
+AI Request
+
+↓
+
+AI Gateway
+
+↓
+
+Model Router
+
+↓
+
+Provider
+
+↓
+
+Token Stream
+
+↓
+
+Response Parser
+
+↓
+
+Safety / Validation
+
+↓
+
+Message Persistence
+
+↓
+
+Frontend Stream
+
+The final persisted response must represent the authoritative completed response state.
+
+END OF 21.21
+
+### 21.22 STREAMING
+
+The Chat system shall support streaming AI responses.
+
+The frontend should receive incremental response events rather than waiting for the complete response.
+
+Example:
+
+response.started
+
+response.delta
+
+response.delta
+
+response.delta
+
+tool.started
+
+tool.completed
+
+response.delta
+
+response.completed
+
+The exact event contract shall be defined by the global AI streaming architecture.
+
+END OF 21.22
+
+### 21.23 STREAM INTERRUPTION
+
+If a connection is interrupted:
+
+Frontend
+
+↓
+
+Reconnect
+
+↓
+
+Request stream state
+
+↓
+
+Resume or retrieve completed response
+
+The system must avoid duplicating message content.
+
+END OF 21.23
+
+### 21.24 STOP GENERATION
+
+The user shall be able to stop an active AI response.
+
+Flow:
+
+STOP
+
+↓
+
+Cancel Request
+
+↓
+
+Cancel Provider Generation Where Supported
+
+↓
+
+Persist Partial/Cancelled State
+
+↓
+
+Release Resources
+
+END OF 21.24
+
+### 21.25 MESSAGE EDITING
+
+Users shall be able to edit previous user messages.
+
+Editing must not silently overwrite the original research history.
+
+Preferred behavior:
+
+Original Message
+
+↓
+
+Edit
+
+↓
+
+Create New Branch
+
+↓
+
+Generate New Response
+
+The original branch remains available.
+
+END OF 21.25
+
+### 21.26 RESPONSE REGENERATION
+
+Regenerate shall create another response branch.
+
+Original User Message
+
+├── Response A
+
+└── Response B
+
+Previous responses must remain recoverable unless explicitly deleted.
+
+END OF 21.26
+
+### 21.27 MESSAGE ACTIONS
+
+The interface may provide:
+
+Copy
+
+Edit
+
+Regenerate
+
+Retry
+
+Stop
+
+Save as Note
+
+Add to Project
+
+Create Task
+
+Create Hypothesis
+
+Share
+
+Export
+
+Report Problem
+
+The availability of actions depends on message type and permissions.
+
+END OF 21.27
+
+### 21.28 RESPONSE CITATIONS
+
+Research responses may contain structured source references.
+
+The citation layer should maintain:
+
+source_id
+
+source_title
+
+source_url where applicable
+
+retrieval_timestamp
+
+relevant passage/reference information
+
+citation status
+
+The citation system must not fabricate sources.
+
+END OF 21.28
+
+### 21.29 SOURCE TRACEABILITY
+
+For research responses, the system should preserve the relationship:
+
+Conversation
+
+↓
+
+Message
+
+↓
+
+Research Request
+
+↓
+
+Source Retrieval
+
+↓
+
+Evidence
+
+↓
+
+AI Response
+
+This allows later auditing.
+
+END OF 21.29
+
+### 21.30 AI RESPONSE STRUCTURE
+
+Internally, AI responses should use a structured representation rather than storing only an unstructured string.
+
+Possible structure:
+
+{
+
+  "content": "...",
+
+  "sections": [],
+
+  "citations": [],
+
+  "artifacts": [],
+
+  "tool_results": [],
+
+  "confidence": null,
+
+  "warnings": [],
+
+  "metadata": {}
+
+}
+
+The exact schema shall follow the global AI response contract.
+
+END OF 21.30
+
+### 21.31 CONTENT BLOCKS
+
+The frontend should support message content blocks such as:
+
+text
+
+heading
+
+code
+
+table
+
+citation
+
+image
+
+file
+
+chart
+
+equation
+
+warning
+
+source
+
+tool result
+
+research evidence
+
+This allows scientific responses to be rendered correctly without treating every response as plain text.
+
+END OF 21.31
+
+### 21.32 CHAT SEARCH
+
+Conversation search shall support:
+
+conversation title
+
+message content
+
+project
+
+date
+
+mode
+
+model
+
+tags
+
+source references
+
+Search must respect user and Project permissions.
+
+END OF 21.32
+
+### 21.33 GLOBAL SEARCH
+
+The global search system may search across:
+
+Chats
+
+Projects
+
+Notes
+
+Files
+
+Sources
+
+Research records
+
+The search result must identify the object type.
+
+Example:
+
+Research Hypothesis
+
+[Chat]
+
+Experimental Observation
+
+[Note]
+
+Protein Structure Analysis
+
+[Project]
+
+END OF 21.33
+
+### 21.34 CHAT HISTORY
+
+History shall be grouped by:
+
+Today
+
+Yesterday
+
+Last 7 Days
+
+Earlier
+
+The exact time grouping must use the user's configured timezone.
+
+END OF 21.34
+
+### 21.35 AUTO-RENAME
+
+When enabled:
+
+First meaningful user message
+
+↓
+
+Title generation
+
+↓
+
+Validate title
+
+↓
+
+Save conversation title
+
+The title should not be regenerated unnecessarily after every message.
+
+END OF 21.35
+
+### 21.36 CHAT MEMORY
+
+Conversation memory and long-term memory must remain separate.
+
+Conversation context:
+
+Current conversation
+
+Project memory:
+
+Current Project
+
+User memory:
+
+Authorized persistent user information
+
+The system must not merge these scopes indiscriminately.
+
+END OF 21.36
+
+### 21.37 CONTEXT WINDOW MANAGEMENT
+
+For long conversations:
+
+Conversation
+
+↓
+
+Recent messages
+
++
+
+Relevant older messages
+
++
+
+Conversation summary
+
++
+
+Explicit user-selected context
+
+↓
+
+Context Manager
+
+↓
+
+AI
+
+The system must not send every historical message when unnecessary.
+
+END OF 21.37
+
+### 21.38 CONTEXT SUMMARIZATION
+
+Long conversations may be summarized into internal conversation state.
+
+The summary must remain distinguishable from original messages.
+
+Important research evidence should retain source references and should not be reduced to unsupported summaries.
+
+END OF 21.38
+
+### 21.39 CONTEXT RETRIEVAL
+
+Relevant previous conversation information may be retrieved using:
+
+semantic relevance
+
+keyword relevance
+
+recency
+
+explicit references
+
+project association
+
+message relationships
+
+The authorization layer must execute before retrieval results enter the AI context.
+
+END OF 21.39
+
+### 21.40 FILE ATTACHMENTS
+
+Chat messages may contain files.
+
+Flow:
+
+Attach File
+
+↓
+
+File Validation
+
+↓
+
+Upload
+
+↓
+
+Create File Reference
+
+↓
+
+Attach file_id to Message
+
+↓
+
+AI Processing if requested
+
+The Chat database must store file references rather than duplicate binary files.
+
+END OF 21.40
+
+### 21.41 MULTIMODAL INPUT
+
+The architecture should support:
+
+text
+
+documents
+
+images
+
+audio
+
+structured data
+
+future scientific data formats
+
+The model capability registry must determine which model/provider can process each input type.
+
+END OF 21.41
+
+### 21.42 VOICE INPUT
+
+Voice input flow:
+
+Microphone
+
+↓
+
+Audio Capture
+
+↓
+
+Speech-to-Text
+
+↓
+
+User Confirmation / Edit
+
+↓
+
+Chat Message
+
+The transcription should not automatically be treated as perfectly accurate.
+
+END OF 21.42
+
+### 21.43 VOICE OUTPUT
+
+Voice response:
+
+AI Response
+
+↓
+
+Text-to-Speech
+
+↓
+
+Audio Stream
+
+↓
+
+Frontend
+
+Voice output should be optional according to user settings.
+
+END OF 21.43
+
+### 21.44 WEB SEARCH
+
+When Web Search is enabled and required:
+
+User Request
+
+↓
+
+Search Decision
+
+↓
+
+Query Generation
+
+↓
+
+Search
+
+↓
+
+Source Filtering
+
+↓
+
+Evidence Extraction
+
+↓
+
+Citation
+
+↓
+
+AI Context
+
+Search must be performed only when required by the execution strategy.
+
+END OF 21.44
+
+### 21.45 TOOL CALLS
+
+The Chat system may invoke tools through the centralized tool architecture.
+
+Examples:
+
+search
+
+calculator
+
+file analysis
+
+database query
+
+scientific analysis
+
+laboratory integration
+
+external plugin
+
+Tools must be permission-controlled and independently validated.
+
+END OF 21.45
+
+### 21.46 TOOL RESULT HANDLING
+
+Tool results must be represented separately from AI-generated text.
+
+Tool Request
+
+↓
+
+Tool Execution
+
+↓
+
+Tool Result
+
+↓
+
+Validation
+
+↓
+
+Context
+
+↓
+
+AI
+
+The model must not be allowed to falsely represent an unexecuted tool operation as completed.
+
+END OF 21.46
+
+### 21.47 CHAT PLUGINS
+
+Plugins shall be accessed through the centralized Plugin architecture.
+
+Chat may display:
+
+available plugins
+
+enabled plugins
+
+connected plugins
+
+plugin actions
+
+Plugin results must identify their source.
+
+END OF 21.47
+
+### 21.48 OFFLINE AI
+
+If the user has downloaded an approved local AI model:
+
+Chat
+
+↓
+
+Model Capability Check
+
+↓
+
+Local Model Available?
+
+├── Yes → Local Model
+
+└── No → Remote AI Gateway
+
+Offline mode must respect the model's capabilities and the user's selected privacy settings.
+
+Cloud-only tools such as live Web Search cannot function without connectivity.
+
+END OF 21.48
+
+### 21.49 MODEL SELECTION
+
+The frontend should not hard-code provider-specific logic.
+
+It should send:
+
+model_id
+
+The backend Model Registry determines:
+
+provider
+
+capabilities
+
+context capacity
+
+cost class
+
+availability
+
+local/remote status
+
+The Model Router makes the final execution decision.
+
+END OF 21.49
+
+### 21.50 COST-AWARE CHAT EXECUTION
+
+Chat execution should avoid unnecessary expensive operations.
+
+The system may use:
+
+small models for classification
+
+cached results
+
+retrieval before generation
+
+local models
+
+streaming
+
+prompt compression
+
+context filtering
+
+model routing
+
+batch processing where appropriate
+
+Expensive models should be reserved for requests requiring their capabilities.
+
+END OF 21.50
+
+### 21.51 ERROR HANDLING
+
+Possible errors:
+
+authentication failure
+
+authorization failure
+
+invalid request
+
+model unavailable
+
+provider timeout
+
+rate limit
+
+tool failure
+
+network interruption
+
+context retrieval failure
+
+file processing failure
+
+AI generation failure
+
+The user should receive a useful controlled error without exposing internal secrets or infrastructure details.
+
+END OF 21.51
+
+### 21.52 RETRY POLICY
+
+Retries must be controlled.
+
+Transient failures may be retried.
+
+Permanent failures should not be repeatedly retried.
+
+Examples of potentially retryable failures:
+
+network timeout
+
+temporary provider error
+
+temporary service unavailable
+
+The retry system must use exponential backoff and retry limits.
+
+END OF 21.52
+
+### 21.53 IDEMPOTENCY
+
+AI request submission should support idempotency.
+
+Each generation request may include:
+
+request_id
+
+idempotency_key
+
+This prevents duplicate AI generations when clients retry after network interruptions.
+
+END OF 21.53
+
+### 21.54 CHAT CONCURRENCY
+
+Multiple conversations may execute simultaneously.
+
+The system must isolate:
+
+conversation state
+
+request state
+
+stream state
+
+model state
+
+tool state
+
+A slow conversation must not block unrelated conversations.
+
+END OF 21.54
+
+### 21.55 SCALABILITY
+
+The Chat architecture must be horizontally scalable.
+
+Stateless API workers should handle requests while persistent state is stored in appropriate infrastructure.
+
+Long-running AI operations should be handled through asynchronous job infrastructure where appropriate.
+
+Streaming connections should be managed independently from database operations.
+
+END OF 21.55
+
+### 21.56 CHAT DATABASE TABLES
+
+Minimum tables:
+
+conversations
+
+messages
+
+message_branches
+
+message_attachments
+
+conversation_settings
+
+conversation_participants
+
+conversation_sources
+
+conversation_tool_calls
+
+conversation_exports
+
+conversation_summaries
+
+The exact database implementation must follow the global database architecture.
+
+END OF 21.56
+
+### 21.57 EXACT BACKEND FILE STRUCTURE
+
+backend/
+
+└── app/
+
+    └── chat/
+
+        ├── __init__.py
+
+        ├── chat_service.py
+
+        ├── conversation_service.py
+
+        ├── conversation_repository.py
+
+        ├── message_service.py
+
+        ├── message_repository.py
+
+        ├── message_validator.py
+
+        ├── message_branching.py
+
+        ├── conversation_context.py
+
+        ├── conversation_memory.py
+
+        ├── conversation_summary.py
+
+        ├── chat_search.py
+
+        ├── chat_history.py
+
+        ├── chat_export.py
+
+        ├── chat_streaming.py
+
+        ├── chat_attachments.py
+
+        ├── chat_tools.py
+
+        ├── chat_errors.py
+
+        │
+
+        ├── models/
+
+        │   ├── conversation.py
+
+        │   ├── message.py
+
+        │   ├── message_branch.py
+
+        │   ├── message_attachment.py
+
+        │   ├── conversation_setting.py
+
+        │   ├── conversation_participant.py
+
+        │   ├── conversation_source.py
+
+        │   └── conversation_tool_call.py
+
+        │
+
+        └── schemas/
+
+            ├── conversation.py
+
+            ├── message.py
+
+            ├── message_branch.py
+
+            ├── message_attachment.py
+
+            ├── conversation_setting.py
+
+            ├── conversation_source.py
+
+            └── conversation_tool_call.py
+
+END OF 21.57
+
+### 21.58 FRONTEND FILE STRUCTURE
+
+frontend/
+
+└── src/
+
+    └── features/
+
+        └── chat/
+
+            ├── components/
+
+            │   ├── ChatPage
+
+            │   ├── ChatTabs
+
+            │   ├── ChatTab
+
+            │   ├── ChatHeader
+
+            │   ├── MessageList
+
+            │   ├── MessageItem
+
+            │   ├── UserMessage
+
+            │   ├── AssistantMessage
+
+            │   ├── MessageActions
+
+            │   ├── MessageEditor
+
+            │   ├── ResponseRenderer
+
+            │   ├── CitationList
+
+            │   ├── SourceCard
+
+            │   ├── ToolResult
+
+            │   ├── ChatComposer
+
+            │   ├── AttachmentPicker
+
+            │   ├── ModelSelector
+
+            │   ├── ModeSelector
+
+            │   ├── VoiceControls
+
+            │   ├── StreamingIndicator
+
+            │   ├── StopGeneration
+
+            │   └── ChatHistory
+
+            │
+
+            ├── hooks/
+
+            │   ├── useChat
+
+            │   ├── useConversation
+
+            │   ├── useMessages
+
+            │   ├── useChatStream
+
+            │   ├── useChatSearch
+
+            │   ├── useConversationContext
+
+            │   └── useChatTabs
+
+            │
+
+            ├── state/
+
+            │   ├── chatStore
+
+            │   ├── conversationStore
+
+            │   └── chatTabsStore
+
+            │
+
+            └── services/
+
+                ├── chatApi
+
+                └── chatStream
+
+END OF 21.58
+
+### 21.59 CHAT API
+
+Primary endpoints:
+
+POST   /api/v1/conversations
+
+GET    /api/v1/conversations
+
+GET    /api/v1/conversations/{conversation_id}
+
+PATCH  /api/v1/conversations/{conversation_id}
+
+DELETE /api/v1/conversations/{conversation_id}
+
+POST   /api/v1/conversations/{conversation_id}/messages
+
+GET    /api/v1/conversations/{conversation_id}/messages
+
+PATCH  /api/v1/messages/{message_id}
+
+DELETE /api/v1/messages/{message_id}
+
+POST   /api/v1/messages/{message_id}/regenerate
+
+POST   /api/v1/messages/{message_id}/branch
+
+POST   /api/v1/chat/generate
+
+POST   /api/v1/chat/stream
+
+POST   /api/v1/chat/stop
+
+POST   /api/v1/chat/search
+
+POST   /api/v1/conversations/{conversation_id}/export
+
+END OF 21.59
+
+### 21.60 CHAT API RESPONSE
+
+Successful API responses shall follow the common GSIR contract:
+
+{
+
+  "success": true,
+
+  "data": {},
+
+  "meta": {},
+
+  "request_id": "..."
+
+}
+
+Error responses:
+
+{
+
+  "success": false,
+
+  "error": {
+
+    "code": "...",
+
+    "message": "...",
+
+    "details": {}
+
+  },
+
+  "request_id": "..."
+
+}
+
+Streaming events shall use the dedicated streaming event contract.
+
+END OF 21.60
+
+### 21.61 CHAT FRONTEND STATE
+
+Frontend state shall distinguish:
+
+server state
+
+local draft state
+
+streaming state
+
+tab state
+
+UI state
+
+The application must not treat all state as one global object.
+
+END OF 21.61
+
+### 21.62 CHAT CACHE
+
+Frequently accessed conversation metadata may be cached.
+
+Messages should use controlled caching and invalidation.
+
+Streaming responses must update the active conversation state without corrupting cached historical data.
+
+END OF 21.62
+
+### 21.63 CHAT SECURITY
+
+The Chat subsystem must enforce:
+
+authentication
+
+conversation ownership
+
+Project authorization
+
+Workspace authorization
+
+message access control
+
+file access control
+
+tool permissions
+
+plugin permissions
+
+AI context permissions
+
+rate limiting
+
+input validation
+
+audit logging where required
+
+END OF 21.63
+
+### 21.64 PROMPT-INJECTION PROTECTION
+
+Messages, files, search results and tool outputs must be treated according to their source.
+
+External content must not automatically become system instructions.
+
+The architecture must separate:
+
+system instructions
+
+developer instructions
+
+user instructions
+
+retrieved data
+
+tool results
+
+untrusted external content
+
+END OF 21.64
+
+### 21.65 SENSITIVE DATA
+
+The Chat subsystem must minimize exposure of sensitive information.
+
+Logs must not unnecessarily contain:
+
+passwords
+
+authentication tokens
+
+private credentials
+
+full sensitive documents
+
+secret API keys
+
+The logging layer must support redaction.
+
+END OF 21.65
+
+### 21.66 CHAT OBSERVABILITY
+
+Track:
+
+request latency
+
+time to first token
+
+generation duration
+
+token usage
+
+model used
+
+provider used
+
+tool usage
+
+retrieval latency
+
+failure rate
+
+stream interruptions
+
+cancellation rate
+
+The system must correlate operations using request_id and trace_id.
+
+END OF 21.66
+
+### 21.67 CHAT TESTING
+
+Automated tests must cover:
+
+conversation creation
+
+message creation
+
+message persistence
+
+message editing
+
+branching
+
+regeneration
+
+streaming
+
+stream interruption
+
+stop generation
+
+context assembly
+
+Project context
+
+memory boundaries
+
+file attachments
+
+tool calls
+
+search
+
+history
+
+model selection
+
+offline model routing
+
+authorization
+
+prompt-injection handling
+
+retry behavior
+
+idempotency
+
+concurrency
+
+END OF 21.67
+
+### 21.68 CHAT ACCEPTANCE CRITERIA
+
+Part 21 shall be considered implemented only when:
+
+- Users can create conversations.
+
+- Users can open multiple chat tabs.
+
+- Each tab maintains independent state.
+
+- Conversations have stable IDs.
+
+- Messages have stable IDs.
+
+- Messages support branching.
+
+- Messages can be edited.
+
+- Responses can be regenerated.
+
+- Responses stream correctly.
+
+- Generation can be stopped.
+
+- Interrupted streams can recover safely.
+
+- Chat history works.
+
+- Chat search works.
+
+- Project conversations work.
+
+- Notes can be created from messages.
+
+- Files can be attached.
+
+- Models can be selected through model IDs.
+
+- Chat modes work through the orchestration layer.
+
+- Research mode can invoke the research architecture.
+
+- Web Search can be controlled through settings and permissions.
+
+- Tools use the centralized tool architecture.
+
+- Plugin operations use the centralized plugin architecture.
+
+- Offline models can be selected when available.
+
+- Context is managed without unnecessarily loading complete histories.
+
+- Conversation memory remains distinct from Project and user memory.
+
+- Research citations remain traceable.
+
+- Unauthorized data cannot enter AI context.
+
+- Prompt injection from external content is isolated.
+
+- API responses follow the common GSIR contract.
+
+- Chat state is scalable and concurrency-safe.
+
+- Failures are handled without data loss.
+
+- Chat operations are observable.
+
+- Automated tests cover the complete Chat lifecycle.
+
+- Chat integrates correctly with AI Gateway, Model Router, Projects, Notes, Files, Search, Research, Memory, Tools and Plugins.
+
+END OF PART 21

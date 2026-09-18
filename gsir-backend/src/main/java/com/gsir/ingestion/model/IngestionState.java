@@ -1,0 +1,5 @@
+package com.gsir.ingestion.model;
+
+public enum IngestionState {
+    QUEUED, ACQUIRING, DOWNLOADING, PARSING, NORMALIZING, VALIDATING, PROCESSING, COMPLETED, FAILED, QUARANTINED, CANCELLED
+}

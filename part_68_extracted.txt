@@ -1,0 +1,2755 @@
+﻿PART 68 — SCIENTIFIC KNOWLEDGE GRAPH AND RESEARCH KNOWLEDGE REPRESENTATION ARCHITECTURE
+
+68.1 PURPOSE
+
+The GSIR Scientific Knowledge Graph shall provide the structured knowledge layer connecting scientific entities, concepts, evidence, experiments, observations, models, datasets, publications, researchers, hypotheses and validated results.
+
+The knowledge graph shall transform disconnected research information into an interconnected scientific representation.
+
+Research
+
+   │
+
+   ├── Concepts
+
+   ├── Hypotheses
+
+   ├── Experiments
+
+   ├── Observations
+
+   ├── Datasets
+
+   ├── Models
+
+   ├── Publications
+
+   ├── Methods
+
+   ├── Evidence
+
+   └── Results
+
+A provenance-aware knowledge representation is important because scientific results must remain traceable to the processes and entities that produced them. 
+
+END OF 68.1
+
+68.2 CORE PRINCIPLE
+
+GSIR shall not treat scientific knowledge as plain text alone.
+
+Knowledge shall be represented through:
+
+Entities
+
+Relationships
+
+Properties
+
+Evidence
+
+Sources
+
+Provenance
+
+Confidence
+
+Versions
+
+Temporal Context
+
+Domain Context
+
+The system shall distinguish between:
+
+Observed Fact
+
+Derived Result
+
+Scientific Claim
+
+Hypothesis
+
+Inference
+
+Prediction
+
+Opinion
+
+Unverified Statement
+
+END OF 68.2
+
+68.3 KNOWLEDGE GRAPH ARCHITECTURE
+
+                         SCIENTIFIC KNOWLEDGE
+
+                                  │
+
+                                  ▼
+
+                         ENTITY EXTRACTION
+
+                                  │
+
+                                  ▼
+
+                       ENTITY RESOLUTION
+
+                                  │
+
+                                  ▼
+
+                     RELATIONSHIP EXTRACTION
+
+                                  │
+
+                                  ▼
+
+                         EVIDENCE LINKING
+
+                                  │
+
+                                  ▼
+
+                       PROVENANCE ATTACHMENT
+
+                                  │
+
+                                  ▼
+
+                         KNOWLEDGE GRAPH
+
+                                  │
+
+             ┌────────────────────┼────────────────────┐
+
+             ▼                    ▼                    ▼
+
+        REASONING             SEARCH               ANALYSIS
+
+             │                    │                    │
+
+             └────────────────────┼────────────────────┘
+
+                                  ▼
+
+                         RESEARCH INTELLIGENCE
+
+END OF 68.3
+
+68.4 KNOWLEDGE GRAPH DIRECTORY
+
+backend/src/knowledge/
+
+knowledge.module.ts
+
+knowledge.service.ts
+
+knowledge.controller.ts
+
+knowledge.repository.ts
+
+knowledge.types.ts
+
+entities/
+
+relations/
+
+claims/
+
+evidence/
+
+sources/
+
+provenance/
+
+ontology/
+
+schemas/
+
+resolution/
+
+extraction/
+
+reasoning/
+
+inference/
+
+temporal/
+
+versions/
+
+confidence/
+
+search/
+
+indexing/
+
+validation/
+
+contradictions/
+
+merging/
+
+snapshots/
+
+exports/
+
+imports/
+
+index.ts
+
+END OF 68.4
+
+68.5 KNOWLEDGE ENTITY
+
+A knowledge entity shall contain:
+
+entity_id
+
+entity_type
+
+canonical_name
+
+aliases
+
+description
+
+properties
+
+domain
+
+source_references
+
+confidence
+
+created_at
+
+updated_at
+
+version
+
+status
+
+END OF 68.5
+
+68.6 ENTITY TYPES
+
+The initial GSIR entity vocabulary shall support:
+
+CONCEPT
+
+THEORY
+
+HYPOTHESIS
+
+CLAIM
+
+LAW
+
+PRINCIPLE
+
+METHOD
+
+TECHNIQUE
+
+EXPERIMENT
+
+OBSERVATION
+
+MEASUREMENT
+
+DATASET
+
+MODEL
+
+ALGORITHM
+
+MATERIAL
+
+SUBSTANCE
+
+COMPOUND
+
+PROTEIN
+
+GENE
+
+ORGANISM
+
+SPECIES
+
+DISEASE
+
+PHENOMENON
+
+INSTRUMENT
+
+SOFTWARE
+
+PUBLICATION
+
+AUTHOR
+
+INSTITUTION
+
+PROJECT
+
+RESULT
+
+EVIDENCE
+
+Additional domain-specific entity types shall be extensible.
+
+END OF 68.6
+
+68.7 ENTITY CANONICALIZATION
+
+Different names referring to the same scientific entity shall be resolved where sufficient evidence exists.
+
+Name A
+
+Name B
+
+Abbreviation
+
+Scientific Name
+
+Identifier
+
+        ↓
+
+Entity Resolution
+
+        ↓
+
+Canonical Entity
+
+The system shall preserve aliases rather than deleting them.
+
+END OF 68.7
+
+68.8 ENTITY RESOLUTION
+
+Directory:
+
+backend/src/knowledge/resolution/
+
+Files:
+
+entity-resolution.service.ts
+
+entity-matcher.ts
+
+alias-resolver.ts
+
+identifier-resolver.ts
+
+entity-deduplicator.ts
+
+resolution-confidence.ts
+
+index.ts
+
+Resolution shall consider:
+
+Name Similarity
+
+Aliases
+
+Identifiers
+
+Domain
+
+Context
+
+Source
+
+Relationships
+
+External References
+
+END OF 68.8
+
+68.9 ENTITY IDENTITY
+
+Each canonical entity shall have a stable internal identifier.
+
+External identifiers shall be stored separately.
+
+Internal Entity ID
+
+├── External Identifier A
+
+├── External Identifier B
+
+└── External Identifier C
+
+This prevents external identifier changes from breaking internal relationships.
+
+END OF 68.9
+
+68.10 KNOWLEDGE RELATIONSHIP
+
+A relationship shall contain:
+
+relationship_id
+
+subject_entity
+
+predicate
+
+object_entity
+
+properties
+
+source
+
+evidence
+
+confidence
+
+valid_from
+
+valid_to
+
+created_at
+
+version
+
+status
+
+END OF 68.10
+
+68.11 RELATIONSHIP TYPES
+
+Initial relationships shall include:
+
+IS_A
+
+PART_OF
+
+HAS_PART
+
+CAUSES
+
+ASSOCIATED_WITH
+
+DEPENDS_ON
+
+DERIVED_FROM
+
+MEASURED_BY
+
+OBSERVED_IN
+
+TESTED_BY
+
+SUPPORTED_BY
+
+REFUTED_BY
+
+CITES
+
+AUTHORED_BY
+
+PRODUCED_BY
+
+USES
+
+IMPLEMENTS
+
+PREDICTS
+
+EXPLAINS
+
+CONTRADICTS
+
+SIMILAR_TO
+
+RELATED_TO
+
+END OF 68.11
+
+68.12 KNOWLEDGE TRIPLE
+
+The fundamental graph representation shall support:
+
+Subject
+
+Predicate
+
+Object
+
+Example:
+
+Entity A
+
+   │
+
+   └── CAUSES ──► Entity B
+
+Additional metadata shall be attached to the relationship rather than embedded into the object itself.
+
+END OF 68.12
+
+68.13 QUALIFIED RELATIONSHIPS
+
+Scientific relationships often require additional context.
+
+Therefore:
+
+Subject
+
+Predicate
+
+Object
+
+├── Evidence
+
+├── Source
+
+├── Confidence
+
+├── Time
+
+├── Conditions
+
+└── Context
+
+shall be supported.
+
+END OF 68.13
+
+68.14 SCIENTIFIC CLAIM
+
+A claim shall be represented independently from the entity or relationship it describes.
+
+claim_id
+
+statement
+
+subject
+
+predicate
+
+object
+
+source
+
+evidence
+
+confidence
+
+status
+
+created_at
+
+This allows multiple sources to support or challenge the same claim.
+
+END OF 68.14
+
+68.15 CLAIM STATES
+
+Claims shall support:
+
+PROPOSED
+
+SUPPORTED
+
+PARTIALLY_SUPPORTED
+
+DISPUTED
+
+REFUTED
+
+UNVERIFIED
+
+SUPERSEDED
+
+ARCHIVED
+
+END OF 68.15
+
+68.16 EVIDENCE OBJECT
+
+Evidence shall contain:
+
+evidence_id
+
+type
+
+source
+
+claim
+
+content_reference
+
+method
+
+quality
+
+confidence
+
+provenance
+
+created_at
+
+END OF 68.16
+
+68.17 EVIDENCE TYPES
+
+OBSERVATION
+
+MEASUREMENT
+
+EXPERIMENT
+
+DATASET
+
+SIMULATION
+
+STATISTICAL_RESULT
+
+PUBLICATION
+
+REVIEW
+
+REPLICATION
+
+COMPUTATIONAL_RESULT
+
+EXPERT_ASSESSMENT
+
+END OF 68.17
+
+68.18 EVIDENCE HIERARCHY
+
+Evidence shall not automatically receive equal weight.
+
+The reasoning layer may distinguish:
+
+Direct Measurement
+
+Controlled Experiment
+
+Independent Replication
+
+Computational Analysis
+
+Observational Study
+
+Review
+
+Expert Assessment
+
+Unverified Report
+
+The exact weighting shall remain domain-dependent.
+
+END OF 68.18
+
+68.19 SOURCE ENTITY
+
+Every externally derived knowledge item shall reference its source.
+
+Sources may include:
+
+Publication
+
+Dataset
+
+Experiment
+
+Researcher
+
+Institution
+
+Repository
+
+Instrument
+
+Software
+
+Web Resource
+
+Internal GSIR Record
+
+END OF 68.19
+
+68.20 SOURCE VERSIONING
+
+Sources shall preserve version information where available.
+
+Source V1
+
+↓
+
+Source V2
+
+↓
+
+Source V3
+
+Knowledge derived from a source shall retain the source version used.
+
+END OF 68.20
+
+68.21 PROVENANCE
+
+Knowledge provenance shall connect:
+
+Source
+
+↓
+
+Extraction
+
+↓
+
+Interpretation
+
+↓
+
+Claim
+
+↓
+
+Evidence
+
+↓
+
+Knowledge Relationship
+
+Provenance systems are widely used to support traceability, reproducibility and quality assessment of scientific data products. 
+
+END OF 68.21
+
+68.22 PROVENANCE GRAPH
+
+Publication
+
+   │
+
+   ▼
+
+Extracted Statement
+
+   │
+
+   ▼
+
+Scientific Claim
+
+   │
+
+   ├── Evidence A
+
+   ├── Evidence B
+
+   └── Evidence C
+
+         │
+
+         ▼
+
+     Knowledge Graph
+
+END OF 68.22
+
+68.23 TEMPORAL KNOWLEDGE
+
+Scientific knowledge changes over time.
+
+Relationships shall therefore support:
+
+valid_from
+
+valid_to
+
+observed_at
+
+published_at
+
+updated_at
+
+The system shall distinguish:
+
+When a claim was published
+
+When evidence was observed
+
+When the relationship was believed valid
+
+END OF 68.23
+
+68.24 TEMPORAL SNAPSHOT
+
+GSIR shall support historical knowledge snapshots.
+
+Knowledge State — 2026-01
+
+Knowledge State — 2026-06
+
+Knowledge State — 2026-09
+
+This allows reasoning against the knowledge available at a specific point in time.
+
+END OF 68.24
+
+68.25 KNOWLEDGE VERSIONING
+
+Knowledge modifications shall create versions rather than silently overwriting historical states.
+
+Entity V1
+
+↓
+
+Entity V2
+
+↓
+
+Entity V3
+
+Historical graph states shall remain queryable where required.
+
+END OF 68.25
+
+68.26 ONTOLOGY SYSTEM
+
+Directory:
+
+backend/src/knowledge/ontology/
+
+Files:
+
+ontology.service.ts
+
+ontology.registry.ts
+
+ontology.class.ts
+
+ontology.property.ts
+
+ontology.relationship.ts
+
+ontology.validator.ts
+
+ontology.version.ts
+
+index.ts
+
+The ontology layer shall define the vocabulary and structural rules used by the knowledge graph.
+
+END OF 68.26
+
+68.27 ONTOLOGY PURPOSE
+
+The ontology shall define:
+
+Entity Classes
+
+Properties
+
+Relationships
+
+Constraints
+
+Inheritance
+
+Domain Vocabulary
+
+Identifiers
+
+The ontology shall remain extensible for different scientific domains.
+
+END OF 68.27
+
+68.28 DOMAIN ONTOLOGIES
+
+GSIR shall support separate domain extensions.
+
+Core Scientific Ontology
+
+        │
+
+ ┌──────┼──────┬──────┐
+
+ ▼      ▼      ▼      ▼
+
+Physics Biology Chemistry Medicine
+
+Domain ontologies shall reuse common GSIR entities where appropriate.
+
+END OF 68.28
+
+68.29 ONTOLOGY VERSIONING
+
+Ontology versions shall be immutable.
+
+Ontology V1
+
+↓
+
+Ontology V2
+
+Knowledge records shall reference the ontology version used for their interpretation.
+
+END OF 68.29
+
+68.30 KNOWLEDGE SCHEMA
+
+The schema system shall define:
+
+Entity Schema
+
+Relationship Schema
+
+Claim Schema
+
+Evidence Schema
+
+Source Schema
+
+Provenance Schema
+
+Schema validation shall occur before knowledge is promoted into the trusted graph.
+
+END OF 68.30
+
+68.31 KNOWLEDGE EXTRACTION
+
+Directory:
+
+backend/src/knowledge/extraction/
+
+Files:
+
+knowledge-extraction.service.ts
+
+entity-extractor.ts
+
+relation-extractor.ts
+
+claim-extractor.ts
+
+evidence-extractor.ts
+
+citation-extractor.ts
+
+extraction-validator.ts
+
+index.ts
+
+The extraction system shall transform source material into candidate structured knowledge.
+
+END OF 68.31
+
+68.32 EXTRACTION PIPELINE
+
+Source
+
+↓
+
+Parsing
+
+↓
+
+Segmentation
+
+↓
+
+Entity Extraction
+
+↓
+
+Relationship Extraction
+
+↓
+
+Claim Extraction
+
+↓
+
+Evidence Linking
+
+↓
+
+Validation
+
+↓
+
+Knowledge Candidate
+
+END OF 68.32
+
+68.33 AI KNOWLEDGE EXTRACTION
+
+AI models may assist extraction.
+
+AI-generated knowledge shall remain in a candidate state until validation.
+
+Source
+
+↓
+
+AI Extraction
+
+↓
+
+Candidate Knowledge
+
+↓
+
+Validation
+
+↓
+
+Trusted Knowledge
+
+END OF 68.33
+
+68.34 EXTRACTION CONFIDENCE
+
+Each extracted item shall contain confidence metadata.
+
+Extraction Confidence
+
+Entity Resolution Confidence
+
+Relationship Confidence
+
+Claim Confidence
+
+Confidence shall not be treated as scientific truth probability unless explicitly defined by the applicable method.
+
+END OF 68.34
+
+68.35 KNOWLEDGE VALIDATION
+
+Directory:
+
+backend/src/knowledge/validation/
+
+Validation shall check:
+
+Schema
+
+Entity Identity
+
+Relationship Validity
+
+Source Availability
+
+Evidence
+
+Ontology Compatibility
+
+Temporal Consistency
+
+Duplicate Conflicts
+
+END OF 68.35
+
+68.36 KNOWLEDGE PROMOTION
+
+Candidate knowledge shall pass through:
+
+CANDIDATE
+
+↓
+
+VALIDATING
+
+↓
+
+VALIDATED
+
+↓
+
+TRUSTED
+
+Unvalidated AI extraction shall never automatically become authoritative scientific knowledge.
+
+END OF 68.36
+
+68.37 KNOWLEDGE CONFIDENCE
+
+Confidence shall be represented separately from provenance and evidence.
+
+Evidence
+
++
+
+Source Quality
+
++
+
+Consistency
+
++
+
+Replication
+
++
+
+Method Quality
+
+        ↓
+
+Confidence Assessment
+
+The confidence framework shall remain configurable by domain.
+
+END OF 68.37
+
+68.38 CONTRADICTION SYSTEM
+
+Directory:
+
+backend/src/knowledge/contradictions/
+
+Files:
+
+contradiction.service.ts
+
+contradiction-detector.ts
+
+claim-comparator.ts
+
+evidence-comparator.ts
+
+conflict-resolver.ts
+
+index.ts
+
+The system shall detect potentially conflicting claims.
+
+END OF 68.38
+
+68.39 CONTRADICTORY CLAIMS
+
+Example:
+
+Claim A:
+
+X increases Y
+
+Claim B:
+
+X does not increase Y
+
+The system shall preserve both claims and their evidence rather than silently deleting one.
+
+END OF 68.39
+
+68.40 CONTRADICTION RECORD
+
+contradiction_id
+
+claim_a
+
+claim_b
+
+reason
+
+evidence_a
+
+evidence_b
+
+severity
+
+status
+
+resolution
+
+END OF 68.40
+
+68.41 CONFLICT STATES
+
+DETECTED
+
+UNDER_REVIEW
+
+EXPLAINED
+
+RESOLVED
+
+UNRESOLVED
+
+SUPERSEDED
+
+END OF 68.41
+
+68.42 KNOWLEDGE MERGING
+
+Directory:
+
+backend/src/knowledge/merging/
+
+Knowledge from different sources may be merged only after entity and relationship resolution.
+
+Source A
+
+Source B
+
+Source C
+
+   ↓
+
+Resolution
+
+   ↓
+
+Merge
+
+   ↓
+
+Unified Knowledge
+
+END OF 68.42
+
+68.43 MERGE SAFETY
+
+The merge engine shall never overwrite conflicting evidence.
+
+Instead:
+
+Existing Knowledge
+
++
+
+New Knowledge
+
++
+
+Provenance
+
++
+
+Conflict Status
+
+shall be preserved.
+
+END OF 68.43
+
+68.44 KNOWLEDGE SEARCH
+
+Directory:
+
+backend/src/knowledge/search/
+
+The search layer shall support:
+
+Entity Search
+
+Relationship Search
+
+Claim Search
+
+Evidence Search
+
+Semantic Search
+
+Graph Traversal
+
+Temporal Search
+
+Domain Search
+
+END OF 68.44
+
+68.45 GRAPH TRAVERSAL
+
+Queries shall be able to traverse relationships.
+
+Entity A
+
+↓
+
+RELATED_TO
+
+↓
+
+Entity B
+
+↓
+
+SUPPORTED_BY
+
+↓
+
+Evidence C
+
+↓
+
+SOURCE
+
+↓
+
+Publication D
+
+This allows GSIR to answer not only "what is known?" but also "why is it known?".
+
+END OF 68.45
+
+68.46 MULTI-HOP REASONING
+
+The reasoning layer shall support controlled multi-hop traversal.
+
+A
+
+↓
+
+B
+
+↓
+
+C
+
+↓
+
+D
+
+Every inference chain shall preserve the relationships used to produce it.
+
+END OF 68.46
+
+68.47 KNOWLEDGE INFERENCE
+
+Directory:
+
+backend/src/knowledge/inference/
+
+Files:
+
+inference.service.ts
+
+inference.engine.ts
+
+rule-engine.ts
+
+inference-validator.ts
+
+inference-provenance.ts
+
+index.ts
+
+Inference shall generate derived knowledge from explicitly defined rules and evidence.
+
+END OF 68.47
+
+68.48 INFERENCE STATES
+
+PROPOSED
+
+DERIVED
+
+VALIDATING
+
+VALIDATED
+
+REJECTED
+
+SUPERSEDED
+
+Derived knowledge shall never be confused with directly observed knowledge.
+
+END OF 68.48
+
+68.49 INFERENCE PROVENANCE
+
+Every inference shall record:
+
+Inference Rule
+
+Input Entities
+
+Input Relationships
+
+Evidence
+
+Model / Algorithm
+
+Execution ID
+
+Timestamp
+
+END OF 68.49
+
+68.50 RULE ENGINE
+
+The rule engine shall support deterministic scientific rules.
+
+IF
+
+    Condition A
+
+AND
+
+    Condition B
+
+THEN
+
+    Derived Relationship C
+
+Rules shall be versioned and independently testable.
+
+END OF 68.50
+
+68.51 RULE VERSIONING
+
+Rule V1
+
+↓
+
+Rule V2
+
+Historical inferences shall retain the rule version used.
+
+END OF 68.51
+
+68.52 AI REASONING OVER KNOWLEDGE GRAPH
+
+AI reasoning shall use graph context as structured evidence.
+
+User Question
+
+↓
+
+Entity Resolution
+
+↓
+
+Graph Retrieval
+
+↓
+
+Evidence Retrieval
+
+↓
+
+Reasoning
+
+↓
+
+Answer
+
+↓
+
+Citation / Provenance
+
+The AI shall distinguish retrieved facts from generated inference.
+
+END OF 68.52
+
+68.53 AI KNOWLEDGE GROUNDING
+
+The AI reasoning system shall preferentially ground scientific answers in:
+
+Validated Knowledge
+
+Primary Evidence
+
+Verified Experiments
+
+Trusted Datasets
+
+Authoritative Sources
+
+Unverified information shall be clearly classified.
+
+END OF 68.53
+
+68.54 KNOWLEDGE GRAPH + RAG
+
+The knowledge graph shall complement document retrieval.
+
+User Question
+
+      │
+
+      ├── Semantic Retrieval
+
+      │
+
+      └── Knowledge Graph Retrieval
+
+               │
+
+               ▼
+
+          Evidence Fusion
+
+               │
+
+               ▼
+
+            AI Reasoning
+
+This combination shall reduce dependence on unstructured text retrieval alone.
+
+END OF 68.54
+
+68.55 KNOWLEDGE GRAPH + EXPERIMENTS
+
+Experiment results shall become graph entities.
+
+Experiment
+
+↓
+
+Measurement
+
+↓
+
+Result
+
+↓
+
+Evidence
+
+↓
+
+Claim
+
+↓
+
+Knowledge
+
+The relationship shall preserve the original experiment provenance.
+
+END OF 68.55
+
+68.56 KNOWLEDGE GRAPH + WORKFLOWS
+
+Workflow outputs shall be linked to the knowledge graph.
+
+Workflow
+
+↓
+
+Task
+
+↓
+
+Artifact
+
+↓
+
+Analysis
+
+↓
+
+Result
+
+↓
+
+Knowledge Entity
+
+This creates a continuous chain between computation and scientific knowledge.
+
+END OF 68.56
+
+68.57 KNOWLEDGE GRAPH + PUBLICATIONS
+
+Publications shall be connected to:
+
+Authors
+
+Institutions
+
+Methods
+
+Datasets
+
+Experiments
+
+Claims
+
+Evidence
+
+Results
+
+Citations
+
+This allows GSIR to reconstruct the scientific context surrounding a publication.
+
+END OF 68.57
+
+68.58 KNOWLEDGE GRAPH + DATASETS
+
+Dataset relationships shall include:
+
+Dataset
+
+├── CREATED_BY
+
+├── DERIVED_FROM
+
+├── USED_BY
+
+├── CONTAINS
+
+├── SUPPORTS
+
+└── PRODUCES
+
+Dataset versions shall remain distinguishable.
+
+END OF 68.58
+
+68.59 KNOWLEDGE GRAPH + MODELS
+
+Models shall connect to:
+
+Training Data
+
+Training Method
+
+Parameters
+
+Software
+
+Evaluation
+
+Experiments
+
+Predictions
+
+Results
+
+This provides model lineage.
+
+END OF 68.59
+
+68.60 KNOWLEDGE GRAPH + AI MEMORY
+
+Research memory shall not be equivalent to conversational memory.
+
+Scientific memory shall require:
+
+Source
+
+Evidence
+
+Provenance
+
+Confidence
+
+Version
+
+Validation
+
+before information becomes trusted long-term research knowledge.
+
+END OF 68.60
+
+68.61 KNOWLEDGE GRAPH SNAPSHOTS
+
+Directory:
+
+backend/src/knowledge/snapshots/
+
+Snapshots shall preserve complete or scoped graph states.
+
+Snapshot ID
+
+Timestamp
+
+Ontology Version
+
+Entity Versions
+
+Relationship Versions
+
+Claim Versions
+
+END OF 68.61
+
+68.62 KNOWLEDGE GRAPH EXPORT
+
+GSIR shall support export of structured knowledge.
+
+Possible formats:
+
+JSON
+
+JSON-LD
+
+RDF
+
+CSV
+
+GraphML
+
+Domain-Specific Formats
+
+The export shall preserve provenance wherever supported.
+
+END OF 68.62
+
+68.63 KNOWLEDGE GRAPH IMPORT
+
+Imported knowledge shall pass through:
+
+Import
+
+↓
+
+Schema Validation
+
+↓
+
+Entity Resolution
+
+↓
+
+Relationship Validation
+
+↓
+
+Source Validation
+
+↓
+
+Conflict Detection
+
+↓
+
+Promotion
+
+END OF 68.63
+
+68.64 EXTERNAL KNOWLEDGE
+
+External knowledge shall never be treated as trusted merely because it was imported.
+
+Each imported item shall retain:
+
+Origin
+
+Import Time
+
+Source
+
+Source Version
+
+Importer
+
+Validation Status
+
+END OF 68.64
+
+68.65 KNOWLEDGE QUALITY METRICS
+
+The system shall monitor:
+
+Entity Resolution Accuracy
+
+Duplicate Rate
+
+Relationship Validity
+
+Evidence Coverage
+
+Claim Support
+
+Contradiction Rate
+
+Stale Knowledge Rate
+
+Provenance Completeness
+
+Validation Rate
+
+END OF 68.65
+
+68.66 KNOWLEDGE FRESHNESS
+
+Scientific knowledge shall have freshness metadata.
+
+Fresh
+
+Aging
+
+Stale
+
+Superseded
+
+Archived
+
+Freshness shall not automatically imply correctness.
+
+END OF 68.66
+
+68.67 KNOWLEDGE ACCESS CONTROL
+
+Knowledge access may depend on:
+
+Project
+
+User
+
+Role
+
+Research Group
+
+Data Classification
+
+Source License
+
+Institution
+
+Confidentiality
+
+Sensitive knowledge shall remain isolated.
+
+END OF 68.67
+
+68.68 KNOWLEDGE TENANCY
+
+Multi-project GSIR deployments shall isolate knowledge by tenant or project where required.
+
+Tenant
+
+├── Project A Knowledge
+
+├── Project B Knowledge
+
+└── Project C Knowledge
+
+Shared knowledge shall be explicitly published into a shared scope.
+
+END OF 68.68
+
+68.69 KNOWLEDGE AUDIT
+
+The audit system shall record:
+
+Entity Created
+
+Entity Updated
+
+Relationship Added
+
+Claim Added
+
+Evidence Added
+
+Knowledge Merged
+
+Conflict Detected
+
+Knowledge Promoted
+
+Knowledge Rejected
+
+Inference Generated
+
+END OF 68.69
+
+68.70 KNOWLEDGE GRAPH SECURITY
+
+Security shall protect against:
+
+Unauthorized Knowledge Injection
+
+False Evidence
+
+Relationship Manipulation
+
+Source Spoofing
+
+Privilege Escalation
+
+Cross-Project Leakage
+
+Malicious Imported Data
+
+END OF 68.70
+
+68.71 KNOWLEDGE INJECTION DEFENSE
+
+Externally generated knowledge shall remain isolated until validated.
+
+External Source
+
+↓
+
+Quarantine
+
+↓
+
+Validation
+
+↓
+
+Candidate Graph
+
+↓
+
+Trusted Graph
+
+END OF 68.71
+
+68.72 SCIENTIFIC KNOWLEDGE REASONING LOOP
+
+Question
+
+↓
+
+Knowledge Retrieval
+
+↓
+
+Evidence Retrieval
+
+↓
+
+Reasoning
+
+↓
+
+Hypothesis
+
+↓
+
+Experiment
+
+↓
+
+Result
+
+↓
+
+Validation
+
+↓
+
+Knowledge Update
+
+↓
+
+New Question
+
+This creates the foundation for continuous scientific discovery.
+
+END OF 68.72
+
+68.73 KNOWLEDGE GRAPH FEEDBACK
+
+Validated research results shall update the graph.
+
+However:
+
+Experiment Result
+
+≠
+
+Automatically Accepted Knowledge
+
+The result shall first pass the applicable validation and evidence policies.
+
+END OF 68.73
+
+68.74 KNOWLEDGE SUPERSESSION
+
+When new evidence replaces an older conclusion:
+
+Old Claim
+
+↓
+
+Superseded
+
+↓
+
+New Claim
+
+The old claim shall remain accessible for historical reasoning.
+
+END OF 68.74
+
+68.75 KNOWLEDGE UNCERTAINTY
+
+The graph shall represent uncertainty explicitly.
+
+Possible representations:
+
+Known
+
+Likely
+
+Possible
+
+Uncertain
+
+Disputed
+
+Unknown
+
+The system shall not convert uncertainty into false precision.
+
+END OF 68.75
+
+68.76 KNOWLEDGE GAP DETECTION
+
+The reasoning system shall identify missing connections.
+
+Examples:
+
+Known Concept
+
+      │
+
+      ▼
+
+Missing Evidence
+
+      │
+
+      ▼
+
+Potential Research Question
+
+Knowledge gaps shall be candidates for research planning rather than assumed facts.
+
+END OF 68.76
+
+68.77 RESEARCH QUESTION GENERATION
+
+The knowledge graph may identify potential research questions from:
+
+Contradictions
+
+Knowledge Gaps
+
+Unexplained Relationships
+
+Weak Evidence
+
+Unvalidated Predictions
+
+Missing Experiments
+
+Conflicting Models
+
+AI-generated questions shall remain proposals until accepted by the research planning system.
+
+END OF 68.77
+
+68.78 HYPOTHESIS GENERATION
+
+Knowledge graph context may support hypothesis generation.
+
+Existing Evidence
+
++
+
+Knowledge Relationships
+
++
+
+Research Gap
+
+        ↓
+
+Candidate Hypothesis
+
+        ↓
+
+Evaluation
+
+        ↓
+
+Experiment Design
+
+END OF 68.78
+
+68.79 KNOWLEDGE GRAPH OBSERVABILITY
+
+The system shall monitor:
+
+Entity Count
+
+Relationship Count
+
+Claim Count
+
+Evidence Count
+
+Graph Growth
+
+Conflict Rate
+
+Inference Rate
+
+Validation Rate
+
+Search Latency
+
+Traversal Latency
+
+END OF 68.79
+
+68.80 KNOWLEDGE GRAPH PERFORMANCE
+
+The architecture shall support:
+
+High-Volume Entity Storage
+
+Indexed Relationships
+
+Efficient Traversal
+
+Semantic Search
+
+Batch Updates
+
+Incremental Updates
+
+Graph Snapshots
+
+Parallel Processing
+
+Large scientific workflow systems can involve substantial data and dependency complexity, making scalable provenance and data management important architectural concerns. 
+
+END OF 68.80
+
+68.81 GRAPH INDEXING
+
+Indexes shall support:
+
+Entity ID
+
+Canonical Name
+
+Alias
+
+Entity Type
+
+Relationship Type
+
+Source
+
+Claim
+
+Evidence
+
+Timestamp
+
+Domain
+
+Semantic indexes may be maintained separately from graph indexes.
+
+END OF 68.81
+
+68.82 HYBRID SEARCH
+
+GSIR shall combine:
+
+Keyword Search
+
+Semantic Search
+
+Graph Search
+
+Vector Search
+
+Metadata Search
+
+Temporal Search
+
+The retrieval layer shall select the appropriate method based on the query.
+
+END OF 68.82
+
+68.83 KNOWLEDGE QUERY ENGINE
+
+Directory:
+
+backend/src/knowledge/search/
+
+knowledge-query.service.ts
+
+graph-query.service.ts
+
+semantic-query.service.ts
+
+evidence-query.service.ts
+
+temporal-query.service.ts
+
+query-planner.ts
+
+index.ts
+
+END OF 68.83
+
+68.84 QUERY PLANNING
+
+The query planner shall determine whether a question requires:
+
+Direct Entity Lookup
+
+Graph Traversal
+
+Semantic Retrieval
+
+Evidence Retrieval
+
+Temporal Filtering
+
+Multi-Hop Reasoning
+
+END OF 68.84
+
+68.85 KNOWLEDGE RESPONSE TRACE
+
+Every AI answer based on the knowledge graph shall be able to expose:
+
+Retrieved Entities
+
+Retrieved Claims
+
+Evidence
+
+Sources
+
+Relationships
+
+Inference Steps
+
+Confidence
+
+This creates a traceable connection between knowledge retrieval and generated responses.
+
+END OF 68.85
+
+68.86 KNOWLEDGE GRAPH TESTING
+
+Testing shall include:
+
+Entity Resolution Tests
+
+Ontology Tests
+
+Relationship Tests
+
+Provenance Tests
+
+Inference Tests
+
+Conflict Tests
+
+Versioning Tests
+
+Temporal Tests
+
+Security Tests
+
+Performance Tests
+
+END OF 68.86
+
+68.87 KNOWLEDGE VALIDATION TESTS
+
+The system shall verify that:
+
+Invalid Entities Are Rejected
+
+Invalid Relationships Are Rejected
+
+Missing Provenance Is Detected
+
+Conflicts Are Preserved
+
+Versions Are Stable
+
+Historical States Are Recoverable
+
+Inference Chains Are Traceable
+
+END OF 68.87
+
+68.88 KNOWLEDGE GRAPH BACKUP
+
+Backups shall preserve:
+
+Entities
+
+Relationships
+
+Claims
+
+Evidence
+
+Provenance
+
+Ontology
+
+Versions
+
+Snapshots
+
+Indexes
+
+Recovery procedures shall be tested regularly.
+
+END OF 68.88
+
+68.89 KNOWLEDGE DISASTER RECOVERY
+
+Recovery shall support:
+
+Full Graph Recovery
+
+Project-Level Recovery
+
+Snapshot Recovery
+
+Point-in-Time Recovery
+
+Provenance Recovery
+
+No restored knowledge state shall lose its historical provenance.
+
+END OF 68.89
+
+68.90 KNOWLEDGE GRAPH DEPLOYMENT
+
+The knowledge layer shall remain independently scalable from:
+
+AI Models
+
+Workflow Engine
+
+Document Processing
+
+Experiment Engine
+
+Frontend
+
+The graph shall communicate through well-defined service interfaces.
+
+END OF 68.90
+
+68.91 KNOWLEDGE SERVICE API
+
+The service shall expose operations for:
+
+Create Entity
+
+Get Entity
+
+Update Entity
+
+Create Relationship
+
+Get Relationships
+
+Create Claim
+
+Attach Evidence
+
+Resolve Entity
+
+Search Knowledge
+
+Traverse Graph
+
+Run Inference
+
+Detect Conflict
+
+Create Snapshot
+
+Export Knowledge
+
+END OF 68.91
+
+68.92 KNOWLEDGE EVENT SYSTEM
+
+Important graph changes shall generate events.
+
+EntityCreated
+
+EntityResolved
+
+RelationshipCreated
+
+ClaimCreated
+
+EvidenceAdded
+
+ConflictDetected
+
+KnowledgeValidated
+
+KnowledgeSuperseded
+
+InferenceCreated
+
+These events shall integrate with the broader GSIR event architecture.
+
+END OF 68.92
+
+68.93 KNOWLEDGE GRAPH + SELF-IMPROVEMENT
+
+The self-improvement architecture shall use validated knowledge feedback.
+
+Research Result
+
+↓
+
+Validation
+
+↓
+
+Knowledge Update
+
+↓
+
+Performance Analysis
+
+↓
+
+New Research Opportunity
+
+↓
+
+Improved Strategy
+
+Self-improvement shall never modify trusted scientific knowledge without provenance and validation.
+
+END OF 68.93
+
+68.94 KNOWLEDGE GRAPH + SCIENTIFIC AGENTS
+
+Scientific agents shall use the graph as shared structured context.
+
+Research Agent
+
+      │
+
+      ▼
+
+Knowledge Graph
+
+      │
+
+ ┌────┼────┐
+
+ ▼    ▼    ▼
+
+Facts Evidence Models
+
+      │
+
+      ▼
+
+Agent Reasoning
+
+Each agent action shall remain attributable to the agent execution that produced it.
+
+END OF 68.94
+
+68.95 KNOWLEDGE GRAPH + MULTI-AGENT SYSTEM
+
+Multiple agents may contribute to a shared research graph.
+
+Literature Agent
+
+       │
+
+Experiment Agent
+
+       │
+
+Data Agent
+
+       │
+
+Model Agent
+
+       │
+
+Validation Agent
+
+       │
+
+       ▼
+
+Scientific Knowledge Graph
+
+Agents shall not silently overwrite each other's findings.
+
+END OF 68.95
+
+68.96 KNOWLEDGE GRAPH + HUMAN SCIENTISTS
+
+Researchers shall be able to:
+
+Inspect
+
+Correct
+
+Approve
+
+Reject
+
+Annotate
+
+Merge
+
+Split
+
+Supersede
+
+Validate
+
+knowledge records.
+
+Human corrections shall remain part of provenance.
+
+END OF 68.96
+
+68.97 KNOWLEDGE GRAPH COMPLETION CRITERIA
+
+The knowledge architecture shall be considered complete when:
+
+- Scientific entities are represented.
+
+- Relationships are represented.
+
+- Claims are represented.
+
+- Evidence is represented.
+
+- Sources are represented.
+
+- Provenance is preserved.
+
+- Temporal knowledge is supported.
+
+- Entity resolution exists.
+
+- Entity canonicalization exists.
+
+- Ontology management exists.
+
+- Domain ontologies are supported.
+
+- Ontology versioning exists.
+
+- Knowledge schemas exist.
+
+- AI-assisted extraction exists.
+
+- Extraction confidence exists.
+
+- Knowledge validation exists.
+
+- Candidate and trusted knowledge are separated.
+
+- Knowledge confidence exists.
+
+- Contradiction detection exists.
+
+- Conflicting claims are preserved.
+
+- Knowledge merging exists.
+
+- Graph search exists.
+
+- Graph traversal exists.
+
+- Multi-hop reasoning exists.
+
+- Inference is provenance-aware.
+
+- Rule versioning exists.
+
+- AI grounding exists.
+
+- RAG and graph retrieval can work together.
+
+- Experiments connect to knowledge.
+
+- Workflows connect to knowledge.
+
+- Publications connect to knowledge.
+
+- Datasets connect to knowledge.
+
+- Models connect to knowledge.
+
+- Research memory is evidence-aware.
+
+- Graph snapshots exist.
+
+- Knowledge export exists.
+
+- Knowledge import exists.
+
+- External knowledge is quarantined.
+
+- Knowledge quality metrics exist.
+
+- Knowledge freshness exists.
+
+- Access control exists.
+
+- Multi-project isolation exists.
+
+- Knowledge auditing exists.
+
+- Injection defense exists.
+
+- Research question generation is supported.
+
+- Hypothesis generation is supported.
+
+- Knowledge gaps can be detected.
+
+- Graph indexing exists.
+
+- Hybrid search exists.
+
+- Query planning exists.
+
+- Knowledge response tracing exists.
+
+- Testing exists.
+
+- Backup exists.
+
+- Disaster recovery exists.
+
+- Independent graph scaling exists.
+
+- Knowledge APIs exist.
+
+- Knowledge events exist.
+
+- Self-improvement integration exists.
+
+- Scientific-agent integration exists.
+
+- Multi-agent knowledge contribution is controlled.
+
+- Human knowledge governance exists.
+
+END OF 68.97
+
+68.98 FINAL SCIENTIFIC KNOWLEDGE ARCHITECTURE
+
+The GSIR Scientific Knowledge Graph shall become the structured memory and evidence layer connecting all major scientific subsystems.
+
+                         SCIENTIFIC WORLD
+
+                                │
+
+                                ▼
+
+                     DOCUMENTS / EXPERIMENTS
+
+                                │
+
+                                ▼
+
+                         DATA + RESULTS
+
+                                │
+
+                                ▼
+
+                       KNOWLEDGE EXTRACTION
+
+                                │
+
+                                ▼
+
+                       ENTITY RESOLUTION
+
+                                │
+
+                                ▼
+
+                        EVIDENCE LINKING
+
+                                │
+
+                                ▼
+
+                      SCIENTIFIC KNOWLEDGE
+
+                                │
+
+                 ┌──────────────┼──────────────┐
+
+                 ▼              ▼              ▼
+
+              CLAIMS        RELATIONS       ENTITIES
+
+                 │              │              │
+
+                 └──────────────┼──────────────┘
+
+                                ▼
+
+                         KNOWLEDGE GRAPH
+
+                                │
+
+                ┌───────────────┼───────────────┐
+
+                ▼               ▼               ▼
+
+             SEARCH         REASONING        INFERENCE
+
+                │               │               │
+
+                └───────────────┼───────────────┘
+
+                                ▼
+
+                         SCIENTIFIC AGENTS
+
+                                │
+
+                                ▼
+
+                          NEW HYPOTHESES
+
+                                │
+
+                                ▼
+
+                            EXPERIMENTS
+
+                                │
+
+                                ▼
+
+                          NEW EVIDENCE
+
+                                │
+
+                                ▼
+
+                         KNOWLEDGE UPDATE
+
+The knowledge graph shall therefore serve as the central structured scientific memory of GSIR.
+
+It shall preserve not only what GSIR knows, but also where the knowledge came from, what evidence supports it, when it was valid, how confident the system is, which claims disagree, and which experiments or workflows generated the evidence.
+
+This architecture provides the foundation for traceable scientific reasoning, evidence-grounded AI, hypothesis generation, research-memory formation and continuous discovery. Provenance-aware workflow systems are specifically intended to connect computational processes with their resulting scientific outputs and support reproducibility. 
+
+END OF PART 68
+
+PART 68 COMPLETED.
+
+PART 69 — SCIENTIFIC KNOWLEDGE GRAPH STORAGE, QUERY, AND PROVENANCE IMPLEMENTATION

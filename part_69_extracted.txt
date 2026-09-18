@@ -1,0 +1,2047 @@
+﻿PART 69 — SCIENTIFIC KNOWLEDGE GRAPH STORAGE, QUERY, AND PROVENANCE IMPLEMENTATION
+
+69.1 PURPOSE
+
+The GSIR knowledge graph storage layer shall provide persistent, versioned, provenance-aware storage for scientific entities, claims, relationships, evidence, sources, hypotheses, experiments and derived knowledge.
+
+The implementation shall prioritize:
+
+- Traceability
+
+- Version control
+
+- Evidence linkage
+
+- Graph traversal
+
+- Scientific queryability
+
+- Efficient retrieval
+
+- Reproducibility
+
+- Controlled updates
+
+Scientific knowledge graphs benefit from combining structured relationships with evidence and provenance, particularly for reproducibility and verification. 
+
+END OF 69.1
+
+69.2 STORAGE ARCHITECTURE
+
+                         GSIR KNOWLEDGE STORAGE
+
+                                  │
+
+                    ┌─────────────┼─────────────┐
+
+                    ▼             ▼             ▼
+
+                 Entities      Relations      Claims
+
+                    │             │             │
+
+                    └─────────────┼─────────────┘
+
+                                  ▼
+
+                             Evidence
+
+                                  │
+
+                                  ▼
+
+                              Provenance
+
+                                  │
+
+                    ┌─────────────┼─────────────┐
+
+                    ▼             ▼             ▼
+
+                 Graph Store   Search Index   Vector Index
+
+                    │             │             │
+
+                    └─────────────┼─────────────┘
+
+                                  ▼
+
+                           Knowledge API
+
+                                  │
+
+                                  ▼
+
+                       Reasoning / AI / Agents
+
+END OF 69.2
+
+69.3 STORAGE PRINCIPLE
+
+GSIR shall separate:
+
+Scientific Knowledge
+
+        +
+
+Scientific Evidence
+
+        +
+
+Provenance
+
+        +
+
+Search Representations
+
+        +
+
+Derived Embeddings
+
+The search index and vector index shall never become the authoritative source of scientific truth.
+
+The authoritative knowledge state shall remain in the primary knowledge storage layer.
+
+END OF 69.3
+
+69.4 KNOWLEDGE STORAGE DIRECTORY
+
+backend/src/knowledge/storage/
+
+knowledge-storage.module.ts
+
+knowledge-storage.service.ts
+
+knowledge-storage.repository.ts
+
+knowledge-storage.types.ts
+
+graph/
+
+graph.repository.ts
+
+graph.service.ts
+
+graph.transaction.ts
+
+graph.mapper.ts
+
+entities/
+
+entity.repository.ts
+
+entity.mapper.ts
+
+relationships/
+
+relationship.repository.ts
+
+relationship.mapper.ts
+
+claims/
+
+claim.repository.ts
+
+claim.mapper.ts
+
+evidence/
+
+evidence.repository.ts
+
+evidence.mapper.ts
+
+provenance/
+
+provenance.repository.ts
+
+provenance.mapper.ts
+
+versions/
+
+version.repository.ts
+
+version.service.ts
+
+snapshots/
+
+snapshot.repository.ts
+
+snapshot.service.ts
+
+index.ts
+
+END OF 69.4
+
+69.5 PRIMARY KNOWLEDGE RECORD
+
+Every stored knowledge object shall contain:
+
+id
+
+type
+
+version
+
+status
+
+created_at
+
+updated_at
+
+source
+
+provenance
+
+confidence
+
+Domain-specific fields shall be stored according to the applicable ontology.
+
+END OF 69.5
+
+69.6 ENTITY STORAGE
+
+Entities shall be stored independently from relationships.
+
+ENTITY
+
+│
+
+├── Identity
+
+├── Type
+
+├── Name
+
+├── Aliases
+
+├── Properties
+
+├── Domain
+
+├── Version
+
+└── Provenance
+
+This allows one entity to participate in many relationships without duplication.
+
+END OF 69.6
+
+69.7 RELATIONSHIP STORAGE
+
+Relationships shall reference entities through stable identifiers.
+
+relationship_id
+
+subject_id
+
+predicate
+
+object_id
+
+ontology_version
+
+source_id
+
+evidence_id
+
+confidence
+
+valid_from
+
+valid_to
+
+version
+
+The system shall avoid duplicating complete entity objects inside every relationship.
+
+END OF 69.7
+
+69.8 CLAIM STORAGE
+
+Claims shall be independently addressable.
+
+claim_id
+
+subject_id
+
+predicate
+
+object_id
+
+statement
+
+claim_type
+
+status
+
+confidence
+
+source_id
+
+created_at
+
+version
+
+This permits several competing claims to exist about the same relationship.
+
+END OF 69.8
+
+69.9 EVIDENCE STORAGE
+
+Evidence shall remain independently addressable.
+
+evidence_id
+
+evidence_type
+
+source_id
+
+artifact_id
+
+claim_id
+
+method
+
+quality
+
+confidence
+
+provenance_id
+
+created_at
+
+A single evidence object may support multiple claims when scientifically appropriate.
+
+END OF 69.9
+
+69.10 PROVENANCE STORAGE
+
+Provenance shall identify the origin and processing history of knowledge.
+
+provenance_id
+
+source_id
+
+activity_id
+
+agent_id
+
+input_ids
+
+output_ids
+
+timestamp
+
+software_version
+
+model_version
+
+parameters
+
+Provenance management enables reproducibility, reruns and historical inspection of knowledge-generation processes. 
+
+END OF 69.10
+
+69.11 GRAPH TRANSACTIONS
+
+Knowledge modifications shall be transactional.
+
+A multi-object operation such as:
+
+Create Entity
+
++
+
+Create Relationship
+
++
+
+Attach Evidence
+
++
+
+Create Provenance
+
+shall either complete successfully or roll back.
+
+END OF 69.11
+
+69.12 ATOMIC KNOWLEDGE UPDATE
+
+The minimum atomic unit shall depend on the operation.
+
+Example:
+
+New Claim
+
+    │
+
+    ├── Claim Record
+
+    ├── Evidence Link
+
+    ├── Source Link
+
+    └── Provenance Record
+
+These records shall be committed consistently.
+
+END OF 69.12
+
+69.13 IDEMPOTENT INGESTION
+
+Repeated ingestion of the same source shall not create uncontrolled duplicates.
+
+The ingestion layer shall use:
+
+source_id
+
+source_version
+
+content_hash
+
+external_identifier
+
+entity_identifier
+
+ingestion_run_id
+
+to detect previously processed material.
+
+END OF 69.13
+
+69.14 KNOWLEDGE DEDUPLICATION
+
+Deduplication shall occur at multiple levels:
+
+Source
+
+Entity
+
+Relationship
+
+Claim
+
+Evidence
+
+Artifact
+
+Exact duplicates shall be merged where safe.
+
+Potential duplicates shall be sent to entity-resolution logic.
+
+END OF 69.14
+
+69.15 GRAPH IDENTITY
+
+GSIR shall maintain stable internal IDs.
+
+entity_01
+
+claim_01
+
+evidence_01
+
+relationship_01
+
+source_01
+
+Identifiers shall remain stable across ordinary updates.
+
+END OF 69.15
+
+69.16 EXTERNAL IDENTIFIERS
+
+External identifiers shall be stored as mappings.
+
+Internal ID
+
+   │
+
+   ├── DOI
+
+   ├── PMID
+
+   ├── ORCID
+
+   ├── Dataset ID
+
+   ├── Chemical ID
+
+   └── Domain Identifier
+
+External identifiers shall not replace internal GSIR identity.
+
+END OF 69.16
+
+69.17 ONTOLOGY VALIDATION
+
+Every entity and relationship shall be checked against the active ontology version.
+
+Knowledge
+
+↓
+
+Ontology Validation
+
+↓
+
+Schema Validation
+
+↓
+
+Storage
+
+Ontology-based scientific KG systems improve semantic consistency and interoperability when extracted information is aligned with standardized vocabularies. 
+
+END OF 69.17
+
+69.18 GRAPH CONSTRAINT VALIDATION
+
+The validation layer shall check:
+
+Required Properties
+
+Allowed Entity Types
+
+Allowed Relationships
+
+Domain Constraints
+
+Cardinality
+
+Identifier Format
+
+Temporal Constraints
+
+Source Requirements
+
+Invalid graph objects shall not enter the trusted graph.
+
+END OF 69.18
+
+69.19 GRAPH QUERY ENGINE
+
+Directory:
+
+backend/src/knowledge/query/
+
+query.module.ts
+
+query.service.ts
+
+query-planner.ts
+
+query-parser.ts
+
+query-validator.ts
+
+graph-query.service.ts
+
+claim-query.service.ts
+
+evidence-query.service.ts
+
+provenance-query.service.ts
+
+temporal-query.service.ts
+
+query-cache.service.ts
+
+index.ts
+
+END OF 69.19
+
+69.20 QUERY TYPES
+
+GSIR shall support:
+
+ENTITY_QUERY
+
+RELATIONSHIP_QUERY
+
+CLAIM_QUERY
+
+EVIDENCE_QUERY
+
+SOURCE_QUERY
+
+PROVENANCE_QUERY
+
+PATH_QUERY
+
+SUBGRAPH_QUERY
+
+TEMPORAL_QUERY
+
+SEMANTIC_QUERY
+
+HYBRID_QUERY
+
+END OF 69.20
+
+69.21 ENTITY QUERY
+
+Example:
+
+Find all entities matching:
+
+"CRISPR"
+
+The query system shall consider:
+
+Canonical Name
+
+Aliases
+
+Identifiers
+
+Descriptions
+
+Domain
+
+Semantic Similarity
+
+END OF 69.21
+
+69.22 RELATIONSHIP QUERY
+
+Example:
+
+Find all relationships where:
+
+subject = X
+
+predicate = CAUSES
+
+Results shall include provenance and evidence references where available.
+
+END OF 69.22
+
+69.23 PATH QUERY
+
+The graph engine shall support:
+
+A → B → C
+
+and longer paths.
+
+Path queries shall support constraints on:
+
+Relationship Type
+
+Maximum Depth
+
+Evidence
+
+Confidence
+
+Domain
+
+Time
+
+Source
+
+END OF 69.23
+
+69.24 SUBGRAPH QUERY
+
+A query may request a scientific subgraph surrounding an entity.
+
+                  B
+
+                  │
+
+                  ▼
+
+              ┌───────┐
+
+          A → │  X    │ ← C
+
+              └───────┘
+
+                  │
+
+                  ▼
+
+                  D
+
+The result shall preserve the relationships and relevant metadata.
+
+END OF 69.24
+
+69.25 MULTI-HOP QUERY
+
+Multi-hop queries shall support controlled traversal.
+
+Entity A
+
+↓
+
+RELATIONSHIP 1
+
+↓
+
+Entity B
+
+↓
+
+RELATIONSHIP 2
+
+↓
+
+Entity C
+
+↓
+
+RELATIONSHIP 3
+
+↓
+
+Entity D
+
+Maximum traversal depth shall be configurable to prevent uncontrolled graph expansion.
+
+END OF 69.25
+
+69.26 QUERY PLANNER
+
+The query planner shall determine the cheapest valid retrieval strategy.
+
+Question
+
+↓
+
+Intent Analysis
+
+↓
+
+Entity Resolution
+
+↓
+
+Query Planning
+
+↓
+
+Graph Retrieval
+
+↓
+
+Evidence Retrieval
+
+↓
+
+Ranking
+
+The planner shall avoid unnecessary graph traversal.
+
+END OF 69.26
+
+69.27 QUERY OPTIMIZATION
+
+Optimization shall use:
+
+Indexes
+
+Cached Subgraphs
+
+Relationship Selectivity
+
+Entity Selectivity
+
+Traversal Limits
+
+Query Rewriting
+
+Parallel Retrieval
+
+END OF 69.27
+
+69.28 QUERY RESULT RANKING
+
+Knowledge results shall be rankable using:
+
+Evidence Strength
+
+Source Quality
+
+Confidence
+
+Recency
+
+Replication
+
+Semantic Relevance
+
+Graph Centrality
+
+Domain Relevance
+
+Ranking shall never silently change the underlying scientific facts.
+
+END OF 69.28
+
+69.29 PROVENANCE-AWARE QUERY
+
+A user shall be able to ask:
+
+Why does GSIR believe X?
+
+The system shall return:
+
+Claim
+
+↓
+
+Supporting Evidence
+
+↓
+
+Source
+
+↓
+
+Extraction
+
+↓
+
+Processing
+
+↓
+
+Inference
+
+This creates an explicit explanation chain.
+
+END OF 69.29
+
+69.30 WHY-NOT QUERY
+
+GSIR shall also support:
+
+Why was this conclusion not accepted?
+
+The system shall identify possible causes:
+
+Missing Evidence
+
+Contradictory Evidence
+
+Low Confidence
+
+Invalid Method
+
+Ontology Conflict
+
+Source Reliability
+
+Validation Failure
+
+END OF 69.30
+
+69.31 TEMPORAL QUERY
+
+The graph shall support questions such as:
+
+What was known before date X?
+
+and:
+
+Which claims changed after experiment Y?
+
+Historical graph states shall therefore remain queryable.
+
+END OF 69.31
+
+69.32 VERSION QUERY
+
+The system shall support:
+
+Current Version
+
+Previous Version
+
+Version At Timestamp
+
+Version Before Event
+
+Version After Event
+
+This is particularly important for scientific knowledge that evolves as evidence changes.
+
+END OF 69.32
+
+69.33 CHANGE HISTORY
+
+Every important graph modification shall generate a change record.
+
+Change ID
+
+Object ID
+
+Operation
+
+Previous Version
+
+New Version
+
+Actor
+
+Timestamp
+
+Reason
+
+Provenance
+
+Fine-grained KG change tracking can provide complete historical reconstruction and restoration of previous graph states. 
+
+END OF 69.33
+
+69.34 KNOWLEDGE SNAPSHOT
+
+Snapshots shall capture a consistent graph state.
+
+Snapshot
+
+├── Entity State
+
+├── Relationship State
+
+├── Claim State
+
+├── Evidence State
+
+├── Ontology Version
+
+└── Provenance State
+
+END OF 69.34
+
+69.35 SNAPSHOT PURPOSE
+
+Snapshots shall support:
+
+Reproducibility
+
+Historical Research
+
+Experiment Comparison
+
+Model Evaluation
+
+Rollback
+
+Audit
+
+Debugging
+
+Benchmarking
+
+END OF 69.35
+
+69.36 GRAPH DELTA
+
+Instead of duplicating the complete graph for every update, GSIR may store graph changes as deltas.
+
+Snapshot V1
+
++
+
+Delta 1
+
++
+
+Delta 2
+
++
+
+Delta 3
+
+=
+
+Snapshot V4
+
+This reduces storage requirements for frequently changing graphs.
+
+END OF 69.36
+
+69.37 SEARCH INDEX
+
+The knowledge graph shall have a dedicated search representation.
+
+Entity
+
+↓
+
+Search Index Document
+
+Indexed fields shall include:
+
+Name
+
+Aliases
+
+Description
+
+Entity Type
+
+Domain
+
+Identifiers
+
+Keywords
+
+Ontology Terms
+
+END OF 69.37
+
+69.38 VECTOR REPRESENTATION
+
+Entities, claims and selected evidence may receive embeddings.
+
+Knowledge Object
+
+↓
+
+Embedding Model
+
+↓
+
+Vector
+
+Vectors shall support semantic retrieval but shall not be treated as authoritative knowledge.
+
+END OF 69.38
+
+69.39 VECTOR VERSIONING
+
+Every embedding shall record:
+
+embedding_model
+
+embedding_model_version
+
+embedding_dimension
+
+created_at
+
+source_object_version
+
+When the embedding model changes, GSIR shall be able to regenerate embeddings.
+
+END OF 69.39
+
+69.40 HYBRID RETRIEVAL
+
+GSIR shall combine:
+
+Keyword Retrieval
+
++
+
+Vector Retrieval
+
++
+
+Graph Retrieval
+
++
+
+Evidence Ranking
+
+The combined result shall be passed to the reasoning layer.
+
+END OF 69.40
+
+69.41 GRAPH-RAG PIPELINE
+
+User Question
+
+↓
+
+Question Understanding
+
+↓
+
+Entity Resolution
+
+↓
+
+Graph Retrieval
+
+↓
+
+Vector Retrieval
+
+↓
+
+Evidence Retrieval
+
+↓
+
+Result Fusion
+
+↓
+
+Evidence Ranking
+
+↓
+
+LLM Reasoning
+
+↓
+
+Grounded Response
+
+Scientific knowledge graphs are increasingly used as structured foundations for grounding and scientific verification in RAG systems. 
+
+END OF 69.41
+
+69.42 CONTEXT PACKET
+
+The retrieval layer shall construct a structured context packet.
+
+ContextPacket
+
+├── Entities
+
+├── Relationships
+
+├── Claims
+
+├── Evidence
+
+├── Sources
+
+├── Provenance
+
+├── Conflicts
+
+├── Temporal Constraints
+
+└── Confidence
+
+The AI reasoning layer shall receive this packet rather than an uncontrolled graph dump.
+
+END OF 69.42
+
+69.43 CONTEXT BUDGET
+
+The context builder shall prioritize:
+
+Directly Relevant Evidence
+
+High-Confidence Claims
+
+Primary Sources
+
+Relevant Relationships
+
+Recent Valid Evidence
+
+Known Contradictions
+
+Low-relevance graph material shall be excluded.
+
+END OF 69.43
+
+69.44 PROVENANCE-AWARE RANKING
+
+A result supported by traceable evidence shall receive higher retrieval priority than an otherwise similar unsupported result.
+
+The system shall retain the underlying evidence references for every ranked item.
+
+END OF 69.44
+
+69.45 KNOWLEDGE GRAPH CACHE
+
+Frequently requested subgraphs may be cached.
+
+Query
+
+↓
+
+Cache
+
+├── HIT → Return
+
+└── MISS
+
+      ↓
+
+   Graph Query
+
+      ↓
+
+    Cache
+
+Cache invalidation shall occur when relevant knowledge versions change.
+
+END OF 69.45
+
+69.46 CACHE SAFETY
+
+Cached knowledge shall contain:
+
+Graph Version
+
+Object Versions
+
+Ontology Version
+
+Timestamp
+
+Expiration
+
+A stale cache shall never silently masquerade as current knowledge.
+
+END OF 69.46
+
+69.47 KNOWLEDGE WRITE PIPELINE
+
+Incoming Knowledge
+
+↓
+
+Schema Validation
+
+↓
+
+Ontology Validation
+
+↓
+
+Entity Resolution
+
+↓
+
+Duplicate Detection
+
+↓
+
+Conflict Detection
+
+↓
+
+Provenance Attachment
+
+↓
+
+Transaction
+
+↓
+
+Trusted Graph
+
+↓
+
+Search Index Update
+
+↓
+
+Vector Index Update
+
+END OF 69.47
+
+69.48 KNOWLEDGE READ PIPELINE
+
+User / Agent
+
+↓
+
+Query
+
+↓
+
+Intent Classification
+
+↓
+
+Entity Resolution
+
+↓
+
+Query Planning
+
+↓
+
+Graph / Search / Vector Retrieval
+
+↓
+
+Evidence Ranking
+
+↓
+
+Context Construction
+
+↓
+
+Reasoning
+
+END OF 69.48
+
+69.49 INDEX CONSISTENCY
+
+Search and vector indexes shall be derived from the authoritative knowledge state.
+
+Primary Knowledge
+
+       │
+
+       ├── Search Index
+
+       └── Vector Index
+
+If an index becomes inconsistent, it shall be rebuildable from the primary state.
+
+END OF 69.49
+
+69.50 EVENT-DRIVEN INDEX UPDATES
+
+Graph changes shall emit events.
+
+KnowledgeUpdated
+
+       │
+
+       ├── Search Index Worker
+
+       └── Vector Index Worker
+
+This allows asynchronous index maintenance without blocking the core transaction.
+
+END OF 69.50
+
+69.51 FAILED INDEX UPDATE
+
+If an index update fails:
+
+Primary Knowledge = COMMITTED
+
+Index Update = FAILED
+
+the system shall record the failure and retry asynchronously.
+
+The index shall never become the reason that authoritative scientific knowledge is lost.
+
+END OF 69.51
+
+69.52 KNOWLEDGE REBUILD
+
+The complete search/vector representation shall be reconstructable from the authoritative knowledge graph.
+
+Knowledge Graph
+
+↓
+
+Rebuild Job
+
+↓
+
+Search Index
+
++
+
+Vector Index
+
+END OF 69.52
+
+69.53 PROVENANCE REBUILD
+
+Provenance shall not depend exclusively on external indexing systems.
+
+The authoritative provenance records shall remain independently recoverable.
+
+END OF 69.53
+
+69.54 GRAPH SECURITY
+
+The storage layer shall enforce:
+
+Authentication
+
+Authorization
+
+Project Isolation
+
+
+
+Source Permissions
+
+Write Permissions
+
+Read Permissions
+
+Audit Logging
+
+END OF 69.54
+
+69.55 KNOWLEDGE WRITE AUTHORIZATION
+
+Not every component shall be allowed to write directly to the trusted graph.
+
+Recommended flow:
+
+AI Agent
+
+↓
+
+Candidate Knowledge API
+
+↓
+
+Validation
+
+↓
+
+Approval / Promotion
+
+↓
+
+Trusted Knowledge API
+
+END OF 69.55
+
+69.56 AGENT WRITE ISOLATION
+
+Scientific agents shall operate through scoped permissions.
+
+An agent may have permission to:
+
+Create Candidate Claims
+
+Attach Evidence
+
+Create Hypotheses
+
+Submit Relationships
+
+without permission to:
+
+Delete Trusted Knowledge
+
+Rewrite Provenance
+
+Modify Historical Records
+
+END OF 69.56
+
+69.57 HUMAN APPROVAL
+
+High-impact knowledge changes may require human approval.
+
+Candidate
+
+↓
+
+Human Review
+
+├── Approve
+
+├── Reject
+
+└── Request Revision
+
+The decision shall become part of provenance.
+
+END OF 69.57
+
+69.58 KNOWLEDGE DELETION
+
+Trusted scientific knowledge shall normally be soft-deleted or superseded rather than physically erased.
+
+ACTIVE
+
+↓
+
+SUPERSEDED
+
+↓
+
+ARCHIVED
+
+Permanent deletion shall require explicit governance authorization where legally or operationally necessary.
+
+END OF 69.58
+
+69.59 KNOWLEDGE RESTORATION
+
+Archived knowledge shall be restorable without losing its original history.
+
+Archived Version
+
+↓
+
+Restore Request
+
+↓
+
+Validation
+
+↓
+
+New Active Version
+
+END OF 69.59
+
+69.60 GRAPH HEALTH MONITORING
+
+The storage layer shall monitor:
+
+Node Count
+
+Edge Count
+
+Claim Count
+
+Evidence Count
+
+Storage Size
+
+Query Latency
+
+Write Latency
+
+Index Lag
+
+Failed Writes
+
+Failed Index Updates
+
+Cache Hit Rate
+
+END OF 69.60
+
+69.61 PROVENANCE HEALTH
+
+GSIR shall monitor:
+
+Objects Without Provenance
+
+Claims Without Sources
+
+Evidence Without Origin
+
+Relationships Without Evidence
+
+Unresolved External IDs
+
+Broken Provenance Links
+
+These metrics shall be part of knowledge quality monitoring.
+
+END OF 69.61
+
+69.62 GRAPH QUALITY CHECK
+
+Scheduled quality jobs shall identify:
+
+Orphan Entities
+
+Duplicate Entities
+
+Invalid Relationships
+
+Broken Sources
+
+Contradictory Claims
+
+Stale Data
+
+Missing Evidence
+
+Missing Provenance
+
+END OF 69.62
+
+69.63 KNOWLEDGE REPAIR
+
+Repair operations shall be explicit and auditable.
+
+Problem
+
+↓
+
+Repair Proposal
+
+↓
+
+Validation
+
+↓
+
+Approval
+
+↓
+
+Repair
+
+↓
+
+Audit Record
+
+Automated repair shall never silently modify trusted scientific conclusions.
+
+END OF 69.63
+
+69.64 STORAGE TESTING
+
+Tests shall cover:
+
+Entity CRUD
+
+Relationship CRUD
+
+Claim CRUD
+
+Evidence CRUD
+
+Provenance CRUD
+
+Transactions
+
+Rollback
+
+Versioning
+
+Snapshots
+
+Graph Traversal
+
+Temporal Queries
+
+Index Rebuild
+
+Cache Invalidation
+
+Access Control
+
+END OF 69.64
+
+69.65 PROVENANCE TESTING
+
+The system shall verify that every derived object can answer:
+
+Where did this come from?
+
+Which source produced it?
+
+Which process generated it?
+
+Which model generated it?
+
+Which input was used?
+
+Which version was active?
+
+END OF 69.65
+
+69.66 REPRODUCIBILITY TEST
+
+A knowledge-generation workflow shall be reproducible using:
+
+Source Version
+
+Input Version
+
+Code Version
+
+Model Version
+
+Configuration
+
+Parameters
+
+Execution Environment
+
+This aligns the knowledge layer with scientific reproducibility requirements. 
+
+END OF 69.66
+
+69.67 PERFORMANCE TARGET
+
+The architecture shall be designed so that:
+
+Simple Entity Lookup
+
+→ Very Low Latency
+
+Small Graph Traversal
+
+→ Low Latency
+
+Complex Multi-Hop Query
+
+→ Controlled Latency
+
+Large Research Analysis
+
+→ Asynchronous Execution
+
+Expensive scientific reasoning shall not block normal interactive queries.
+
+END OF 69.67
+
+69.68 ASYNCHRONOUS GRAPH JOBS
+
+Long-running operations shall execute through the workflow/job system.
+
+Examples:
+
+Large Graph Traversal
+
+Bulk Import
+
+Ontology Migration
+
+Entity Resolution
+
+Embedding Generation
+
+Index Rebuild
+
+Snapshot Creation
+
+Knowledge Repair
+
+END OF 69.68
+
+69.69 KNOWLEDGE JOB RECORD
+
+Every asynchronous knowledge job shall have:
+
+job_id
+
+type
+
+status
+
+requested_by
+
+input
+
+output
+
+progress
+
+started_at
+
+completed_at
+
+error
+
+provenance_id
+
+END OF 69.69
+
+69.70 KNOWLEDGE GRAPH API BOUNDARY
+
+The knowledge graph shall expose a stable internal service boundary.
+
+AI Layer
+
+    │
+
+Research Layer
+
+    │
+
+Experiment Layer
+
+    │
+
+Document Layer
+
+    │
+
+Agent Layer
+
+    │
+
+    ▼
+
+Knowledge API
+
+    │
+
+    ▼
+
+Knowledge Storage
+
+Subsystems shall not directly manipulate internal storage structures.
+
+END OF 69.70
+
+69.71 KNOWLEDGE API OPERATIONS
+
+Core operations shall include:
+
+createEntity()
+
+getEntity()
+
+updateEntity()
+
+resolveEntity()
+
+createRelationship()
+
+getRelationships()
+
+removeRelationship()
+
+validateRelationship()
+
+createClaim()
+
+getClaim()
+
+attachEvidence()
+
+createEvidence()
+
+getEvidence()
+
+getProvenance()
+
+getHistory()
+
+searchKnowledge()
+
+queryGraph()
+
+traverseGraph()
+
+createSnapshot()
+
+restoreSnapshot()
+
+runInference()
+
+detectContradictions()
+
+END OF 69.71
+
+69.72 API RESPONSE STRUCTURE
+
+Knowledge API responses shall distinguish:
+
+data
+
+metadata
+
+provenance
+
+confidence
+
+warnings
+
+errors
+
+version
+
+This prevents provenance and confidence information from being lost during API transport.
+
+END OF 69.72
+
+69.73 KNOWLEDGE ERROR MODEL
+
+Errors shall be categorized.
+
+KNOWLEDGE_NOT_FOUND
+
+ENTITY_CONFLICT
+
+INVALID_RELATIONSHIP
+
+ONTOLOGY_VIOLATION
+
+PROVENANCE_MISSING
+
+VERSION_CONFLICT
+
+ACCESS_DENIED
+
+QUERY_LIMIT_EXCEEDED
+
+GRAPH_TIMEOUT
+
+INDEX_OUT_OF_SYNC
+
+END OF 69.73
+
+69.74 KNOWLEDGE OBSERVABILITY
+
+Each knowledge operation shall produce structured telemetry.
+
+trace_id
+
+request_id
+
+operation
+
+entity_ids
+
+query_type
+
+duration
+
+storage_operation
+
+result_count
+
+error
+
+Sensitive scientific content shall not be unnecessarily written into telemetry.
+
+END OF 69.74
+
+69.75 FINAL IMPLEMENTATION FLOW
+
+                  SCIENTIFIC INPUT
+
+                         │
+
+                         ▼
+
+                  KNOWLEDGE EXTRACTION
+
+                         │
+
+                         ▼
+
+                  ENTITY RESOLUTION
+
+                         │
+
+                         ▼
+
+                  ONTOLOGY VALIDATION
+
+                         │
+
+                         ▼
+
+                  CLAIM + RELATIONSHIP
+
+                         │
+
+                         ▼
+
+                     EVIDENCE
+
+                         │
+
+                         ▼
+
+                    PROVENANCE
+
+                         │
+
+                         ▼
+
+                 TRANSACTIONAL STORAGE
+
+                         │
+
+             ┌───────────┼───────────┐
+
+             ▼           ▼           ▼
+
+          Graph       Search       Vector
+
+          Store       Index        Index
+
+             │           │           │
+
+             └───────────┼───────────┘
+
+                         ▼
+
+                    QUERY ENGINE
+
+                         │
+
+                         ▼
+
+                 EVIDENCE RANKING
+
+                         │
+
+                         ▼
+
+                  CONTEXT BUILDER
+
+                         │
+
+                         ▼
+
+                  AI REASONING
+
+                         │
+
+                         ▼
+
+                 SCIENTIFIC ANSWER
+
+                         │
+
+                         ▼
+
+                NEW KNOWLEDGE / RESULT
+
+                         │
+
+                         ▼
+
+                   VALIDATION LOOP
+
+END OF 69.75
+
+69.76 FINAL ARCHITECTURAL REQUIREMENT
+
+The GSIR knowledge layer shall be designed around one fundamental rule:
+
+Every important scientific statement must remain connected to its identity, evidence, source, provenance, version and validation state.
+
+The knowledge graph is therefore not merely a database of scientific facts.
+
+It is the persistent, traceable representation of:
+
+WHAT GSIR KNOWS
+
++
+
+WHY GSIR KNOWS IT
+
++
+
+WHERE IT CAME FROM
+
++
+
+WHEN IT WAS VALID
+
++
+
+WHAT SUPPORTS IT
+
++
+
+WHAT CONTRADICTS IT
+
++
+
+HOW IT WAS DERIVED
+
++
+
+WHICH VERSION PRODUCED IT
+
+This architecture enables GSIR to maintain scientific knowledge as a continuously evolving but historically traceable research asset.
+
+END OF PART 69.
+
+PART 70 — SCIENTIFIC KNOWLEDGE GRAPH PROVENANCE, LINEAGE, AND REPRODUCIBILITY ENGINE

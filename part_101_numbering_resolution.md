@@ -1,0 +1,8 @@
+AUTHORITATIVE PART NUMBER: 101
+AUTHORITATIVE PART TITLE: AGI SAFETY BOUNDARY
+MASTER LOCATION: Line 43394
+PREVIOUS AUTHORITATIVE PART: PART 100 — AGI + SCIENTIFIC RESEARCH LOOP
+NEXT AUTHORITATIVE PART: PART 102 — RECURSIVE SELF-IMPROVEMENT BOUNDARY
+RELATED EXTENSION SECTIONS: 6.13, 6.39, 7.23, 14.37, 17.22
+DUPLICATE/NESTED OCCURRENCES: Yes, another PART 101 exists at Line 374122 titled "GSIR SCIENTIFIC RESEARCH MONITORING, DRIFT DETECTION AND CONTINUOUS ASSURANCE ARCHITECTURE".
+RESOLUTION REASON: The canonical implementation path immediately follows Part 100 at Line 43298. The block at Line 43394 logically follows Part 100 and perfectly matches the expected architectural constraints for AGI safety before progressing to Part 102. The second Part 101 is an erroneous duplicate numbering late in the document.

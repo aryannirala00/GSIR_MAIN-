@@ -1,0 +1,14 @@
+package com.gsir.ai.improvement;
+
+public enum SelfImprovementCategory {
+    KNOWLEDGE_REPRESENTATION,
+    RESEARCH_STRATEGY,
+    PROMPT_CONFIGURATION,
+    TOOL_SELECTION,
+    REASONING_STRATEGY,
+    MODEL_ROUTING,
+    SOURCE_CODE,
+    MODEL_WEIGHTS,
+    SECURITY_POLICY,
+    DEPLOYMENT
+}

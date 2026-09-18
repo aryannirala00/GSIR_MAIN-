@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: gsir-backend-test
+
+  datasource:
+    url: jdbc:h2:mem:gsir_test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ''
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: false
+
+server:
+  port: 0
+
+gsir:
+  security:
+    jwt:
+      secret: this-is-a-default-secret-key-that-must-be-changed-in-production-environments-and-must-be-at-least-256-bits
+      expiration-ms: 900000
+      refresh-expiration-ms: 604800000

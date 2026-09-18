@@ -1,0 +1,2631 @@
+﻿PART 71 — SCIENTIFIC WORKFLOW ORCHESTRATION AND EXECUTION ENGINE
+
+71.1 PURPOSE
+
+The GSIR Scientific Workflow Orchestration Engine shall coordinate complex research workflows involving data acquisition, document processing, scientific computation, AI reasoning, experiments, validation, knowledge updates, and reporting.
+
+The workflow engine shall make research processes:
+
+Deterministic where possible
+
+Reproducible
+
+Versioned
+
+Observable
+
+Recoverable
+
+Auditable
+
+Parallelizable
+
+Scalable
+
+Scientific workflow systems are valuable because they can automatically capture computational provenance, connect results to the processes that produced them, and support rerunning computational tasks. 
+
+END OF 71.1
+
+71.2 CORE WORKFLOW ARCHITECTURE
+
+                         RESEARCH REQUEST
+
+                                │
+
+                                ▼
+
+                       WORKFLOW PLANNER
+
+                                │
+
+                                ▼
+
+                       WORKFLOW DEFINITION
+
+                                │
+
+                                ▼
+
+                        EXECUTION ENGINE
+
+                                │
+
+              ┌─────────────────┼─────────────────┐
+
+              ▼                 ▼                 ▼
+
+           TASK A             TASK B             TASK C
+
+              │                 │                 │
+
+              └─────────────────┼─────────────────┘
+
+                                ▼
+
+                         RESULT AGGREGATOR
+
+                                │
+
+                                ▼
+
+                           VALIDATION
+
+                                │
+
+                                ▼
+
+                         KNOWLEDGE UPDATE
+
+                                │
+
+                                ▼
+
+                           PROVENANCE
+
+END OF 71.2
+
+71.3 WORKFLOW DIRECTORY
+
+backend/src/workflow/
+
+workflow.module.ts
+
+workflow.controller.ts
+
+workflow.service.ts
+
+workflow.repository.ts
+
+workflow.types.ts
+
+workflow.constants.ts
+
+definition/
+
+workflow-definition.service.ts
+
+workflow-schema.validator.ts
+
+workflow-version.service.ts
+
+execution/
+
+execution.service.ts
+
+execution-engine.ts
+
+execution-context.ts
+
+execution-state.ts
+
+execution-manager.ts
+
+tasks/
+
+task.service.ts
+
+task-registry.ts
+
+task-runner.ts
+
+task-context.ts
+
+scheduler/
+
+scheduler.service.ts
+
+priority-queue.ts
+
+resource-scheduler.ts
+
+dependencies/
+
+dependency-resolver.ts
+
+dependency-graph.ts
+
+retry/
+
+retry-policy.ts
+
+retry-manager.ts
+
+checkpoint/
+
+checkpoint.service.ts
+
+checkpoint.repository.ts
+
+recovery/
+
+recovery.service.ts
+
+events/
+
+workflow-events.ts
+
+workflow-event-handler.ts
+
+monitoring/
+
+workflow-metrics.ts
+
+workflow-health.service.ts
+
+index.ts
+
+END OF 71.3
+
+71.4 WORKFLOW DEFINITION
+
+A workflow shall define:
+
+workflow_id
+
+workflow_version
+
+name
+
+description
+
+inputs
+
+tasks
+
+dependencies
+
+outputs
+
+resources
+
+retry_policy
+
+timeout_policy
+
+validation_policy
+
+provenance_policy
+
+END OF 71.4
+
+71.5 WORKFLOW AS A DIRECTED GRAPH
+
+A workflow shall be represented internally as a directed acyclic graph where possible.
+
+INPUT
+
+  │
+
+  ▼
+
+TASK A
+
+  │
+
+  ├──────────► TASK B
+
+  │               │
+
+  ▼               ▼
+
+TASK C ───────► TASK D
+
+                  │
+
+                  ▼
+
+                OUTPUT
+
+Independent tasks shall be eligible for parallel execution.
+
+END OF 71.5
+
+71.6 WORKFLOW TASK
+
+Each task shall contain:
+
+task_id
+
+task_type
+
+version
+
+inputs
+
+outputs
+
+dependencies
+
+configuration
+
+resource_requirements
+
+timeout
+
+retry_policy
+
+validation_policy
+
+END OF 71.6
+
+71.7 TASK TYPES
+
+GSIR shall support task types including:
+
+DOCUMENT_INGESTION
+
+TEXT_EXTRACTION
+
+ENTITY_EXTRACTION
+
+ENTITY_RESOLUTION
+
+KNOWLEDGE_RETRIEVAL
+
+GRAPH_QUERY
+
+DATA_TRANSFORMATION
+
+STATISTICAL_ANALYSIS
+
+MODEL_INFERENCE
+
+MODEL_TRAINING
+
+SIMULATION
+
+EXPERIMENT_EXECUTION
+
+VALIDATION
+
+HUMAN_REVIEW
+
+KNOWLEDGE_UPDATE
+
+REPORT_GENERATION
+
+END OF 71.7
+
+71.8 WORKFLOW INPUTS
+
+Inputs shall be explicitly declared.
+
+Workflow
+
+├── Dataset
+
+├── Research Question
+
+├── Configuration
+
+├── Model
+
+└── Knowledge Snapshot
+
+Undeclared hidden inputs shall be avoided.
+
+END OF 71.8
+
+71.9 WORKFLOW OUTPUTS
+
+Outputs shall also be explicitly declared.
+
+Workflow
+
+├── Results
+
+├── Artifacts
+
+├── Claims
+
+├── Evidence
+
+├── Knowledge Updates
+
+└── Reports
+
+END OF 71.9
+
+71.10 EXECUTION IDENTITY
+
+Every workflow execution shall receive:
+
+execution_id
+
+workflow_id
+
+workflow_version
+
+started_at
+
+requested_by
+
+execution_environment
+
+status
+
+This identifier shall connect every task execution to the overall research operation.
+
+END OF 71.10
+
+71.11 TASK EXECUTION IDENTITY
+
+Each task execution shall receive:
+
+task_execution_id
+
+execution_id
+
+task_id
+
+task_version
+
+attempt
+
+status
+
+started_at
+
+completed_at
+
+END OF 71.11
+
+71.12 EXECUTION STATES
+
+Workflow states:
+
+CREATED
+
+QUEUED
+
+RUNNING
+
+PAUSED
+
+WAITING
+
+COMPLETED
+
+FAILED
+
+CANCELLED
+
+TIMED_OUT
+
+RECOVERING
+
+END OF 71.12
+
+71.13 TASK STATES
+
+PENDING
+
+READY
+
+RUNNING
+
+WAITING
+
+SUCCEEDED
+
+FAILED
+
+RETRYING
+
+SKIPPED
+
+CANCELLED
+
+END OF 71.13
+
+71.14 WORKFLOW SCHEDULER
+
+The scheduler shall determine:
+
+Which task can run
+
+When it can run
+
+Where it can run
+
+Which resources it requires
+
+Which tasks have priority
+
+The scheduler shall respect task dependencies before execution.
+
+END OF 71.14
+
+71.15 DEPENDENCY RESOLUTION
+
+Before running a task:
+
+Task
+
+↓
+
+Dependency Check
+
+├── Dependencies incomplete → WAIT
+
+└── Dependencies complete → READY
+
+No task shall consume incomplete upstream outputs.
+
+END OF 71.15
+
+71.16 PARALLEL EXECUTION
+
+Independent tasks shall execute concurrently when resources permit.
+
+             TASK A
+
+                │
+
+       ┌────────┼────────┐
+
+       ▼        ▼        ▼
+
+     TASK B   TASK C   TASK D
+
+       │        │        │
+
+       └────────┼────────┘
+
+                ▼
+
+             TASK E
+
+Parallel execution shall preserve deterministic dependency semantics.
+
+END OF 71.16
+
+71.17 RESOURCE SCHEDULING
+
+Resources may include:
+
+CPU
+
+RAM
+
+GPU
+
+GPU Memory
+
+Storage
+
+Network
+
+External API Capacity
+
+Model Capacity
+
+Database Connections
+
+The scheduler shall prevent resource overcommitment.
+
+END OF 71.17
+
+71.18 PRIORITY
+
+Workflow priority levels shall include:
+
+CRITICAL
+
+HIGH
+
+NORMAL
+
+LOW
+
+BACKGROUND
+
+Priority shall affect scheduling but shall not violate safety, dependency, or resource constraints.
+
+END OF 71.18
+
+71.19 RESOURCE-AWARE AI EXECUTION
+
+AI tasks shall declare requirements such as:
+
+model
+
+context_window
+
+gpu_required
+
+estimated_tokens
+
+estimated_runtime
+
+memory
+
+The scheduler may route the task to an appropriate execution backend.
+
+END OF 71.19
+
+71.20 LOW-COST EXECUTION
+
+GSIR shall minimize unnecessary expensive computation.
+
+The scheduler shall prefer:
+
+Cache Hit
+
+↓
+
+Existing Result
+
+↓
+
+Small Model
+
+↓
+
+Local Model
+
+↓
+
+Specialized Model
+
+↓
+
+Large Model
+
+where scientific correctness permits.
+
+END OF 71.20
+
+71.21 TASK CACHING
+
+Deterministic tasks shall be cacheable.
+
+Cache identity shall include:
+
+task_type
+
+task_version
+
+input_hashes
+
+configuration_hash
+
+model_version
+
+environment_version
+
+This prevents incompatible results from being reused.
+
+END OF 71.21
+
+71.22 CACHE INVALIDATION
+
+A cached task result shall be invalidated when a relevant dependency changes.
+
+Input Changed
+
+↓
+
+Input Hash Changed
+
+↓
+
+Cache Miss
+
+↓
+
+Task Re-execution
+
+END OF 71.22
+
+71.23 CHECKPOINTING
+
+Long-running workflows shall create checkpoints.
+
+Workflow
+
+↓
+
+Task A
+
+↓
+
+Checkpoint 1
+
+↓
+
+Task B
+
+↓
+
+Checkpoint 2
+
+↓
+
+Task C
+
+A failure shall allow recovery from the latest valid checkpoint where possible.
+
+END OF 71.23
+
+71.24 CHECKPOINT CONTENT
+
+A checkpoint shall contain:
+
+workflow_state
+
+completed_tasks
+
+task_outputs
+
+input_versions
+
+configuration_version
+
+knowledge_snapshot
+
+execution_context
+
+provenance_state
+
+timestamp
+
+END OF 71.24
+
+71.25 FAILURE HANDLING
+
+When a task fails:
+
+TASK FAILURE
+
+     │
+
+     ▼
+
+CLASSIFY ERROR
+
+     │
+
+ ┌───┼─────────────┐
+
+ ▼   ▼             ▼
+
+Retry Recover     Fatal
+
+ │      │            │
+
+ ▼      ▼            ▼
+
+Retry  Resume      Stop
+
+END OF 71.25
+
+71.26 RETRY POLICY
+
+Retries shall be configurable by error type.
+
+TRANSIENT_ERROR
+
+→ Retry
+
+RATE_LIMIT
+
+→ Backoff + Retry
+
+NETWORK_ERROR
+
+→ Retry
+
+INVALID_INPUT
+
+→ Do Not Retry
+
+SCHEMA_ERROR
+
+→ Do Not Retry
+
+AUTHORIZATION_ERROR
+
+→ Do Not Retry
+
+END OF 71.26
+
+71.27 EXPONENTIAL BACKOFF
+
+Transient failures may use:
+
+Attempt 1 → Short Delay
+
+Attempt 2 → Longer Delay
+
+Attempt 3 → Longer Delay
+
+...
+
+Randomized jitter shall be supported to avoid synchronized retry storms.
+
+END OF 71.27
+
+71.28 CIRCUIT BREAKER
+
+Repeated failures against an external service shall trigger a circuit breaker.
+
+NORMAL
+
+↓
+
+FAILURES
+
+↓
+
+OPEN
+
+↓
+
+WAIT
+
+↓
+
+HALF-OPEN
+
+↓
+
+SUCCESS → NORMAL
+
+FAILURE → OPEN
+
+END OF 71.28
+
+71.29 TIMEOUT MANAGEMENT
+
+Each task shall have an appropriate timeout.
+
+Task Started
+
+↓
+
+Timeout Reached?
+
+├── No → Continue
+
+└── Yes → Timeout Handler
+
+Timeouts shall produce provenance and diagnostic information.
+
+END OF 71.29
+
+71.30 CANCELLATION
+
+Users and supervisory agents shall be able to cancel workflows.
+
+Cancellation shall:
+
+Stop new tasks
+
+Signal running tasks
+
+Preserve completed outputs
+
+Record cancellation
+
+Preserve provenance
+
+END OF 71.30
+
+71.31 PAUSE AND RESUME
+
+Workflows shall support:
+
+RUNNING
+
+↓
+
+PAUSED
+
+↓
+
+RESUMED
+
+Resume shall use the latest valid workflow state.
+
+END OF 71.31
+
+71.32 HUMAN-IN-THE-LOOP TASK
+
+Some workflows require human decisions.
+
+AI Analysis
+
+↓
+
+Human Review Task
+
+↓
+
+Decision
+
+↓
+
+Workflow Continues
+
+Human tasks shall be represented as normal workflow states rather than external undocumented actions.
+
+END OF 71.32
+
+71.33 APPROVAL TASK
+
+Approval tasks shall support:
+
+APPROVE
+
+REJECT
+
+REQUEST_CHANGES
+
+ESCALATE
+
+The decision shall be stored in provenance.
+
+END OF 71.33
+
+71.34 CONDITIONAL BRANCHING
+
+Workflows shall support conditional paths.
+
+Validation
+
+   │
+
+   ├── PASS → Continue
+
+   │
+
+   └── FAIL → Repair
+
+Branch conditions shall be deterministic and auditable whenever possible.
+
+END OF 71.34
+
+71.35 LOOP CONTROL
+
+Controlled iteration shall support:
+
+Experiment
+
+↓
+
+Evaluate
+
+↓
+
+Improve
+
+↓
+
+Experiment Again
+
+Every iteration shall receive a unique execution identity.
+
+END OF 71.35
+
+71.36 ITERATION LIMIT
+
+Every workflow loop shall have a maximum iteration count or explicit termination condition.
+
+This prevents:
+
+Infinite Agent Loop
+
+Infinite Retry
+
+Infinite Research Iteration
+
+END OF 71.36
+
+71.37 SCIENTIFIC EXPERIMENT WORKFLOW
+
+Research Question
+
+↓
+
+Hypothesis
+
+↓
+
+Experiment Design
+
+↓
+
+Input Preparation
+
+↓
+
+Experiment
+
+↓
+
+Measurement
+
+↓
+
+Analysis
+
+↓
+
+Validation
+
+↓
+
+Result
+
+↓
+
+Knowledge Update
+
+END OF 71.37
+
+71.38 AI RESEARCH WORKFLOW
+
+Research Question
+
+↓
+
+Question Decomposition
+
+↓
+
+Knowledge Retrieval
+
+↓
+
+Evidence Retrieval
+
+↓
+
+Hypothesis Generation
+
+↓
+
+Analysis
+
+↓
+
+Verification
+
+↓
+
+Critique
+
+↓
+
+Synthesis
+
+↓
+
+Research Result
+
+END OF 71.38
+
+71.39 DOCUMENT-TO-KNOWLEDGE WORKFLOW
+
+Document
+
+↓
+
+Ingestion
+
+↓
+
+Parsing
+
+↓
+
+Structure Detection
+
+↓
+
+Text Extraction
+
+↓
+
+Entity Extraction
+
+↓
+
+Claim Extraction
+
+↓
+
+Evidence Linking
+
+↓
+
+Validation
+
+↓
+
+Knowledge Graph
+
+END OF 71.39
+
+71.40 DATA-ANALYSIS WORKFLOW
+
+Dataset
+
+↓
+
+Validation
+
+↓
+
+Cleaning
+
+↓
+
+Transformation
+
+↓
+
+Exploration
+
+↓
+
+Statistical Analysis
+
+↓
+
+Visualization
+
+↓
+
+Validation
+
+↓
+
+Result
+
+END OF 71.40
+
+71.41 MODEL-TRAINING WORKFLOW
+
+Dataset
+
+↓
+
+Dataset Validation
+
+↓
+
+Split
+
+↓
+
+Preprocessing
+
+↓
+
+Training
+
+↓
+
+Evaluation
+
+↓
+
+Error Analysis
+
+↓
+
+Model Registration
+
+↓
+
+Model Version
+
+END OF 71.41
+
+71.42 SIMULATION WORKFLOW
+
+Parameters
+
+↓
+
+Simulation Setup
+
+↓
+
+Execution
+
+↓
+
+Raw Output
+
+↓
+
+Post-processing
+
+↓
+
+Validation
+
+↓
+
+Analysis
+
+↓
+
+Scientific Result
+
+END OF 71.42
+
+71.43 MULTI-AGENT WORKFLOW
+
+                    ORCHESTRATOR
+
+                         │
+
+        ┌────────────────┼────────────────┐
+
+        ▼                ▼                ▼
+
+   RESEARCH AGENT   ANALYSIS AGENT   CRITIC AGENT
+
+        │                │                │
+
+        └────────────────┼────────────────┘
+
+                         ▼
+
+                    SYNTHESIS AGENT
+
+                         │
+
+                         ▼
+
+                     VALIDATOR
+
+Every agent execution shall be independently traceable.
+
+END OF 71.43
+
+71.44 AGENT COORDINATION
+
+The orchestration engine shall manage:
+
+Agent Assignment
+
+Agent Dependencies
+
+Tool Permissions
+
+Context Passing
+
+Result Collection
+
+Conflict Handling
+
+Validation
+
+Termination
+
+END OF 71.44
+
+71.45 SHARED CONTEXT
+
+Agents shall not automatically receive the complete workflow history.
+
+The orchestrator shall provide only:
+
+Required Inputs
+
+Relevant Previous Results
+
+Relevant Evidence
+
+Required Constraints
+
+Task Instructions
+
+This controls context size and reduces unnecessary model cost.
+
+END OF 71.45
+
+71.46 WORKFLOW CONTEXT
+
+Every task shall receive a controlled context:
+
+Workflow Context
+
+├── Execution ID
+
+├── Task ID
+
+├── Inputs
+
+├── Relevant Outputs
+
+├── Constraints
+
+├── Permissions
+
+├── Configuration
+
+└── Provenance Context
+
+END OF 71.46
+
+71.47 ARTIFACT PASSING
+
+Tasks shall communicate through explicit artifacts.
+
+TASK A
+
+  │
+
+  ▼
+
+Artifact A
+
+  │
+
+  ▼
+
+TASK B
+
+  │
+
+  ▼
+
+Artifact B
+
+Hidden shared state shall be minimized.
+
+END OF 71.47
+
+71.48 ARTIFACT VALIDATION
+
+Before an artifact is consumed:
+
+Artifact
+
+↓
+
+Schema Validation
+
+↓
+
+Integrity Check
+
+↓
+
+Version Check
+
+↓
+
+Permission Check
+
+↓
+
+Consume
+
+END OF 71.48
+
+71.49 WORKFLOW VERSIONING
+
+Workflow definitions shall be immutable after publication.
+
+Workflow V1
+
+↓
+
+Workflow V2
+
+↓
+
+Workflow V3
+
+An existing execution shall continue using the version with which it started.
+
+END OF 71.49
+
+71.50 WORKFLOW MIGRATION
+
+Running workflows may require migration only through an explicit migration mechanism.
+
+Execution V1
+
+↓
+
+Migration Validation
+
+↓
+
+Execution V2
+
+Migration shall record exactly what changed.
+
+END OF 71.50
+
+71.51 WORKFLOW TEMPLATES
+
+Reusable workflow templates shall support common research patterns.
+
+Document Analysis
+
+Data Analysis
+
+Experiment
+
+Simulation
+
+Model Training
+
+Literature Review
+
+Knowledge Extraction
+
+Replication Study
+
+Templates shall be versioned.
+
+END OF 71.51
+
+71.52 WORKFLOW COMPOSITION
+
+A workflow may invoke another workflow.
+
+Parent Workflow
+
+      │
+
+      ▼
+
+Child Workflow
+
+      │
+
+      ▼
+
+Child Result
+
+      │
+
+      ▼
+
+Parent Workflow
+
+The parent and child execution IDs shall remain linked.
+
+END OF 71.52
+
+71.53 SUBWORKFLOW ISOLATION
+
+Subworkflows shall have:
+
+Input Boundary
+
+Output Boundary
+
+Permission Boundary
+
+Resource Boundary
+
+Provenance Boundary
+
+This prevents uncontrolled access to parent workflow state.
+
+END OF 71.53
+
+71.54 WORKFLOW SECURITY
+
+The engine shall enforce:
+
+Authentication
+
+Authorization
+
+Task Permissions
+
+Tool Permissions
+
+Dataset Permissions
+
+Model Permissions
+
+Project Isolation
+
+Secret Isolation
+
+END OF 71.54
+
+71.55 SECRET MANAGEMENT
+
+Secrets shall never be stored directly inside workflow definitions or provenance.
+
+Instead:
+
+Workflow
+
+↓
+
+Secret Reference
+
+↓
+
+Secret Manager
+
+↓
+
+Runtime Credential
+
+END OF 71.55
+
+71.56 EXTERNAL TOOL EXECUTION
+
+External tools shall execute through controlled adapters.
+
+Workflow
+
+↓
+
+Tool Adapter
+
+↓
+
+Permission Check
+
+↓
+
+Tool
+
+↓
+
+Output Validation
+
+↓
+
+Artifact
+
+END OF 71.56
+
+71.57 TOOL FAILURE
+
+External tool failure shall produce:
+
+tool
+
+request_id
+
+execution_id
+
+error_type
+
+error_message
+
+timestamp
+
+retry_state
+
+Sensitive request content shall be excluded from logs where necessary.
+
+END OF 71.57
+
+71.58 WORKFLOW OBSERVABILITY
+
+The engine shall expose:
+
+Workflow Duration
+
+Task Duration
+
+Queue Time
+
+Resource Usage
+
+Failure Rate
+
+Retry Count
+
+Cache Hit Rate
+
+Throughput
+
+Concurrency
+
+External API Usage
+
+END OF 71.58
+
+71.59 WORKFLOW EVENT STREAM
+
+Events shall include:
+
+WorkflowCreated
+
+WorkflowQueued
+
+WorkflowStarted
+
+TaskReady
+
+TaskStarted
+
+TaskCompleted
+
+TaskFailed
+
+TaskRetried
+
+TaskSkipped
+
+WorkflowPaused
+
+WorkflowResumed
+
+WorkflowCancelled
+
+WorkflowCompleted
+
+WorkflowFailed
+
+END OF 71.59
+
+71.60 WORKFLOW AUDIT
+
+The audit trail shall answer:
+
+Who started the workflow?
+
+Which version ran?
+
+Which tasks executed?
+
+Which inputs were used?
+
+Which agents participated?
+
+Which tools were called?
+
+Which outputs were produced?
+
+Which tasks failed?
+
+Which decisions were made?
+
+END OF 71.60
+
+71.61 PROVENANCE INTEGRATION
+
+Every workflow task shall automatically create provenance.
+
+Workflow
+
+↓
+
+Task
+
+↓
+
+Activity
+
+↓
+
+Inputs
+
+↓
+
+Execution
+
+↓
+
+Outputs
+
+↓
+
+Provenance
+
+This minimizes manual provenance capture and supports machine-actionable reproducibility. 
+
+END OF 71.61
+
+71.62 REPRODUCIBLE WORKFLOW EXECUTION
+
+A workflow shall be reproducible using:
+
+Workflow Version
+
+Input Versions
+
+Task Versions
+
+Code Versions
+
+Model Versions
+
+Configuration
+
+Environment
+
+Random Seeds
+
+External Dependencies
+
+END OF 71.62
+
+71.63 WORKFLOW SIGNATURE
+
+GSIR shall generate an execution signature from relevant immutable components.
+
+Workflow Version
+
++
+
+Input Hashes
+
++
+
+Configuration Hash
+
++
+
+Task Versions
+
++
+
+Model Versions
+
+=
+
+Execution Signature
+
+This signature shall help identify equivalent executions.
+
+END OF 71.63
+
+71.64 RESULT COMPARISON
+
+Two workflow executions shall be comparable.
+
+Execution A
+
+        │
+
+        ├── Inputs
+
+        ├── Tasks
+
+        └── Outputs
+
+Execution B
+
+        │
+
+        ├── Inputs
+
+        ├── Tasks
+
+        └── Outputs
+
+Differences shall be reported explicitly.
+
+END OF 71.64
+
+71.65 WORKFLOW REPLAY
+
+Replay shall support:
+
+Full Replay
+
+Partial Replay
+
+Failed Task Replay
+
+Changed Input Replay
+
+Changed Model Replay
+
+Changed Configuration Replay
+
+Only affected downstream tasks shall be rerun when dependency analysis safely permits.
+
+END OF 71.65
+
+71.66 PARTIAL REPLAY
+
+A → B → C → D
+
+If B changes:
+
+A → B
+
+     ↓
+
+     C → D
+
+A shall not be recomputed if its inputs and execution identity remain valid.
+
+END OF 71.66
+
+71.67 DETERMINISM CLASSIFICATION
+
+Tasks shall be classified:
+
+DETERMINISTIC
+
+PROBABLY_DETERMINISTIC
+
+NON_DETERMINISTIC
+
+EXTERNAL_DEPENDENCY
+
+This classification shall influence caching and reproducibility expectations.
+
+END OF 71.67
+
+71.68 WORKFLOW VALIDATION
+
+Before execution:
+
+Workflow Definition
+
+↓
+
+Schema Validation
+
+↓
+
+Dependency Validation
+
+↓
+
+Resource Validation
+
+↓
+
+Permission Validation
+
+↓
+
+Configuration Validation
+
+↓
+
+Execution
+
+END OF 71.68
+
+71.69 STATIC WORKFLOW ANALYSIS
+
+The system shall detect:
+
+Circular Dependencies
+
+Missing Inputs
+
+Unused Outputs
+
+Invalid Task Types
+
+Impossible Dependencies
+
+Resource Conflicts
+
+Missing Permissions
+
+Invalid Conditions
+
+END OF 71.69
+
+71.70 RUNTIME VALIDATION
+
+During execution:
+
+Task Output
+
+↓
+
+Schema Validation
+
+↓
+
+Quality Validation
+
+↓
+
+Integrity Validation
+
+↓
+
+Scientific Validation
+
+A technically successful task shall not automatically be considered scientifically valid.
+
+END OF 71.70
+
+71.71 SCIENTIFIC QUALITY GATES
+
+Critical workflows may contain gates:
+
+Extraction
+
+↓
+
+Quality Gate
+
+↓
+
+Analysis
+
+↓
+
+Quality Gate
+
+↓
+
+Inference
+
+↓
+
+Quality Gate
+
+↓
+
+Knowledge Update
+
+A failed gate shall prevent invalid downstream propagation.
+
+END OF 71.71
+
+71.72 WORKFLOW HUMAN REVIEW GATE
+
+For high-impact scientific outputs:
+
+Automated Analysis
+
+↓
+
+Validation
+
+↓
+
+Human Review
+
+↓
+
+Approval
+
+↓
+
+Trusted Knowledge
+
+The review decision shall become part of the workflow provenance.
+
+END OF 71.72
+
+71.73 WORKFLOW COST CONTROL
+
+The orchestration engine shall estimate:
+
+CPU Cost
+
+GPU Cost
+
+Model Cost
+
+Storage Cost
+
+External API Cost
+
+Runtime
+
+before expensive workflows when practical.
+
+END OF 71.73
+
+71.74 BUDGET ENFORCEMENT
+
+A workflow may define:
+
+Maximum Runtime
+
+Maximum Tokens
+
+Maximum GPU Time
+
+Maximum API Cost
+
+Maximum Retries
+
+Maximum Iterations
+
+The scheduler shall stop or downgrade execution when configured limits are reached.
+
+END OF 71.74
+
+71.75 ADAPTIVE EXECUTION
+
+GSIR may dynamically select an execution strategy.
+
+Simple Task
+
+→ Cheap Execution
+
+Complex Task
+
+→ Specialized Execution
+
+High-Uncertainty Task
+
+→ Additional Verification
+
+High-Impact Task
+
+→ Stronger Validation
+
+The adaptation decision shall be recorded.
+
+END OF 71.75
+
+71.76 WORKFLOW SELF-OPTIMIZATION
+
+Historical workflow metrics shall identify:
+
+Slow Tasks
+
+Frequent Failures
+
+Expensive Tasks
+
+Unnecessary Retries
+
+Poor Models
+
+Poor Tool Selection
+
+Cache Opportunities
+
+The system may propose workflow improvements.
+
+END OF 71.76
+
+71.77 SAFE WORKFLOW OPTIMIZATION
+
+Optimization shall never silently change scientific semantics.
+
+Current Workflow
+
+↓
+
+Optimization Proposal
+
+↓
+
+Validation
+
+↓
+
+Benchmark
+
+↓
+
+Approval
+
+↓
+
+New Workflow Version
+
+END OF 71.77
+
+71.78 WORKFLOW TESTING
+
+Tests shall include:
+
+Definition Validation
+
+Dependency Resolution
+
+Task Execution
+
+Parallel Execution
+
+Retry
+
+Timeout
+
+Cancellation
+
+Pause / Resume
+
+Checkpoint Recovery
+
+Conditional Branching
+
+Loop Termination
+
+Human Review
+
+External Tool Failure
+
+Cache Reuse
+
+Replay
+
+Provenance
+
+Security
+
+END OF 71.78
+
+71.79 FAILURE-INJECTION TESTING
+
+The system shall intentionally test:
+
+Task Crash
+
+Network Failure
+
+Database Failure
+
+Model Failure
+
+External API Failure
+
+Resource Exhaustion
+
+Worker Failure
+
+Corrupt Artifact
+
+Invalid Output
+
+Timeout
+
+Recovery behavior shall be verified.
+
+END OF 71.79
+
+71.80 WORKER ARCHITECTURE
+
+                    WORKFLOW ENGINE
+
+                         │
+
+                    TASK QUEUE
+
+                         │
+
+        ┌────────────────┼────────────────┐
+
+        ▼                ▼                ▼
+
+     WORKER A         WORKER B         WORKER C
+
+        │                │                │
+
+        └────────────────┼────────────────┘
+
+                         ▼
+
+                    RESULT STORE
+
+Workers shall remain stateless where practical.
+
+END OF 71.80
+
+71.81 WORKER REGISTRATION
+
+Workers shall advertise:
+
+worker_id
+
+capabilities
+
+supported_task_types
+
+cpu
+
+memory
+
+gpu
+
+capacity
+
+version
+
+health
+
+The scheduler shall assign compatible tasks.
+
+END OF 71.81
+
+71.82 WORKER FAILURE
+
+If a worker fails:
+
+Worker Failure
+
+↓
+
+Detect
+
+↓
+
+Mark Task Interrupted
+
+↓
+
+Recover From Checkpoint
+
+↓
+
+Requeue
+
+↓
+
+Continue
+
+Duplicate execution shall be prevented through task execution identity and idempotency controls.
+
+END OF 71.82
+
+71.83 DISTRIBUTED EXECUTION
+
+Large deployments may distribute tasks across:
+
+Local Workers
+
+GPU Workers
+
+Cloud Workers
+
+Specialized Compute Nodes
+
+External Compute Services
+
+The provenance layer shall preserve the execution location.
+
+END OF 71.83
+
+71.84 WORKFLOW STORAGE
+
+Workflow storage shall contain:
+
+Definitions
+
+Versions
+
+Executions
+
+Tasks
+
+Task Attempts
+
+Inputs
+
+Outputs
+
+Checkpoints
+
+Events
+
+Errors
+
+Provenance References
+
+END OF 71.84
+
+71.85 WORKFLOW API
+
+Core operations:
+
+createWorkflow()
+
+getWorkflow()
+
+updateWorkflow()
+
+publishWorkflow()
+
+validateWorkflow()
+
+startWorkflow()
+
+pauseWorkflow()
+
+resumeWorkflow()
+
+cancelWorkflow()
+
+getExecution()
+
+getTaskExecution()
+
+retryTask()
+
+getWorkflowHistory()
+
+getWorkflowEvents()
+
+createReplay()
+
+compareExecutions()
+
+END OF 71.85
+
+71.86 WORKFLOW EXECUTION API RESPONSE
+
+Every execution response shall expose:
+
+execution_id
+
+workflow_version
+
+status
+
+progress
+
+current_tasks
+
+completed_tasks
+
+failed_tasks
+
+outputs
+
+warnings
+
+provenance_id
+
+END OF 71.86
+
+71.87 WORKFLOW PROGRESS
+
+Progress shall be based on task state rather than simply elapsed time.
+
+Completed Tasks
+
++
+
+Successful Dependencies
+
++
+
+Workflow Weight
+
+This prevents misleading progress indicators for workflows containing tasks of very different complexity.
+
+END OF 71.87
+
+71.88 WORKFLOW GRAPH VISUALIZATION
+
+The frontend shall display:
+
+INPUT
+
+  ↓
+
+TASK A ───── TASK B
+
+  ↓            ↓
+
+TASK C ───── TASK D
+
+               ↓
+
+             OUTPUT
+
+Node states shall show:
+
+Pending
+
+Running
+
+Success
+
+Failed
+
+Waiting
+
+Skipped
+
+END OF 71.88
+
+71.89 TASK INSPECTION
+
+Selecting a task shall display:
+
+Task Definition
+
+Inputs
+
+Outputs
+
+Execution Time
+
+Worker
+
+Model
+
+Configuration
+
+Logs
+
+Errors
+
+Retries
+
+Provenance
+
+END OF 71.89
+
+71.90 WORKFLOW RESEARCH DASHBOARD
+
+The research interface shall provide:
+
+Active Workflows
+
+Completed Workflows
+
+Failed Workflows
+
+Queued Workflows
+
+Running Experiments
+
+Pending Reviews
+
+Resource Usage
+
+Workflow Costs
+
+END OF 71.90
+
+71.91 WORKFLOW NOTIFICATIONS
+
+Important workflow events may generate notifications:
+
+Workflow Completed
+
+Workflow Failed
+
+Human Review Required
+
+Budget Limit Reached
+
+Long-Running Task
+
+External Dependency Failure
+
+Scientific Validation Failure
+
+END OF 71.91
+
+71.92 WORKFLOW RETENTION
+
+Completed workflow executions shall retain enough information to reconstruct:
+
+What happened
+
+Why it happened
+
+Which inputs were used
+
+Which outputs were produced
+
+Which software ran
+
+Which models ran
+
+Which decisions occurred
+
+END OF 71.92
+
+71.93 WORKFLOW ARCHIVING
+
+Old executions may be archived while maintaining:
+
+execution_id
+
+workflow_version
+
+artifact references
+
+provenance
+
+results
+
+summary
+
+integrity hashes
+
+END OF 71.93
+
+71.94 DISASTER RECOVERY
+
+Recovery shall restore:
+
+Workflow Definitions
+
+Workflow Versions
+
+Execution State
+
+Task State
+
+Checkpoints
+
+Artifacts
+
+Provenance
+
+Events
+
+A recovered workflow shall not resume until integrity checks pass.
+
+END OF 71.94
+
+71.95 WORKFLOW GOVERNANCE
+
+Production workflows shall require:
+
+Version
+
+Owner
+
+Description
+
+Validation Status
+
+Permissions
+
+Resource Policy
+
+Provenance Policy
+
+Critical workflows shall additionally require approval before publication.
+
+END OF 71.95
+
+71.96 WORKFLOW FAIRNESS AND REUSABILITY
+
+Reusable workflows should expose machine-readable metadata describing their inputs, outputs, dependencies, versions, and provenance. FAIR principles for research software explicitly emphasize findability, interoperability, reusability, and detailed provenance. 
+
+END OF 71.96
+
+71.97 FINAL WORKFLOW EXECUTION FLOW
+
+                         RESEARCH REQUEST
+
+                                │
+
+                                ▼
+
+                       WORKFLOW PLANNER
+
+                                │
+
+                                ▼
+
+                     WORKFLOW DEFINITION
+
+                                │
+
+                                ▼
+
+                       STATIC VALIDATION
+
+                                │
+
+                                ▼
+
+                           SCHEDULER
+
+                                │
+
+                     ┌──────────┼──────────┐
+
+                     ▼          ▼          ▼
+
+                   TASK A     TASK B     TASK C
+
+                     │          │          │
+
+                     └──────────┼──────────┘
+
+                                ▼
+
+                       ARTIFACT VALIDATION
+
+                                │
+
+                                ▼
+
+                         QUALITY GATE
+
+                                │
+
+                                ▼
+
+                       RESULT AGGREGATION
+
+                                │
+
+                                ▼
+
+                         SCIENTIFIC VALIDATION
+
+                                │
+
+                                ▼
+
+                       KNOWLEDGE UPDATE
+
+                                │
+
+                                ▼
+
+                           PROVENANCE
+
+                                │
+
+                                ▼
+
+                          FINAL RESULT
+
+END OF 71.97
+
+71.98 FINAL ARCHITECTURAL REQUIREMENT
+
+The GSIR workflow engine shall transform complex research processes into explicit, executable, observable, recoverable, and reproducible computational workflows.
+
+The fundamental rule shall be:
+
+EVERY IMPORTANT RESEARCH PROCESS
+
+        ↓
+
+MUST HAVE
+
+        ↓
+
+DEFINED INPUTS
+
+DEFINED TASKS
+
+DEFINED DEPENDENCIES
+
+DEFINED OUTPUTS
+
+DEFINED VALIDATION
+
+DEFINED PROVENANCE
+
+DEFINED RECOVERY
+
+DEFINED VERSION
+
+The workflow engine shall therefore become the execution backbone connecting GSIR's research questions, agents, data, experiments, models, knowledge graph, validation systems, provenance layer, and final scientific outputs.
+
+END OF PART 71.
+
+PART 72 — SCIENTIFIC DATA INGESTION, NORMALIZATION, AND DATA QUALITY ENGINE

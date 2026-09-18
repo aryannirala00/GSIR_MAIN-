@@ -1,0 +1,103 @@
+-------------------------------------------------------------------------------
+Test set: com.gsir.tools.ToolExecutionServiceTest
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 11, Skipped: 0, Time elapsed: 0.299 s <<< FAILURE! -- in com.gsir.tools.ToolExecutionServiceTest
+com.gsir.tools.ToolExecutionServiceTest.testExecuteTool_Success -- Time elapsed: 0.258 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testExecuteTool_MalformedInput -- Time elapsed: 0.005 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testExecuteTool_MissingProjectId_AllowedIfToolSupportsIt -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testExecuteTool_UnknownTool -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testExecuteTool_Unauthorized -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testExecuteTool_ConcurrentIndependentContexts -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testSafetyOrdering_AllowWithExhaustedBudget -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testContextCreationValidation -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testExecuteTool_InvalidSchema -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testSafetyOrdering_RequireHumanReviewBeforeBudget -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.gsir.tools.ToolExecutionServiceTest.testSafetyOrdering_DenyBeforeBudget -- Time elapsed: 0.004 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.beans.factory.ObjectProvider.getIfAvailable(java.util.function.Supplier)" because "clockProvider" is null
+	at com.gsir.ai.execution.ExecutionBudgetService.<init>(ExecutionBudgetService.java:17)
+	at com.gsir.tools.ToolExecutionServiceTest$3.<init>(ToolExecutionServiceTest.java:65)
+	at com.gsir.tools.ToolExecutionServiceTest.setUp(ToolExecutionServiceTest.java:65)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

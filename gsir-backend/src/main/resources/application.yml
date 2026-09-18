@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: gsir-backend
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/gsir}
+    username: ${DATABASE_USERNAME:gsir}
+    password: ${DATABASE_PASSWORD:gsir}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+
+server:
+  port: ${SERVER_PORT:8080}
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    accept-count: 100
+    max-connections: 1000
+
+gsir:
+  security:
+    encryption:
+      key: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=
+    jwt:
+      secret: ${JWT_SECRET}
+      expiration-ms: 900000
+      refresh-expiration-ms: 604800000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.1}
+
+logging:
+  pattern:
+    console: "[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%logger{36}] [requestId=%X{requestId}] [traceId=%X{traceId}] [userId=%X{userId}] [projectId=%X{projectId}] - %msg%n"

@@ -1,0 +1,1 @@
+ALTER TABLE projects ADD COLUMN execution_budget DOUBLE PRECISION;

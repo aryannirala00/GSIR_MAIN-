@@ -1,0 +1,2359 @@
+﻿PART 75 — SCIENTIFIC KNOWLEDGE GRAPH AND EVIDENCE GRAPH ENGINE
+
+75.1 PURPOSE
+
+The GSIR Scientific Knowledge Graph Engine shall provide the structured knowledge layer connecting scientific entities, observations, measurements, experiments, datasets, publications, evidence, claims, models, workflows, researchers, and derived conclusions.
+
+The engine shall transform validated information into an interconnected graph while preserving source context, uncertainty, provenance, temporal state, and evidence.
+
+Modern scientific data interoperability increasingly relies on semantic representations, ontologies, qualified relationships, and provenance to make research objects interpretable and reusable across systems. 
+
+END OF 75.1
+
+75.2 KNOWLEDGE GRAPH ARCHITECTURE
+
+                    RESEARCH SOURCES
+
+                          │
+
+                          ▼
+
+                  DATA / DOCUMENTS
+
+                          │
+
+                          ▼
+
+                    EXTRACTION
+
+                          │
+
+                          ▼
+
+                  ENTITY RESOLUTION
+
+                          │
+
+                          ▼
+
+                  SEMANTIC MAPPING
+
+                          │
+
+                          ▼
+
+                    EVIDENCE LAYER
+
+                          │
+
+                          ▼
+
+                    CLAIM LAYER
+
+                          │
+
+                          ▼
+
+                 SCIENTIFIC KNOWLEDGE
+
+                          │
+
+                          ▼
+
+                    KNOWLEDGE GRAPH
+
+                          │
+
+          ┌───────────────┼────────────────┐
+
+          ▼               ▼                ▼
+
+       REASONING       SEARCH          AI AGENTS
+
+END OF 75.2
+
+75.3 KNOWLEDGE GRAPH DIRECTORY
+
+backend/src/knowledge/
+
+knowledge.module.ts
+
+knowledge.controller.ts
+
+knowledge.service.ts
+
+knowledge.repository.ts
+
+knowledge.types.ts
+
+knowledge.constants.ts
+
+graph/
+
+graph.service.ts
+
+graph.repository.ts
+
+graph-query.service.ts
+
+graph-index.service.ts
+
+entities/
+
+entity.service.ts
+
+entity-resolver.ts
+
+entity-merger.ts
+
+entity-version.service.ts
+
+relations/
+
+relation.service.ts
+
+relation-resolver.ts
+
+relation-validator.ts
+
+claims/
+
+claim.service.ts
+
+claim-validator.ts
+
+claim-version.service.ts
+
+evidence/
+
+evidence.service.ts
+
+evidence-linker.ts
+
+evidence-validator.ts
+
+ontology/
+
+ontology.service.ts
+
+concept-resolver.ts
+
+semantic-mapper.ts
+
+reasoning/
+
+reasoning.service.ts
+
+inference-engine.ts
+
+rule-engine.ts
+
+confidence/
+
+confidence.service.ts
+
+uncertainty.service.ts
+
+snapshots/
+
+knowledge-snapshot.service.ts
+
+lineage/
+
+knowledge-lineage.service.ts
+
+index.ts
+
+END OF 75.3
+
+75.4 GRAPH OBJECT TYPES
+
+The graph shall support:
+
+Entity
+
+Concept
+
+Observation
+
+Measurement
+
+Experiment
+
+Dataset
+
+Document
+
+Publication
+
+Evidence
+
+Claim
+
+Hypothesis
+
+Result
+
+Model
+
+Prediction
+
+Method
+
+Procedure
+
+Researcher
+
+Organization
+
+Instrument
+
+Software
+
+Workflow
+
+Location
+
+Time
+
+Event
+
+END OF 75.4
+
+75.5 ENTITY
+
+Every entity shall contain:
+
+entity_id
+
+entity_type
+
+canonical_name
+
+aliases
+
+description
+
+ontology_concept
+
+source_references
+
+confidence
+
+status
+
+created_at
+
+updated_at
+
+version
+
+END OF 75.5
+
+75.6 ENTITY IDENTITY
+
+GSIR shall distinguish:
+
+Source Identity
+
+GSIR Identity
+
+Ontology Identity
+
+Version Identity
+
+Example:
+
+External ID
+
+    ↓
+
+Entity Resolver
+
+    ↓
+
+GSIR Entity
+
+    ↓
+
+Ontology Concept
+
+END OF 75.6
+
+75.7 ENTITY RESOLUTION
+
+Entity resolution shall determine whether different references represent:
+
+Same Entity
+
+Different Entity
+
+Possible Same Entity
+
+Related Entity
+
+Unknown
+
+Similarity of names alone shall not establish identity.
+
+END OF 75.7
+
+75.8 ENTITY RESOLUTION SIGNALS
+
+The resolver may use:
+
+Name
+
+Alias
+
+Identifier
+
+Context
+
+Ontology
+
+Source
+
+Location
+
+Time
+
+Attributes
+
+Relationships
+
+External References
+
+END OF 75.8
+
+75.9 ENTITY MERGING
+
+Entities may be merged only when the evidence satisfies the configured resolution policy.
+
+Entity A
+
+   +
+
+Entity B
+
+   ↓
+
+Resolution
+
+   ↓
+
+Merged Entity
+
+The merge history shall remain permanently traceable.
+
+END OF 75.9
+
+75.10 ENTITY SPLITTING
+
+If a previous merge is discovered to be incorrect:
+
+Merged Entity
+
+      ↓
+
+Correction
+
+      ↓
+
+Entity A
+
+Entity B
+
+Historical graph versions shall preserve the earlier state.
+
+END OF 75.10
+
+75.11 RELATIONSHIPS
+
+Graph relationships shall be typed.
+
+causes
+
+associatedWith
+
+measures
+
+contains
+
+derivedFrom
+
+supports
+
+contradicts
+
+uses
+
+produces
+
+observedIn
+
+partOf
+
+locatedIn
+
+occursAt
+
+precedes
+
+follows
+
+END OF 75.11
+
+75.12 QUALIFIED RELATIONSHIPS
+
+Relationships shall support:
+
+relation_id
+
+source_entity
+
+target_entity
+
+relation_type
+
+confidence
+
+evidence
+
+provenance
+
+valid_time
+
+asserted_time
+
+source
+
+status
+
+version
+
+END OF 75.12
+
+75.13 SCIENTIFIC ASSERTION
+
+GSIR shall distinguish a graph relationship from an established scientific assertion.
+
+Graph Relationship
+
+        ↓
+
+Evidence
+
+        ↓
+
+Validation
+
+        ↓
+
+Scientific Assertion
+
+This prevents automatically extracted relationships from being treated as verified knowledge.
+
+END OF 75.13
+
+75.14 EVIDENCE OBJECT
+
+Evidence shall contain:
+
+evidence_id
+
+source_id
+
+source_location
+
+evidence_type
+
+content_reference
+
+extraction_method
+
+confidence
+
+validation_status
+
+created_at
+
+END OF 75.14
+
+75.15 EVIDENCE TYPES
+
+Direct Observation
+
+Measurement
+
+Experimental Result
+
+Published Result
+
+Dataset
+
+Document Statement
+
+Figure
+
+Table
+
+Code Output
+
+Simulation Result
+
+Statistical Result
+
+Expert Assessment
+
+External Authority
+
+END OF 75.15
+
+75.16 EVIDENCE FRAGMENT
+
+Where possible, evidence shall reference the smallest useful source fragment.
+
+Document
+
+ ↓
+
+Page
+
+ ↓
+
+Section
+
+ ↓
+
+Paragraph
+
+ ↓
+
+Sentence
+
+For structured datasets:
+
+Dataset
+
+ ↓
+
+Table
+
+ ↓
+
+Column
+
+ ↓
+
+Row
+
+ ↓
+
+Cell / Value
+
+Recent work on fragment-level FAIRness demonstrates the value of precise, machine-actionable references to sub-file regions and their ontology-backed semantics. 
+
+END OF 75.16
+
+75.17 CLAIM OBJECT
+
+A claim shall contain:
+
+claim_id
+
+statement
+
+claim_type
+
+subject
+
+predicate
+
+object
+
+evidence
+
+confidence
+
+source
+
+status
+
+version
+
+created_at
+
+END OF 75.17
+
+75.18 CLAIM TYPES
+
+Observation
+
+Correlation
+
+Association
+
+Causal Claim
+
+Mechanistic Claim
+
+Prediction
+
+Classification
+
+Definition
+
+Methodological Claim
+
+Negative Result
+
+Hypothesis
+
+Derived Conclusion
+
+END OF 75.18
+
+75.19 CLAIM STATUS
+
+PROPOSED
+
+EXTRACTED
+
+SUPPORTED
+
+VALIDATED
+
+CONTESTED
+
+CONTRADICTED
+
+RETRACTED
+
+SUPERSEDED
+
+ARCHIVED
+
+END OF 75.19
+
+75.20 CLAIM-EVIDENCE RELATIONSHIP
+
+CLAIM
+
+ │
+
+ ├── supportedBy → Evidence A
+
+ ├── supportedBy → Evidence B
+
+ ├── derivedFrom → Dataset
+
+ └── reportedBy → Publication
+
+END OF 75.20
+
+75.21 CONTRADICTORY CLAIMS
+
+GSIR shall preserve contradictory claims.
+
+Claim A
+
+   │
+
+   └── contradicts
+
+          │
+
+       Claim B
+
+Contradictions shall not be automatically resolved by deleting one claim.
+
+END OF 75.21
+
+75.22 CONTRADICTION ANALYSIS
+
+The engine shall compare:
+
+Source
+
+Population
+
+Method
+
+Experiment
+
+Conditions
+
+Time
+
+Units
+
+Statistical Strength
+
+Evidence
+
+before determining whether two claims genuinely contradict each other.
+
+END OF 75.22
+
+75.23 TEMPORAL KNOWLEDGE
+
+Knowledge shall support temporal validity.
+
+Entity
+
+Relation
+
+Claim
+
+      │
+
+      ├── valid_from
+
+      └── valid_until
+
+This allows GSIR to distinguish historical knowledge from current knowledge.
+
+END OF 75.23
+
+75.24 SOURCE-TIME VS VALID-TIME
+
+The graph shall distinguish:
+
+When Was It Reported?
+
+        ≠
+
+When Was It True / Applicable?
+
+Both timestamps shall be retained when available.
+
+END OF 75.24
+
+75.25 KNOWLEDGE VERSIONING
+
+Knowledge graph versions shall be immutable snapshots.
+
+Graph V1
+
+   ↓
+
+Graph V2
+
+   ↓
+
+Graph V3
+
+Changes shall be represented through graph deltas and provenance.
+
+END OF 75.25
+
+75.26 KNOWLEDGE DELTA
+
+Each graph update shall identify:
+
+Added Entity
+
+Removed Entity
+
+Changed Entity
+
+Added Relation
+
+Removed Relation
+
+Changed Relation
+
+Added Claim
+
+Changed Confidence
+
+Changed Status
+
+END OF 75.26
+
+75.27 KNOWLEDGE SNAPSHOT
+
+A snapshot shall include:
+
+snapshot_id
+
+graph_version
+
+ontology_version
+
+source_versions
+
+created_at
+
+created_by
+
+change_set
+
+integrity_hash
+
+provenance
+
+END OF 75.27
+
+75.28 GRAPH PROVENANCE
+
+Every important graph assertion shall be traceable to:
+
+Source
+
+Extraction
+
+Transformation
+
+Validation
+
+Agent / Human
+
+Software Version
+
+Workflow
+
+Timestamp
+
+This aligns with current provenance approaches that treat traceability, quality, and fitness-for-purpose as information spanning the lifecycle of scientific data. 
+
+END OF 75.28
+
+75.29 PROVENANCE GRAPH
+
+SOURCE
+
+  ↓
+
+EXTRACTION
+
+  ↓
+
+EVIDENCE
+
+  ↓
+
+CLAIM
+
+  ↓
+
+VALIDATION
+
+  ↓
+
+KNOWLEDGE
+
+No important scientific assertion shall exist without an identifiable provenance path.
+
+END OF 75.29
+
+75.30 ONTOLOGY INTEGRATION
+
+Every semantic entity shall be linked to ontology concepts where possible.
+
+Entity
+
+ ↓
+
+Concept ID
+
+ ↓
+
+Ontology
+
+ ↓
+
+Ontology Version
+
+END OF 75.30
+
+75.31 ONTOLOGY MAPPING CONFIDENCE
+
+EXACT
+
+HIGH
+
+MEDIUM
+
+LOW
+
+AMBIGUOUS
+
+UNMAPPED
+
+Low-confidence mappings shall remain explicitly marked.
+
+END OF 75.31
+
+75.32 KNOWLEDGE NORMALIZATION
+
+The graph shall normalize:
+
+Entity Names
+
+Identifiers
+
+Units
+
+Dates
+
+Concepts
+
+Relationship Types
+
+Scientific Terminology
+
+while retaining original source expressions.
+
+END OF 75.32
+
+75.33 SOURCE ASSERTION PRESERVATION
+
+GSIR shall preserve the difference between:
+
+Source Says X
+
+and:
+
+GSIR Concludes X
+
+Source statements shall not automatically become validated knowledge.
+
+END OF 75.33
+
+75.34 EVIDENCE WEIGHT
+
+Evidence may be weighted according to configured factors:
+
+Source Reliability
+
+Method Quality
+
+Replication
+
+Statistical Strength
+
+Independent Confirmation
+
+Recency
+
+Domain Relevance
+
+Provenance Completeness
+
+Weights shall be transparent and versioned.
+
+END OF 75.34
+
+75.35 CONFIDENCE
+
+Confidence shall be represented independently from truth.
+
+Confidence
+
+≠
+
+Truth
+
+A high-confidence extraction can still represent an incorrect source statement.
+
+END OF 75.35
+
+75.36 UNCERTAINTY
+
+Where scientific uncertainty is available, GSIR shall preserve:
+
+Range
+
+Distribution
+
+Confidence Interval
+
+Probability
+
+Error
+
+Variance
+
+Measurement Uncertainty
+
+Qualitative Uncertainty
+
+END OF 75.36
+
+75.37 NEGATIVE KNOWLEDGE
+
+GSIR shall explicitly represent:
+
+No Evidence Found
+
+Evidence Against
+
+Experiment Failed
+
+Hypothesis Not Supported
+
+Negative Result
+
+Unknown
+
+These states shall not be collapsed into FALSE.
+
+END OF 75.37
+
+75.38 UNKNOWN STATE
+
+The graph shall distinguish:
+
+TRUE
+
+FALSE
+
+UNKNOWN
+
+UNRESOLVED
+
+CONTESTED
+
+NOT_APPLICABLE
+
+END OF 75.38
+
+75.39 EVIDENCE AGGREGATION
+
+Multiple evidence items may support a claim.
+
+Evidence A ─┐
+
+Evidence B ─┼→ Claim
+
+Evidence C ─┘
+
+The engine shall retain individual evidence contributions rather than only storing an aggregate score.
+
+END OF 75.39
+
+75.40 EVIDENCE CONFLICT
+
+When evidence disagrees:
+
+Evidence A → Supports
+
+Evidence B → Contradicts
+
+both shall remain connected to the claim and contradiction analysis shall be triggered.
+
+END OF 75.40
+
+75.41 REPLICATION
+
+Independent replications shall be represented separately.
+
+Original Experiment
+
+       │
+
+       ├── Replication A
+
+       ├── Replication B
+
+       └── Replication C
+
+Replication shall strengthen evidence only according to the configured scientific policy.
+
+END OF 75.41
+
+75.42 EXPERIMENT GRAPH
+
+Hypothesis
+
+    ↓
+
+Experiment
+
+    ↓
+
+Protocol
+
+    ↓
+
+Inputs
+
+    ↓
+
+Measurements
+
+    ↓
+
+Results
+
+    ↓
+
+Evidence
+
+    ↓
+
+Claims
+
+END OF 75.42
+
+75.43 DATASET GRAPH
+
+Dataset
+
+ ├── producedBy → Experiment
+
+ ├── derivedFrom → Dataset
+
+ ├── contains → Observation
+
+ ├── supports → Claim
+
+ └── describedBy → Metadata
+
+END OF 75.43
+
+75.44 PUBLICATION GRAPH
+
+Publication
+
+ ├── authoredBy → Researcher
+
+ ├── reports → Experiment
+
+ ├── uses → Dataset
+
+ ├── describes → Method
+
+ ├── supports → Claim
+
+ └── cites → Publication
+
+END OF 75.44
+
+75.45 MODEL GRAPH
+
+Model
+
+ ├── trainedOn → Dataset
+
+ ├── implementedBy → Software
+
+ ├── uses → Method
+
+ ├── evaluatedOn → Dataset
+
+ ├── produces → Prediction
+
+ └── supports → Claim
+
+END OF 75.45
+
+75.46 WORKFLOW GRAPH
+
+Workflow
+
+ ├── contains → Task
+
+ ├── uses → Software
+
+ ├── uses → Model
+
+ ├── consumes → Dataset
+
+ ├── produces → Dataset
+
+ └── generated → Result
+
+END OF 75.46
+
+75.47 RESEARCHER GRAPH
+
+Researcher
+
+ ├── authored → Publication
+
+ ├── performed → Experiment
+
+ ├── created → Dataset
+
+ ├── developed → Model
+
+ ├── contributedTo → Workflow
+
+ └── affiliatedWith → Organization
+
+END OF 75.47
+
+75.48 METHOD GRAPH
+
+Methods shall be represented independently.
+
+Method
+
+ ├── implementedBy → Software
+
+ ├── usedIn → Experiment
+
+ ├── describedBy → Publication
+
+ ├── requires → Input
+
+ └── produces → Output
+
+END OF 75.48
+
+75.49 CAUSAL RELATIONSHIPS
+
+Causal relationships shall have a stronger evidence requirement than generic associations.
+
+A
+
+ ↓
+
+causes
+
+ ↓
+
+B
+
+The graph shall distinguish:
+
+CAUSES
+
+ASSOCIATED_WITH
+
+CORRELATED_WITH
+
+PREDICTS
+
+POSSIBLY_CAUSES
+
+END OF 75.49
+
+75.50 CAUSAL CLAIM VALIDATION
+
+A causal relationship shall consider:
+
+Study Design
+
+Experimental Controls
+
+Temporal Ordering
+
+Confounders
+
+Replication
+
+Statistical Evidence
+
+Mechanistic Evidence
+
+Automatic extraction shall not upgrade correlation into causation.
+
+END OF 75.50
+
+75.51 GRAPH QUERY ENGINE
+
+The engine shall support:
+
+Entity Lookup
+
+Relationship Lookup
+
+Path Queries
+
+Neighborhood Queries
+
+Evidence Queries
+
+Claim Queries
+
+Temporal Queries
+
+Provenance Queries
+
+Ontology Queries
+
+END OF 75.51
+
+75.52 EXAMPLE KNOWLEDGE QUERY
+
+Question:
+
+Which experiments provide evidence for Claim X?
+
+Query Flow:
+
+Claim X
+
+ ↓
+
+supportedBy
+
+ ↓
+
+Evidence
+
+ ↓
+
+derivedFrom
+
+ ↓
+
+Experiment
+
+END OF 75.52
+
+75.53 MULTI-HOP REASONING
+
+GSIR shall support controlled multi-hop queries.
+
+Drug
+
+ ↓
+
+targets
+
+ ↓
+
+Protein
+
+ ↓
+
+participatesIn
+
+ ↓
+
+Pathway
+
+ ↓
+
+associatedWith
+
+ ↓
+
+Disease
+
+Every inferred path shall retain its source edges.
+
+END OF 75.53
+
+75.54 GRAPH REASONING
+
+The reasoning engine may derive candidate relationships using:
+
+Ontology Rules
+
+Logical Rules
+
+Graph Patterns
+
+Statistical Associations
+
+Temporal Rules
+
+Domain Rules
+
+Derived knowledge shall be marked as inferred.
+
+END OF 75.54
+
+75.55 INFERENCE STATUS
+
+EXPLICIT
+
+EXTRACTED
+
+DERIVED
+
+INFERRED
+
+HYPOTHETICAL
+
+UNVERIFIED
+
+END OF 75.55
+
+75.56 INFERENCE PROVENANCE
+
+Every inferred relationship shall store:
+
+Input Facts
+
+Rule
+
+Rule Version
+
+Inference Engine
+
+Execution
+
+Timestamp
+
+Confidence
+
+END OF 75.56
+
+75.57 RULE ENGINE
+
+Rules shall be represented as:
+
+rule_id
+
+description
+
+conditions
+
+conclusion
+
+domain
+
+priority
+
+version
+
+validation_status
+
+END OF 75.57
+
+75.58 RULE EXAMPLE
+
+IF
+
+A is part of B
+
+AND
+
+B is part of C
+
+THEN
+
+A may be part of C
+
+The result shall be marked as derived rather than directly observed.
+
+END OF 75.58
+
+75.59 GRAPH SAFETY
+
+The reasoning system shall prevent:
+
+Unsupported Claims
+
+False Equivalence
+
+Circular Evidence
+
+Untracked Inference
+
+Silent Knowledge Mutation
+
+Provenance Loss
+
+END OF 75.59
+
+75.60 CIRCULAR REASONING DETECTION
+
+The engine shall detect reasoning loops.
+
+A → B
+
+B → C
+
+C → A
+
+Cycles may be valid in some scientific systems, but circular reasoning shall not be treated as independent evidence.
+
+END OF 75.60
+
+75.61 KNOWLEDGE CONFLICT DETECTION
+
+The graph shall detect:
+
+Contradictory Claims
+
+Conflicting Measurements
+
+Conflicting Entity Types
+
+Incompatible Units
+
+Temporal Contradictions
+
+Ontology Conflicts
+
+END OF 75.61
+
+75.62 CONFLICT RESOLUTION
+
+Resolution shall consider:
+
+Evidence Quality
+
+Source Reliability
+
+Experimental Design
+
+Recency
+
+Replication
+
+Context
+
+Ontology
+
+Domain Rules
+
+The system shall preserve unresolved conflicts rather than forcing a false consensus.
+
+END OF 75.62
+
+75.63 KNOWLEDGE SEARCH
+
+Search shall support:
+
+Keyword
+
+Semantic
+
+Entity
+
+Concept
+
+Relationship
+
+Evidence
+
+Claim
+
+Publication
+
+Dataset
+
+Experiment
+
+Temporal
+
+END OF 75.63
+
+75.64 NATURAL-LANGUAGE QUERY
+
+Users may ask:
+
+"What evidence supports this hypothesis?"
+
+"Which experiments contradict this claim?"
+
+"Which datasets measured this variable?"
+
+"Which models predict this phenomenon?"
+
+The natural-language layer shall translate questions into graph queries while exposing the evidence path behind the answer.
+
+END OF 75.64
+
+75.65 AGENT KNOWLEDGE ACCESS
+
+Agents shall access knowledge through controlled APIs rather than unrestricted direct database manipulation.
+
+AI AGENT
+
+   ↓
+
+Knowledge API
+
+   ↓
+
+Authorization
+
+   ↓
+
+Graph Query
+
+   ↓
+
+Evidence
+
+   ↓
+
+Answer
+
+END OF 75.65
+
+75.66 ANSWER-GROUNDED REASONING
+
+An agent answer based on graph knowledge shall retain:
+
+Claims Used
+
+Evidence Used
+
+Source Objects
+
+Graph Version
+
+Ontology Version
+
+Reasoning Steps
+
+Confidence
+
+END OF 75.66
+
+75.67 KNOWLEDGE CITATION
+
+Scientific answers shall be able to resolve:
+
+Answer
+
+ ↓
+
+Claim
+
+ ↓
+
+Evidence
+
+ ↓
+
+Source
+
+ ↓
+
+Exact Location
+
+This creates citation-level traceability rather than source-only attribution.
+
+END OF 75.67
+
+75.68 KNOWLEDGE GRAPH + METADATA
+
+Metadata
+
+   ↓
+
+Research Object
+
+   ↓
+
+Entity / Concept
+
+   ↓
+
+Knowledge Graph
+
+Part 73 metadata remains the descriptive layer while Part 75 represents semantic scientific relationships.
+
+END OF 75.68
+
+75.69 KNOWLEDGE GRAPH + DATA ENGINE
+
+Validated Dataset
+
+      ↓
+
+Semantic Mapping
+
+      ↓
+
+Entities / Observations
+
+      ↓
+
+Knowledge Graph
+
+Only data passing the required quality gates shall become authoritative graph inputs.
+
+END OF 75.69
+
+75.70 KNOWLEDGE GRAPH + WORKFLOW ENGINE
+
+Workflow
+
+ ↓
+
+Execution
+
+ ↓
+
+Generated Result
+
+ ↓
+
+Evidence
+
+ ↓
+
+Claim
+
+ ↓
+
+Knowledge
+
+This creates an explicit bridge from computation to scientific knowledge.
+
+END OF 75.70
+
+75.71 KNOWLEDGE GRAPH + PROVENANCE
+
+Knowledge
+
+ ↓
+
+Claim
+
+ ↓
+
+Evidence
+
+ ↓
+
+Activity
+
+ ↓
+
+Input
+
+ ↓
+
+Source
+
+The graph shall allow reverse traversal from a scientific conclusion to the original source.
+
+END OF 75.71
+
+75.72 KNOWLEDGE GRAPH + MEMORY
+
+Validated knowledge may be promoted into long-term GSIR memory only when:
+
+Evidence Exists
+
+Provenance Exists
+
+Semantic Identity Exists
+
+Confidence Meets Threshold
+
+Policy Allows Promotion
+
+END OF 75.72
+
+75.73 KNOWLEDGE PROMOTION
+
+Candidate Knowledge
+
+       ↓
+
+Evidence Check
+
+       ↓
+
+Semantic Check
+
+       ↓
+
+Provenance Check
+
+       ↓
+
+Validation
+
+       ↓
+
+Knowledge Graph
+
+END OF 75.73
+
+75.74 KNOWLEDGE RETRACTION
+
+If evidence is invalidated:
+
+Knowledge
+
+ ↓
+
+Source Retraction
+
+ ↓
+
+Impact Analysis
+
+ ↓
+
+Status Update
+
+The original assertion shall remain historically visible with its retraction state.
+
+END OF 75.74
+
+75.75 KNOWLEDGE IMPACT ANALYSIS
+
+A changed source shall identify:
+
+Evidence
+
+ ↓
+
+Claims
+
+ ↓
+
+Derived Claims
+
+ ↓
+
+Models
+
+ ↓
+
+Predictions
+
+ ↓
+
+Knowledge
+
+ ↓
+
+Agent Memory
+
+END OF 75.75
+
+75.76 KNOWLEDGE QUALITY SCORE
+
+Graph quality shall consider:
+
+Evidence Coverage
+
+Provenance Coverage
+
+Semantic Completeness
+
+Entity Resolution
+
+Conflict Rate
+
+Source Reliability
+
+Validation Status
+
+END OF 75.76
+
+75.77 GRAPH OBSERVABILITY
+
+Metrics shall include:
+
+Entity Count
+
+Relationship Count
+
+Claim Count
+
+Evidence Count
+
+Unresolved Entities
+
+Unresolved Concepts
+
+Contradiction Count
+
+Inference Count
+
+Provenance Coverage
+
+Orphan Nodes
+
+Orphan Evidence
+
+END OF 75.77
+
+75.78 ORPHAN DETECTION
+
+The system shall identify:
+
+Entity Without Source
+
+Claim Without Evidence
+
+Relation Without Provenance
+
+Evidence Without Source
+
+Concept Without Ontology
+
+Dataset Without Metadata
+
+These shall be flagged for remediation.
+
+END OF 75.78
+
+75.79 GRAPH INTEGRITY
+
+Integrity checks shall verify:
+
+Identifier Uniqueness
+
+Relationship Validity
+
+Reference Integrity
+
+Version Integrity
+
+Provenance Integrity
+
+Ontology Compatibility
+
+Temporal Consistency
+
+END OF 75.79
+
+75.80 GRAPH STORAGE
+
+The implementation may use:
+
+Graph Database
+
+Document Store
+
+Relational Store
+
+Search Index
+
+Vector Index
+
+The architecture shall separate authoritative knowledge from derived search indexes.
+
+END OF 75.80
+
+75.81 HYBRID KNOWLEDGE STORAGE
+
+             KNOWLEDGE SERVICE
+
+                    │
+
+        ┌───────────┼───────────┐
+
+        ▼           ▼           ▼
+
+      GRAPH       SEARCH      VECTOR
+
+       DB          INDEX       INDEX
+
+        │           │           │
+
+        └───────────┼───────────┘
+
+                    ▼
+
+              KNOWLEDGE API
+
+END OF 75.81
+
+75.82 VECTOR SEARCH ROLE
+
+Vector representations may assist:
+
+Semantic Discovery
+
+Similarity Search
+
+Candidate Entity Matching
+
+Candidate Claim Retrieval
+
+Vector similarity shall not replace authoritative graph relationships.
+
+END OF 75.82
+
+75.83 GRAPH + VECTOR HYBRID SEARCH
+
+Natural Language Query
+
+       ↓
+
+Semantic Retrieval
+
+       ↓
+
+Candidate Entities
+
+       ↓
+
+Graph Expansion
+
+       ↓
+
+Evidence Filtering
+
+       ↓
+
+Answer
+
+END OF 75.83
+
+75.84 KNOWLEDGE CACHING
+
+Frequently requested graph paths may be cached.
+
+Caches shall never become authoritative sources of truth.
+
+END OF 75.84
+
+75.85 KNOWLEDGE SECURITY
+
+Access shall operate at:
+
+Graph
+
+Entity
+
+Relation
+
+Evidence
+
+Document
+
+Dataset
+
+Field
+
+levels where required.
+
+Sensitive evidence shall not leak through graph relationships or generated answers.
+
+END OF 75.85
+
+75.86 KNOWLEDGE ACCESS CONTROL
+
+User
+
+ ↓
+
+Authorization
+
+ ↓
+
+Knowledge Policy
+
+ ↓
+
+Permitted Graph View
+
+ ↓
+
+Query
+
+Agents shall receive only the graph information permitted by policy.
+
+END OF 75.86
+
+75.87 KNOWLEDGE REDACTION
+
+When sensitive data are restricted, the graph may expose:
+
+Entity Exists
+
+Metadata Available
+
+Evidence Restricted
+
+Data Restricted
+
+without exposing the protected content.
+
+END OF 75.87
+
+75.88 KNOWLEDGE EXPORT
+
+The engine shall support export of:
+
+Entities
+
+Relations
+
+Claims
+
+Evidence References
+
+Ontology References
+
+Provenance
+
+Version
+
+END OF 75.88
+
+75.89 KNOWLEDGE PACKAGE
+
+A portable knowledge package shall contain:
+
+Graph Snapshot
+
+Ontology Version
+
+Metadata
+
+Evidence References
+
+Provenance
+
+Source Identifiers
+
+Change Set
+
+Integrity Hash
+
+END OF 75.89
+
+75.90 KNOWLEDGE TESTING
+
+Tests shall include:
+
+Entity Resolution
+
+Entity Merge
+
+Entity Split
+
+Relationship Validation
+
+Claim Validation
+
+Evidence Linking
+
+Ontology Mapping
+
+Inference
+
+Contradiction Detection
+
+Temporal Reasoning
+
+Provenance
+
+Graph Queries
+
+Access Control
+
+Versioning
+
+Rollback
+
+END OF 75.90
+
+75.91 ADVERSARIAL KNOWLEDGE TESTING
+
+The system shall test:
+
+Conflicting Sources
+
+Ambiguous Names
+
+False Synonyms
+
+Contradictory Claims
+
+Circular Reasoning
+
+Missing Evidence
+
+Incorrect Ontology Mapping
+
+Manipulated Metadata
+
+Unsupported Inference
+
+END OF 75.91
+
+75.92 KNOWLEDGE REPRODUCIBILITY
+
+A historical knowledge answer shall be reproducible using:
+
+Graph Snapshot
+
+Ontology Version
+
+Metadata Version
+
+Source Versions
+
+Evidence Versions
+
+Rule Versions
+
+Inference Engine Version
+
+Query
+
+END OF 75.92
+
+75.93 KNOWLEDGE AUDIT
+
+GSIR shall answer:
+
+Why does this fact exist?
+
+Which source created it?
+
+Which evidence supports it?
+
+Who extracted it?
+
+Which model or rule processed it?
+
+Which ontology version was used?
+
+Was it human-validated?
+
+Has the source changed?
+
+Has the claim been contradicted or retracted?
+
+END OF 75.93
+
+75.94 KNOWLEDGE EVENTS
+
+EntityCreated
+
+EntityResolved
+
+EntityMerged
+
+EntitySplit
+
+RelationCreated
+
+RelationUpdated
+
+ClaimCreated
+
+EvidenceLinked
+
+ClaimValidated
+
+ClaimContested
+
+ClaimRetracted
+
+InferenceCreated
+
+InferenceInvalidated
+
+KnowledgeSnapshotCreated
+
+KnowledgeSnapshotRestored
+
+END OF 75.94
+
+75.95 FINAL KNOWLEDGE GRAPH ARCHITECTURE
+
+                         SOURCES
+
+                            │
+
+              ┌─────────────┼──────────────┐
+
+              ▼             ▼              ▼
+
+           DATASETS     DOCUMENTS      EXPERIMENTS
+
+              │             │              │
+
+              └─────────────┼──────────────┘
+
+                            ▼
+
+                       EXTRACTION
+
+                            │
+
+                            ▼
+
+                     ENTITY RESOLUTION
+
+                            │
+
+                            ▼
+
+                    SEMANTIC MAPPING
+
+                            │
+
+                            ▼
+
+                         EVIDENCE
+
+                            │
+
+                            ▼
+
+                          CLAIMS
+
+                            │
+
+                 ┌──────────┴──────────┐
+
+                 ▼                     ▼
+
+             VALIDATION             CONFLICT
+
+                 │                     │
+
+                 └──────────┬──────────┘
+
+                            ▼
+
+                     KNOWLEDGE GRAPH
+
+                            │
+
+             ┌──────────────┼──────────────┐
+
+             ▼              ▼              ▼
+
+         REASONING        SEARCH         MEMORY
+
+             │              │              │
+
+             └──────────────┼──────────────┘
+
+                            ▼
+
+                       AI RESEARCH
+
+END OF 75.95
+
+75.96 FINAL ARCHITECTURAL REQUIREMENT
+
+The GSIR Scientific Knowledge Graph Engine shall enforce:
+
+EVERY IMPORTANT KNOWLEDGE OBJECT MUST HAVE AN IDENTITY.
+
+EVERY IMPORTANT CLAIM MUST HAVE TRACEABLE EVIDENCE.
+
+EVERY IMPORTANT RELATIONSHIP MUST HAVE PROVENANCE.
+
+SOURCE STATEMENTS MUST REMAIN DISTINGUISHABLE FROM GSIR CONCLUSIONS.
+
+CONTRADICTORY KNOWLEDGE MUST BE PRESERVED, NOT SILENTLY DELETED.
+
+UNKNOWN MUST REMAIN DIFFERENT FROM FALSE.
+
+CORRELATION MUST REMAIN DIFFERENT FROM CAUSATION.
+
+INFERENCE MUST REMAIN DIFFERENT FROM DIRECT OBSERVATION.
+
+EVERY IMPORTANT KNOWLEDGE STATE MUST BE VERSIONED.
+
+EVERY RETRACTION MUST PROPAGATE THROUGH IMPACT ANALYSIS.
+
+EVERY AI-GENERATED CONCLUSION MUST BE TRACEABLE TO ITS EVIDENCE.
+
+EVERY SCIENTIFIC ANSWER MUST BE CAPABLE OF TRACING BACK TO ITS SOURCES.
+
+The resulting GSIR knowledge layer shall provide the foundation for evidence-grounded scientific reasoning, contradiction analysis, multi-hop discovery, provenance-aware AI, research memory, hypothesis generation, and eventually autonomous scientific investigation. Its design shall preserve the distinction between source information, extracted evidence, validated claims, and inferred knowledge rather than collapsing them into a single undifferentiated graph. 
+
+END OF PART 75.
+
+PART 76 — SCIENTIFIC DATA GOVERNANCE, SECURITY, ACCESS CONTROL, PRIVACY AND COMPLIANCE ARCHITECTURE

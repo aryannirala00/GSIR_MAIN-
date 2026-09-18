@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.gsir.workflow.goal.GoalControllerTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.751 s -- in com.gsir.workflow.goal.GoalControllerTest

@@ -1,0 +1,53 @@
+name: GSIR Production Delivery Pipeline
+
+on:
+  push:
+    branches: [ "main", "release/*" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+env:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2,TLSv1.3 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  TRACING_SAMPLING_PROBABILITY: "1.0"
+  DATABASE_URL: "jdbc:postgresql://localhost:5432/gsir"
+  DATABASE_USERNAME: "gsir"
+  DATABASE_PASSWORD: "gsir_password"
+  JWT_SECRET: "01234567890123456789012345678901"
+
+jobs:
+  validate-build-test-package:
+    name: Validate, Build, Test, and Package
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Validate Maven Wrapper
+      run: |
+        if [ ! -x "./mvnw" ]; then
+          chmod +x ./mvnw
+        fi
+
+    - name: Compile Source Code
+      run: ./mvnw clean compile -T 1C --no-transfer-progress
+
+    - name: Run Test Suite (Includes Security, Regression, Migration, Observability)
+      run: ./mvnw test -T 1C --no-transfer-progress
+
+    - name: Package Artifact
+      run: ./mvnw package -DskipTests=false -T 1C --no-transfer-progress

@@ -1,0 +1,2369 @@
+﻿PART 76 — SCIENTIFIC DATA GOVERNANCE, SECURITY, ACCESS CONTROL, PRIVACY AND COMPLIANCE ARCHITECTURE
+
+76.1 PURPOSE
+
+The GSIR Data Governance Architecture shall define how scientific data, research objects, knowledge, files, experiments, workflows, AI inputs, AI outputs, metadata, and provenance are controlled throughout their complete lifecycle.
+
+The governance system shall ensure:
+
+Security
+
+Privacy
+
+Ownership
+
+Access Control
+
+Data Quality
+
+Provenance
+
+Retention
+
+Compliance
+
+Interoperability
+
+Scientific Integrity
+
+FAIR principles emphasize that research objects should be findable, accessible, interoperable and reusable, while sensitive data may require authentication and authorization and still retain rich metadata. ([nature.com](https://www.nature.com/articles/sdata201618))
+
+END OF 76.1
+
+76.2 GOVERNANCE ARCHITECTURE
+
+                         GSIR DATA
+
+                            │
+
+                            ▼
+
+                      CLASSIFICATION
+
+                            │
+
+                            ▼
+
+                        OWNERSHIP
+
+                            │
+
+                            ▼
+
+                       ACCESS POLICY
+
+                            │
+
+             ┌──────────────┼──────────────┐
+
+             ▼              ▼              ▼
+
+          STORAGE        PROCESSING      SHARING
+
+             │              │              │
+
+             └──────────────┼──────────────┘
+
+                            ▼
+
+                     AUDIT + PROVENANCE
+
+                            │
+
+                            ▼
+
+                     RETENTION / DELETION
+
+END OF 76.2
+
+76.3 GOVERNANCE DIRECTORY
+
+backend/src/governance/
+
+governance.module.ts
+
+governance.service.ts
+
+governance.controller.ts
+
+governance.repository.ts
+
+governance.types.ts
+
+classification/
+
+ownership/
+
+policies/
+
+permissions/
+
+access/
+
+privacy/
+
+retention/
+
+sharing/
+
+consent/
+
+compliance/
+
+audit/
+
+enforcement/
+
+reviews/
+
+exceptions/
+
+incidents/
+
+reporting/
+
+index.ts
+
+END OF 76.3
+
+76.4 DATA GOVERNANCE OBJECTIVE
+
+GSIR shall maintain explicit policies governing:
+
+Who owns data
+
+Who can access data
+
+How data may be processed
+
+Where data may be processed
+
+How data may be shared
+
+How long data is retained
+
+How data is deleted
+
+How data changes are audited
+
+How sensitive data is protected
+
+END OF 76.4
+
+76.5 DATA OWNERSHIP
+
+Every controlled research object shall have an ownership relationship.
+
+Possible ownership levels:
+
+User
+
+Research Group
+
+Laboratory
+
+Organization
+
+Institution
+
+Project
+
+GSIR System
+
+External Provider
+
+Ownership shall be distinct from access permission.
+
+END OF 76.5
+
+76.6 DATA STEWARDSHIP
+
+A data steward may be responsible for:
+
+Metadata Quality
+
+Access Policy
+
+Retention Policy
+
+Source Quality
+
+Classification
+
+Review
+
+Compliance
+
+Ownership and stewardship may belong to different actors.
+
+END OF 76.6
+
+76.7 DATA CLASSIFICATION
+
+GSIR shall classify information according to sensitivity.
+
+PUBLIC
+
+INTERNAL
+
+PRIVATE
+
+SENSITIVE
+
+RESTRICTED
+
+Classification shall influence storage, access, processing, model selection, export and sharing.
+
+END OF 76.7
+
+76.8 CLASSIFICATION METADATA
+
+Each classified object shall contain:
+
+classification
+
+classification_reason
+
+assigned_by
+
+assigned_at
+
+review_at
+
+policy_version
+
+END OF 76.8
+
+76.9 CLASSIFICATION PROPAGATION
+
+When derived data is created:
+
+Source Data
+
+↓
+
+Transformation
+
+↓
+
+Derived Data
+
+the derived object shall inherit or recalculate appropriate classification according to policy.
+
+END OF 76.9
+
+76.10 SENSITIVE DATA
+
+Sensitive data may include:
+
+Personal Information
+
+Private Research Data
+
+Confidential Laboratory Data
+
+Restricted Datasets
+
+Proprietary Research
+
+Credentials
+
+Restricted Clinical Information
+
+Sensitive Institutional Information
+
+Processing requirements shall depend on the specific classification.
+
+END OF 76.10
+
+76.11 PRIVACY BY DESIGN
+
+Privacy requirements shall be incorporated into system design before processing begins.
+
+The system shall minimize unnecessary collection, storage, transfer and exposure of sensitive information.
+
+END OF 76.11
+
+76.12 DATA MINIMIZATION
+
+Each workflow shall receive only the data required for its task.
+
+Research Task
+
+↓
+
+Required Fields
+
+↓
+
+Minimal Data
+
+Unnecessary data shall not be copied into downstream services.
+
+END OF 76.12
+
+76.13 ACCESS CONTROL
+
+Access control shall be enforced at multiple levels:
+
+User
+
+Organization
+
+Project
+
+Resource
+
+Field
+
+Operation
+
+Tool
+
+Workflow
+
+END OF 76.13
+
+76.14 AUTHENTICATION
+
+Authentication shall establish:
+
+User Identity
+
+Session
+
+Authentication Method
+
+Session Status
+
+Authentication shall occur before protected resource access.
+
+END OF 76.14
+
+76.15 AUTHORIZATION
+
+Authorization shall determine whether a user or service may perform a requested action.
+
+Identity
+
++
+
+Resource
+
++
+
+Action
+
++
+
+Context
+
+↓
+
+Authorization Decision
+
+END OF 76.15
+
+76.16 ROLE-BASED ACCESS
+
+GSIR may support roles such as:
+
+Owner
+
+Researcher
+
+Collaborator
+
+Reviewer
+
+Data Steward
+
+Administrator
+
+Auditor
+
+Service Account
+
+Roles shall map to defined permissions.
+
+END OF 76.16
+
+76.17 ATTRIBUTE-BASED ACCESS
+
+Where role-based permissions are insufficient, access may consider:
+
+Project
+
+Data Classification
+
+Organization
+
+Resource Type
+
+Research Purpose
+
+Location
+
+Time
+
+Workflow
+
+END OF 76.17
+
+76.18 RESOURCE-LEVEL AUTHORIZATION
+
+A user may have access to one resource while being denied access to another.
+
+User
+
+├── Project A → Allowed
+
+└── Project B → Denied
+
+END OF 76.18
+
+76.19 FIELD-LEVEL PROTECTION
+
+Highly sensitive fields may have stricter access requirements than the surrounding object.
+
+Research Object
+
+├── General Metadata → Allowed
+
+└── Restricted Field → Restricted
+
+END OF 76.19
+
+76.20 SERVICE-TO-SERVICE AUTHORIZATION
+
+Internal services shall authenticate and authorize each other.
+
+Service A
+
+↓
+
+Service Identity
+
+↓
+
+Authorization
+
+↓
+
+Service B
+
+Network location alone shall not imply trust.
+
+END OF 76.20
+
+76.21 SERVICE ACCOUNTS
+
+Service accounts shall have:
+
+Unique Identity
+
+Minimal Permissions
+
+Credential Rotation
+
+Auditability
+
+Expiration / Disablement
+
+END OF 76.21
+
+76.22 LEAST PRIVILEGE
+
+Every user, service, agent and workflow shall receive the minimum permissions required to perform its task.
+
+Required Access
+
+=
+
+Minimum Necessary Access
+
+END OF 76.22
+
+76.23 AI ACCESS CONTROL
+
+AI agents shall receive scoped permissions.
+
+AI Agent
+
+↓
+
+Task Scope
+
+↓
+
+Tool Permissions
+
+↓
+
+Data Permissions
+
+↓
+
+Allowed Actions
+
+An AI agent shall never inherit unrestricted administrative authority from a user session.
+
+END OF 76.23
+
+76.24 AI DATA ACCESS
+
+Before data enters an AI model:
+
+Data
+
+↓
+
+Classification
+
+↓
+
+Model Policy
+
+↓
+
+Privacy Check
+
+↓
+
+Allowed / Blocked / Redacted
+
+END OF 76.24
+
+76.25 AI MODEL ROUTING BY DATA CLASS
+
+GSIR may route data according to classification.
+
+Public
+
+→ Approved External Model
+
+Private
+
+→ Approved Provider / Controlled Environment
+
+Sensitive
+
+→ Restricted Model Environment
+
+Highly Restricted
+
+→ Private / Local Processing
+
+Actual routing shall follow deployment policy.
+
+END OF 76.25
+
+76.26 DATA REDACTION
+
+Before transmission to an unapproved environment:
+
+Sensitive Data
+
+↓
+
+Detection
+
+↓
+
+Redaction / Transformation
+
+↓
+
+Validation
+
+↓
+
+Approved Processing
+
+Original restricted data shall remain protected.
+
+END OF 76.26
+
+76.27 PSEUDONYMIZATION
+
+Where suitable, GSIR may replace direct identifiers with controlled identifiers.
+
+Original Identifier
+
+↓
+
+Pseudonymous Identifier
+
+↓
+
+Processing
+
+The mapping shall be separately protected.
+
+END OF 76.27
+
+76.28 ANONYMIZATION
+
+Where true anonymization is required, the resulting data shall be assessed for re-identification risk.
+
+An anonymized dataset shall not be assumed safe solely because obvious identifiers were removed.
+
+END OF 76.28
+
+76.29 CONSENT
+
+Where required by the research context, GSIR shall support consent records.
+
+consent_id
+
+subject_reference
+
+purpose
+
+scope
+
+version
+
+granted_at
+
+withdrawn_at
+
+status
+
+END OF 76.29
+
+76.30 CONSENT PURPOSE
+
+Consent may be associated with:
+
+Collection
+
+Storage
+
+Research
+
+Sharing
+
+AI Processing
+
+Secondary Use
+
+Publication
+
+END OF 76.30
+
+76.31 CONSENT WITHDRAWAL
+
+When consent is withdrawn:
+
+Withdrawal
+
+↓
+
+Affected Data
+
+↓
+
+Affected Workflows
+
+↓
+
+Affected Sharing
+
+↓
+
+Policy Enforcement
+
+The system shall determine the required downstream action according to applicable policy.
+
+END OF 76.31
+
+76.32 DATA USAGE POLICY
+
+Each restricted research object may have a usage policy.
+
+Allowed Purpose
+
+Allowed Users
+
+Allowed Projects
+
+Allowed Processing
+
+Allowed Models
+
+Allowed Sharing
+
+Expiration
+
+END OF 76.32
+
+76.33 PURPOSE LIMITATION
+
+Data collected for one approved purpose shall not automatically be reused for a different purpose.
+
+A secondary use shall pass its applicable authorization and governance checks.
+
+END OF 76.33
+
+76.34 DATA SHARING
+
+Sharing shall support:
+
+Private
+
+Project
+
+Organization
+
+Collaborator
+
+Public
+
+External Partner
+
+Each sharing operation shall evaluate permissions.
+
+END OF 76.34
+
+76.35 EXTERNAL SHARING
+
+Before external sharing:
+
+Resource
+
+↓
+
+Classification
+
+↓
+
+License
+
+↓
+
+Ownership
+
+↓
+
+Consent / Policy
+
+↓
+
+Recipient
+
+↓
+
+Approval
+
+↓
+
+Share
+
+END OF 76.35
+
+76.36 SHARE AUDIT
+
+Every significant sharing operation shall record:
+
+Actor
+
+Resource
+
+Recipient
+
+Purpose
+
+Timestamp
+
+Policy
+
+Approval
+
+Result
+
+END OF 76.36
+
+76.37 DOWNLOAD CONTROL
+
+Sensitive files may require:
+
+Download Permission
+
+Watermarking
+
+Expiry
+
+Audit
+
+Approved Client
+
+END OF 76.37
+
+76.38 EXPORT CONTROL
+
+Exports shall enforce the same governance rules as direct access.
+
+View Allowed
+
+≠
+
+Export Allowed
+
+END OF 76.38
+
+76.39 API ACCESS CONTROL
+
+Every protected API operation shall evaluate:
+
+Identity
+
+Resource
+
+Action
+
+Scope
+
+Classification
+
+Policy
+
+END OF 76.39
+
+76.40 SEARCH ACCESS CONTROL
+
+Search shall enforce access before returning candidate data.
+
+Unauthorized Resource
+
+→ Must Not Enter Search Result
+
+Filtering only after sensitive content has entered the result set is insufficient.
+
+END OF 76.40
+
+76.41 VECTOR ACCESS CONTROL
+
+Vector retrieval shall enforce the same access scope as the underlying source.
+
+A private document's embedding shall not expose the document through semantic similarity.
+
+END OF 76.41
+
+76.42 KNOWLEDGE GRAPH ACCESS CONTROL
+
+Knowledge graph relationships shall also be access-controlled.
+
+Restricted Entity
+
+↓
+
+Restricted Relationship
+
+↓
+
+Restricted Evidence
+
+Indirect traversal shall not bypass permissions.
+
+END OF 76.42
+
+76.43 CACHE ACCESS CONTROL
+
+Caches shall preserve authorization scope.
+
+A cached result produced for one project shall not become visible to another project through shared cache keys.
+
+END OF 76.43
+
+76.44 TENANT ISOLATION
+
+For multi-tenant GSIR:
+
+Tenant Context
+
+↓
+
+Request
+
+↓
+
+Service
+
+↓
+
+Repository
+
+↓
+
+Storage
+
+shall remain consistent throughout the request lifecycle.
+
+END OF 76.44
+
+76.45 TENANT DATA RULE
+
+Cross-tenant data access shall require explicit shared-resource governance.
+
+Tenant A
+
+≠
+
+Tenant B
+
+unless an approved sharing relationship exists.
+
+END OF 76.45
+
+76.46 DATA RESIDENCY
+
+Governance policies may specify where data can be:
+
+Stored
+
+Processed
+
+Copied
+
+Backed Up
+
+Exported
+
+The execution scheduler shall respect residency requirements.
+
+END OF 76.46
+
+76.47 PROCESSING LOCATION
+
+A workflow shall evaluate location constraints before dispatching tasks.
+
+Dataset
+
+↓
+
+Residency Policy
+
+↓
+
+Eligible Workers
+
+↓
+
+Scheduler
+
+END OF 76.47
+
+76.48 DATA RETENTION
+
+Retention policies shall define how long objects remain available.
+
+Object
+
+↓
+
+Retention Policy
+
+↓
+
+Review
+
+↓
+
+Archive / Delete / Retain
+
+END OF 76.48
+
+76.49 RETENTION POLICY
+
+A policy shall contain:
+
+policy_id
+
+object_type
+
+classification
+
+retention_period
+
+archive_period
+
+deletion_method
+
+review_period
+
+legal_hold_behavior
+
+version
+
+END OF 76.49
+
+76.50 LEGAL HOLD
+
+A resource under legal or institutional hold shall not be automatically deleted.
+
+Retention Expired
+
+↓
+
+Legal Hold?
+
+├── YES → Preserve
+
+└── NO → Continue Retention Workflow
+
+END OF 76.50
+
+76.51 ARCHIVING
+
+Archiving may move data to lower-cost storage while preserving:
+
+Identity
+
+Version
+
+Provenance
+
+Access Policy
+
+Integrity
+
+Recovery Path
+
+END OF 76.51
+
+76.52 DELETION
+
+Deletion shall distinguish:
+
+Logical Deletion
+
+Archive
+
+Permanent Deletion
+
+Crypto-Deletion Where Applicable
+
+Retention Expiration
+
+END OF 76.52
+
+76.53 DELETION WORKFLOW
+
+Deletion Request
+
+↓
+
+Authorization
+
+↓
+
+Dependency Check
+
+↓
+
+Retention Check
+
+↓
+
+Legal Hold Check
+
+↓
+
+Approval
+
+↓
+
+Deletion
+
+↓
+
+Audit
+
+END OF 76.53
+
+76.54 DEPENDENCY-AWARE DELETION
+
+Before deleting a resource, GSIR shall identify dependent objects.
+
+Dataset
+
+↓
+
+Derived Dataset
+
+↓
+
+Model
+
+↓
+
+Prediction
+
+↓
+
+Claim
+
+The system shall determine whether dependencies must also be retained or invalidated.
+
+END OF 76.54
+
+76.55 DELETION PROVENANCE
+
+Deletion itself shall become an auditable event.
+
+Resource
+
+↓
+
+Deletion Activity
+
+↓
+
+Actor
+
+↓
+
+Reason
+
+↓
+
+Timestamp
+
+END OF 76.55
+
+76.56 BACKUP GOVERNANCE
+
+Backups shall follow the classification and retention policy of the underlying data.
+
+Sensitive data shall not become uncontrolled through backup storage.
+
+END OF 76.56
+
+76.57 BACKUP ACCESS
+
+Backup access shall be restricted to authorized recovery personnel and services.
+
+END OF 76.57
+
+76.58 DATA LINEAGE GOVERNANCE
+
+Every important derived object shall preserve:
+
+Input
+
+Transformation
+
+Actor
+
+Software
+
+Model
+
+Configuration
+
+Output
+
+Timestamp
+
+This is consistent with FAIR's emphasis on detailed provenance for reusable research objects. ([nature.com](https://www.nature.com/articles/sdata201618))
+
+END OF 76.58
+
+76.59 DATA QUALITY GOVERNANCE
+
+Production datasets shall have:
+
+Owner
+
+Quality Profile
+
+Validation Rules
+
+Review Frequency
+
+Known Issues
+
+Status
+
+END OF 76.59
+
+76.60 DATA STEWARD REVIEW
+
+Data stewards shall review:
+
+Classification
+
+Metadata
+
+Quality
+
+Access Policy
+
+Retention
+
+Sharing
+
+Known Risks
+
+according to defined schedules.
+
+END OF 76.60
+
+76.61 POLICY ENGINE
+
+Directory:
+
+backend/src/governance/policies/
+
+Files:
+
+policy-registry.ts
+
+policy-evaluator.ts
+
+policy-condition.ts
+
+policy-action.ts
+
+policy-version.ts
+
+policy-context.ts
+
+index.ts
+
+The policy engine shall evaluate governance rules consistently across the platform.
+
+END OF 76.61
+
+76.62 POLICY STRUCTURE
+
+A governance rule shall contain:
+
+Policy ID
+
+Version
+
+Scope
+
+Condition
+
+Decision
+
+Required Approval
+
+Action
+
+Priority
+
+Effective Date
+
+Expiration
+
+END OF 76.62
+
+76.63 POLICY EVALUATION
+
+Request
+
+↓
+
+Policy Context
+
+↓
+
+Policy Evaluation
+
+↓
+
+ALLOW
+
+DENY
+
+REDACT
+
+REQUIRE_APPROVAL
+
+AUDIT
+
+END OF 76.63
+
+76.64 POLICY PRIORITY
+
+When multiple policies apply:
+
+Global Policy
+
+↓
+
+Organization Policy
+
+↓
+
+Project Policy
+
+↓
+
+Resource Policy
+
+More restrictive applicable policies shall not be silently bypassed.
+
+END OF 76.64
+
+76.65 POLICY VERSIONING
+
+Every governance decision shall identify the policy version used.
+
+Policy V1
+
+↓
+
+Decision
+
+This allows historical decisions to be explained.
+
+END OF 76.65
+
+76.66 GOVERNANCE EXCEPTIONS
+
+An exception shall contain:
+
+Exception ID
+
+Policy
+
+Requester
+
+Reason
+
+Scope
+
+Approval
+
+Start
+
+Expiration
+
+Review
+
+Exceptions shall expire automatically.
+
+END OF 76.66
+
+76.67 EXCEPTION SAFETY
+
+Exceptions shall never silently become permanent policy.
+
+Every exception shall remain visible to authorized auditors.
+
+END OF 76.67
+
+76.68 SECURITY INCIDENT
+
+A data-security incident shall create:
+
+Incident ID
+
+Resource
+
+Severity
+
+Detected At
+
+Detection Source
+
+Affected Scope
+
+Containment
+
+Resolution
+
+Root Cause
+
+END OF 76.68
+
+76.69 INCIDENT RESPONSE
+
+Detect
+
+↓
+
+Classify
+
+↓
+
+Contain
+
+↓
+
+Investigate
+
+↓
+
+Remediate
+
+↓
+
+Recover
+
+↓
+
+Review
+
+END OF 76.69
+
+76.70 DATA BREACH RESPONSE
+
+For a suspected unauthorized disclosure:
+
+Detection
+
+↓
+
+Access Revocation
+
+↓
+
+Session / Credential Review
+
+↓
+
+Scope Identification
+
+↓
+
+Containment
+
+↓
+
+Forensic Analysis
+
+↓
+
+Notification According to Policy
+
+↓
+
+Recovery
+
+END OF 76.70
+
+76.71 SECURITY AUDIT
+
+Security audits shall inspect:
+
+Access
+
+Permissions
+
+Policy Changes
+
+Sensitive Data
+
+Exports
+
+Downloads
+
+Administrative Actions
+
+AI Access
+
+Tool Access
+
+END OF 76.71
+
+76.72 AUDIT LOG
+
+Audit events shall contain:
+
+event_id
+
+actor
+
+action
+
+resource
+
+scope
+
+timestamp
+
+request_id
+
+policy_version
+
+result
+
+metadata
+
+Audit records shall be protected against unauthorized modification.
+
+END OF 76.72
+
+76.73 AUDIT IMMUTABILITY
+
+Historical audit records shall normally be append-only.
+
+Corrections shall be recorded as additional events rather than rewriting history.
+
+END OF 76.73
+
+76.74 GOVERNANCE DASHBOARD
+
+Authorized users shall be able to view:
+
+Data Inventory
+
+Classifications
+
+Policy Violations
+
+Access Events
+
+Sharing
+
+Exports
+
+Retention
+
+Legal Holds
+
+Incidents
+
+Exceptions
+
+Quality
+
+END OF 76.74
+
+76.75 DATA INVENTORY
+
+The catalog shall maintain an inventory of:
+
+Datasets
+
+Documents
+
+Files
+
+Experiments
+
+Models
+
+Workflows
+
+Research Results
+
+Knowledge Objects
+
+Software
+
+with their ownership, location, classification and status.
+
+END OF 76.75
+
+76.76 DATA ACCESS REVIEW
+
+Access permissions shall be periodically reviewed.
+
+Permission
+
+↓
+
+Review
+
+├── Keep
+
+├── Reduce
+
+└── Remove
+
+END OF 76.76
+
+76.77 STALE ACCESS
+
+Unused or expired permissions shall be removed.
+
+This shall apply to:
+
+Users
+
+Service Accounts
+
+Agents
+
+Projects
+
+External Collaborators
+
+END OF 76.77
+
+76.78 GOVERNANCE + AI AGENTS
+
+AI agents shall be governed by the same resource policies as human actors.
+
+AI Agent
+
+↓
+
+Identity
+
+↓
+
+Permission
+
+↓
+
+Policy
+
+↓
+
+Resource
+
+↓
+
+Action
+
+END OF 76.78
+
+76.79 GOVERNANCE + AUTONOMOUS RESEARCH
+
+Autonomous research workflows shall have:
+
+Defined Scope
+
+Tool Allowlist
+
+Data Allowlist
+
+Resource Budget
+
+Execution Duration
+
+Human Escalation
+
+Audit
+
+END OF 76.79
+
+76.80 GOVERNANCE + PHYSICAL EXPERIMENTS
+
+Physical laboratory actions shall additionally require:
+
+Instrument Permission
+
+Safety Policy
+
+Calibration
+
+Parameter Limits
+
+Approval Where Required
+
+Emergency Controls
+
+END OF 76.80
+
+76.81 GOVERNANCE + EXTERNAL APIS
+
+External API use shall be governed by:
+
+Approved Provider
+
+Data Classification
+
+Allowed Data
+
+Purpose
+
+Rate Limit
+
+Cost
+
+Geographic Restrictions
+
+Audit
+
+END OF 76.81
+
+76.82 GOVERNANCE + FILE UPLOAD
+
+Uploaded data shall pass through:
+
+Authentication
+
+↓
+
+Upload Permission
+
+↓
+
+File Validation
+
+↓
+
+Classification
+
+↓
+
+Malware / Safety Processing
+
+↓
+
+Storage Policy
+
+↓
+
+Processing Policy
+
+END OF 76.82
+
+76.83 GOVERNANCE + EXPORT
+
+Export policies shall evaluate:
+
+User
+
+Resource
+
+Classification
+
+Destination
+
+Format
+
+License
+
+Consent
+
+Retention
+
+END OF 76.83
+
+76.84 GOVERNANCE + PUBLICATION
+
+Before publication:
+
+Research Result
+
+↓
+
+Provenance Check
+
+↓
+
+Evidence Check
+
+↓
+
+Data License Check
+
+↓
+
+Privacy Check
+
+↓
+
+Human Review
+
+↓
+
+Publication
+
+END OF 76.84
+
+76.85 GOVERNANCE + KNOWLEDGE GRAPH
+
+Knowledge graph updates shall respect:
+
+Source Permission
+
+Evidence Permission
+
+Project Scope
+
+Tenant Scope
+
+Classification
+
+Write Permission
+
+Validation
+
+END OF 76.85
+
+76.86 GOVERNANCE + RAG
+
+RAG shall obey the same access rules.
+
+User
+
+↓
+
+Authorized Corpus
+
+↓
+
+Retrieval
+
+↓
+
+Context
+
+↓
+
+AI
+
+Unauthorized content shall never enter the context.
+
+END OF 76.86
+
+76.87 GOVERNANCE + MEMORY
+
+Long-term memory writes shall pass governance checks.
+
+Candidate Memory
+
+↓
+
+Classification
+
+↓
+
+Scope
+
+↓
+
+Provenance
+
+↓
+
+Validation
+
+↓
+
+Stored Memory
+
+END OF 76.87
+
+76.88 GOVERNANCE + SELF-IMPROVEMENT
+
+Self-improvement systems shall not use restricted data outside authorized policies.
+
+Training or evaluation datasets shall have explicit:
+
+Source
+
+License
+
+Permission
+
+Classification
+
+Purpose
+
+Retention
+
+END OF 76.88
+
+76.89 POLICY-DRIVEN MODEL TRAINING
+
+Data shall be eligible for model training only if policy allows it.
+
+Dataset
+
+↓
+
+Training Eligibility
+
+├── Allowed
+
+├── Restricted
+
+└── Prohibited
+
+END OF 76.89
+
+76.90 GOVERNANCE TESTING
+
+Tests shall include:
+
+Authorization
+
+Classification
+
+Policy Evaluation
+
+Tenant Isolation
+
+Field Access
+
+Export Control
+
+Retention
+
+Deletion
+
+Legal Hold
+
+AI Data Routing
+
+Agent Permissions
+
+Audit
+
+END OF 76.90
+
+76.91 POLICY SIMULATION
+
+Before deploying a new policy:
+
+New Policy
+
+↓
+
+Historical Requests
+
+↓
+
+Simulate Decisions
+
+↓
+
+Compare
+
+↓
+
+Review
+
+↓
+
+Deploy
+
+This reduces unexpected production access changes.
+
+END OF 76.91
+
+76.92 POLICY MONITORING
+
+The system shall monitor:
+
+Denied Requests
+
+Policy Violations
+
+Exceptions
+
+Expired Permissions
+
+Sensitive Exports
+
+Unauthorized Attempts
+
+END OF 76.92
+
+76.93 GOVERNANCE METRICS
+
+Metrics shall include:
+
+Policy Violations
+
+Access Denials
+
+Sensitive Data Access
+
+External Shares
+
+Expired Permissions
+
+Retention Events
+
+Deletion Events
+
+Incidents
+
+Audit Coverage
+
+Classification Coverage
+
+END OF 76.93
+
+76.94 GOVERNANCE PERFORMANCE
+
+Policy decisions shall introduce minimal latency.
+
+Frequently evaluated policies may use controlled caching, but cached decisions must respect policy and permission changes.
+
+END OF 76.94
+
+76.95 GOVERNANCE AVAILABILITY
+
+Failure of the policy engine shall default according to operation risk.
+
+For highly sensitive operations:
+
+Policy Service Unavailable
+
+↓
+
+DENY
+
+For low-risk operations, an explicitly approved fallback policy may be used.
+
+END OF 76.95
+
+76.96 GOVERNANCE ARCHITECTURE
+
+                         GSIR USER / AGENT
+
+                                │
+
+                                ▼
+
+                         REQUEST CONTEXT
+
+                                │
+
+                                ▼
+
+                       IDENTITY + AUTH
+
+                                │
+
+                                ▼
+
+                       POLICY EVALUATION
+
+                                │
+
+          ┌─────────────────────┼─────────────────────┐
+
+          ▼                     ▼                     ▼
+
+     CLASSIFICATION         PURPOSE              PERMISSION
+
+          │                     │                     │
+
+          └─────────────────────┼─────────────────────┘
+
+                                ▼
+
+                         RESOURCE ACCESS
+
+                                │
+
+                    ┌───────────┼───────────┐
+
+                    ▼           ▼           ▼
+
+                  READ        WRITE       EXPORT
+
+                    │           │           │
+
+                    └───────────┼───────────┘
+
+                                ▼
+
+                              AUDIT
+
+                                │
+
+                                ▼
+
+                           PROVENANCE
+
+                                │
+
+                                ▼
+
+                       RETENTION / REVIEW
+
+END OF 76.96
+
+76.97 GOVERNANCE COMPLETION CRITERIA
+
+The GSIR governance architecture shall be considered complete when:
+
+- Data ownership is defined.
+
+- Data stewardship is defined.
+
+- Classification exists.
+
+- Classification metadata exists.
+
+- Classification propagation exists.
+
+- Sensitive-data policies exist.
+
+- Privacy-by-design requirements exist.
+
+- Data minimization exists.
+
+- Authentication is centralized.
+
+- Authorization is enforced.
+
+- Role-based access is supported.
+
+- Attribute-based access is supported where required.
+
+- Resource-level authorization exists.
+
+- Field-level protection exists where required.
+
+- Service-to-service authorization exists.
+
+- Least privilege is enforced.
+
+- AI access is governed.
+
+- AI data routing is policy-controlled.
+
+- Redaction is supported.
+
+- Pseudonymization is supported where required.
+
+- Consent management exists where required.
+
+- Purpose limitation is enforced.
+
+- External sharing is controlled.
+
+- Export control exists.
+
+- Tenant isolation exists where required.
+
+- Data residency rules are supported.
+
+- Retention policies exist.
+
+- Legal holds are supported.
+
+- Archiving exists.
+
+- Deletion workflows exist.
+
+- Dependency-aware deletion exists.
+
+- Backup governance exists.
+
+- Provenance is preserved.
+
+- Data quality governance exists.
+
+- Policy engine exists.
+
+- Policy versioning exists.
+
+- Governance exceptions are controlled.
+
+- Security incidents are tracked.
+
+- Audit records are protected.
+
+- Access reviews exist.
+
+- Stale access is removed.
+
+- Autonomous research is governed.
+
+- Laboratory operations are governed.
+
+- External APIs are governed.
+
+- RAG access is governed.
+
+- Knowledge graph access is governed.
+
+- Memory access is governed.
+
+- AI training-data eligibility is governed.
+
+- Policy simulation exists.
+
+- Governance monitoring exists.
+
+- Governance metrics exist.
+
+- Fail-secure behavior exists for high-risk operations.
+
+END OF 76.97
+
+76.98 FINAL GOVERNANCE PRINCIPLE
+
+The GSIR governance system shall ensure that access to scientific information is determined by policy rather than convenience.
+
+The complete decision path shall be:
+
+WHO
+
+↓
+
+WANTS TO DO WHAT
+
+↓
+
+TO WHICH RESOURCE
+
+↓
+
+FOR WHAT PURPOSE
+
+↓
+
+UNDER WHICH CLASSIFICATION
+
+↓
+
+UNDER WHICH POLICY
+
+↓
+
+WITH WHICH PERMISSION
+
+↓
+
+IN WHICH ENVIRONMENT
+
+↓
+
+WITH WHICH DATA
+
+↓
+
+UNDER WHICH AUDIT REQUIREMENTS
+
+Only when all applicable controls permit the operation shall execution proceed.
+
+END OF 76.98
+
+76.99 FINAL DATA GOVERNANCE REQUIREMENT
+
+GSIR shall preserve the following fundamental rules:
+
+NO UNAUTHORIZED DATA ACCESS.
+
+NO UNCONTROLLED DATA SHARING.
+
+NO UNTRACKED SENSITIVE DATA PROCESSING.
+
+NO UNGOVERNED AI ACCESS.
+
+NO SILENT POLICY OVERRIDES.
+
+NO UNEXPLAINED DATA DELETION.
+
+NO LOSS OF PROVENANCE.
+
+NO CROSS-TENANT DATA LEAKAGE.
+
+NO TRUST BASED ONLY ON NETWORK LOCATION.
+
+NO AI AGENT WITH UNBOUNDED AUTHORITY.
+
+The governance architecture shall operate across the full research lifecycle:
+
+COLLECT
+
+↓
+
+CLASSIFY
+
+↓
+
+STORE
+
+↓
+
+PROCESS
+
+↓
+
+ANALYZE
+
+↓
+
+SHARE
+
+↓
+
+PUBLISH
+
+↓
+
+ARCHIVE
+
+↓
+
+DELETE / RETAIN
+
+At every stage, the system shall preserve appropriate security, privacy, ownership, provenance, licensing, access and scientific-integrity controls.
+
+END OF 76.99
+
+76.100 FINAL ARCHITECTURAL PRINCIPLE
+
+The GSIR governance layer shall become a cross-cutting control system for the complete platform.
+
+                         GSIR PLATFORM
+
+                              │
+
+          ┌───────────────────┼───────────────────┐
+
+          ▼                   ▼                   ▼
+
+       DATA                  AI               RESEARCH
+
+          │                   │                   │
+
+          ▼                   ▼                   ▼
+
+      WORKFLOWS          KNOWLEDGE          EXPERIMENTS
+
+          │                   │                   │
+
+          └───────────────────┼───────────────────┘
+
+                              ▼
+
+                       GOVERNANCE ENGINE
+
+                              │
+
+             ┌────────────────┼────────────────┐
+
+             ▼                ▼                ▼
+
+          POLICY           SECURITY          PRIVACY
+
+             │                │                │
+
+             └────────────────┼────────────────┘
+
+                              ▼
+
+                            AUDIT
+
+                              │
+
+                              ▼
+
+                         PROVENANCE
+
+                              │
+
+                              ▼
+
+                     TRUSTED GSIR SYSTEM
+
+The final GSIR architecture shall therefore make governance a foundational capability rather than an administrative layer added after implementation.
+
+Every significant scientific resource and every significant AI operation shall remain subject to explicit rules for identity, authorization, classification, privacy, provenance, retention, sharing, scientific integrity and accountability.
+
+END OF PART 76
+
+PART 76 COMPLETED.
+
+PART 77 — GSIR TRUST, PROVENANCE INTEGRITY, REPRODUCIBILITY AND RESEARCH ASSURANCE ARCHITECTURE

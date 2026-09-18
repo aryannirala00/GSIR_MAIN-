@@ -1,0 +1,2241 @@
+﻿PART 77 — GSIR TRUST, PROVENANCE INTEGRITY, REPRODUCIBILITY AND RESEARCH ASSURANCE ARCHITECTURE
+
+77.1 PURPOSE
+
+The GSIR Research Assurance Layer shall ensure that scientific results, data transformations, AI operations, models, workflows, experiments, evidence and knowledge can be independently inspected, reproduced, verified and trusted.
+
+Scientific data governance increasingly requires lifecycle controls spanning stakeholders, processes and governance elements, while provenance integrity is particularly important for scientific workflows and AI systems. 
+
+END OF 77.1
+
+77.2 CORE ASSURANCE MODEL
+
+RESEARCH INPUT
+
+      ↓
+
+IDENTITY
+
+      ↓
+
+PROVENANCE
+
+      ↓
+
+TRANSFORMATION
+
+      ↓
+
+EXECUTION
+
+      ↓
+
+OUTPUT
+
+      ↓
+
+VALIDATION
+
+      ↓
+
+EVIDENCE
+
+      ↓
+
+REPRODUCTION
+
+      ↓
+
+ASSURANCE
+
+END OF 77.2
+
+77.3 ASSURANCE DIRECTORY
+
+backend/src/assurance/
+
+assurance.module.ts
+
+assurance.controller.ts
+
+assurance.service.ts
+
+assurance.repository.ts
+
+assurance.types.ts
+
+provenance/
+
+integrity/
+
+reproducibility/
+
+verification/
+
+attestation/
+
+evidence/
+
+checksums/
+
+signatures/
+
+execution/
+
+environment/
+
+artifacts/
+
+comparisons/
+
+reports/
+
+assurance-policies/
+
+index.ts
+
+END OF 77.3
+
+77.4 TRUST OBJECT
+
+Every major research execution shall produce a trust record containing:
+
+trust_id
+
+object_id
+
+execution_id
+
+provenance_id
+
+integrity_status
+
+verification_status
+
+reproducibility_status
+
+assurance_level
+
+created_at
+
+END OF 77.4
+
+77.5 PROVENANCE CHAIN
+
+SOURCE
+
+  ↓
+
+INGESTION
+
+  ↓
+
+NORMALIZATION
+
+  ↓
+
+TRANSFORMATION
+
+  ↓
+
+ANALYSIS
+
+  ↓
+
+MODEL
+
+  ↓
+
+EXECUTION
+
+  ↓
+
+RESULT
+
+  ↓
+
+CLAIM
+
+Every significant transition shall be represented as a provenance event.
+
+END OF 77.5
+
+77.6 PROVENANCE EVENT
+
+event_id
+
+activity_id
+
+actor
+
+inputs
+
+outputs
+
+software
+
+model
+
+parameters
+
+environment
+
+timestamp
+
+configuration
+
+status
+
+END OF 77.6
+
+77.7 PROVENANCE INTEGRITY
+
+Provenance records shall themselves be protected against unauthorized modification.
+
+PROVENANCE
+
+    ↓
+
+HASH
+
+    ↓
+
+SIGNATURE / ATTESTATION
+
+    ↓
+
+IMMUTABLE RECORD
+
+Integrity and authenticity are central properties of secure provenance. 
+
+END OF 77.7
+
+77.8 CONTENT INTEGRITY
+
+Important artifacts shall receive cryptographic fingerprints.
+
+artifact
+
+   ↓
+
+canonical representation
+
+   ↓
+
+cryptographic hash
+
+   ↓
+
+artifact_hash
+
+END OF 77.8
+
+77.9 ARTIFACT IDENTITY
+
+An artifact shall be identified independently from its storage location.
+
+artifact_id
+
+content_hash
+
+version
+
+storage_location
+
+A storage relocation shall not change the logical artifact identity.
+
+END OF 77.9
+
+77.10 HASH VERIFICATION
+
+Before an artifact is consumed:
+
+Stored Artifact
+
+↓
+
+Calculate Hash
+
+↓
+
+Compare Expected Hash
+
+↓
+
+MATCH / MISMATCH
+
+A mismatch shall prevent trust-sensitive processing.
+
+END OF 77.10
+
+77.11 DATA INTEGRITY
+
+Integrity checks shall apply to:
+
+Datasets
+
+Documents
+
+Models
+
+Code
+
+Configurations
+
+Workflow Definitions
+
+Experiment Results
+
+Evidence
+
+Knowledge Snapshots
+
+END OF 77.11
+
+77.12 MODEL INTEGRITY
+
+A model record shall contain:
+
+model_id
+
+model_version
+
+artifact_hash
+
+architecture
+
+weights_hash
+
+configuration_hash
+
+runtime_requirements
+
+provenance_id
+
+AI provenance research increasingly emphasizes tracking model lineage, dependencies, configuration and runtime state for reproducibility and security. 
+
+END OF 77.12
+
+77.13 SOFTWARE INTEGRITY
+
+Software used in scientific execution shall record:
+
+repository
+
+commit
+
+release
+
+dependency_lock
+
+container_digest
+
+runtime
+
+build_hash
+
+END OF 77.13
+
+77.14 ENVIRONMENT FINGERPRINT
+
+Each reproducibility-sensitive execution shall capture:
+
+OS
+
+Runtime
+
+Libraries
+
+Dependencies
+
+GPU
+
+CUDA / accelerator environment
+
+Container
+
+Environment Variables
+
+Configuration
+
+END OF 77.14
+
+77.15 EXECUTION FINGERPRINT
+
+workflow_version
+
+code_version
+
+model_version
+
+dataset_version
+
+configuration_version
+
+environment_version
+
+shall collectively identify the execution context.
+
+END OF 77.15
+
+77.16 REPRODUCIBILITY RECORD
+
+reproduction_id
+
+original_execution
+
+reproduction_execution
+
+input_versions
+
+environment
+
+comparison
+
+result
+
+difference
+
+status
+
+END OF 77.16
+
+77.17 REPRODUCTION LEVELS
+
+GSIR shall distinguish:
+
+LEVEL 0 — NOT REPRODUCIBLE
+
+LEVEL 1 — DATA REPRODUCIBLE
+
+LEVEL 2 — COMPUTATION REPRODUCIBLE
+
+LEVEL 3 — ENVIRONMENT REPRODUCIBLE
+
+LEVEL 4 — RESULT VERIFIED
+
+LEVEL 5 — INDEPENDENTLY REPRODUCED
+
+END OF 77.17
+
+77.18 DETERMINISTIC EXECUTION
+
+Where deterministic execution is possible, GSIR shall record and control:
+
+Random Seed
+
+Algorithm Version
+
+Input Ordering
+
+Parallelism
+
+Numerical Precision
+
+Hardware
+
+Configuration
+
+END OF 77.18
+
+77.19 NON-DETERMINISTIC EXECUTION
+
+When deterministic reproduction is impossible, GSIR shall record the sources of nondeterminism.
+
+nondeterministic_sources[]
+
+expected_variation
+
+statistical_tolerance
+
+comparison_method
+
+END OF 77.19
+
+77.20 RESULT COMPARISON
+
+Reproduction shall compare:
+
+Exact Equality
+
+Numerical Tolerance
+
+Statistical Similarity
+
+Structural Similarity
+
+Semantic Similarity
+
+The comparison method shall be selected according to the artifact type.
+
+END OF 77.20
+
+77.21 RESEARCH RESULT VERIFICATION
+
+Result
+
+↓
+
+Integrity Check
+
+↓
+
+Input Verification
+
+↓
+
+Execution Verification
+
+↓
+
+Statistical Validation
+
+↓
+
+Evidence Validation
+
+↓
+
+Verified Result
+
+END OF 77.21
+
+77.22 CLAIM ASSURANCE
+
+A scientific claim shall reference:
+
+claim_id
+
+claim_text
+
+evidence[]
+
+source[]
+
+analysis[]
+
+execution[]
+
+confidence
+
+validation_status
+
+END OF 77.22
+
+77.23 EVIDENCE CHAIN
+
+CLAIM
+
+ ↓
+
+EVIDENCE
+
+ ↓
+
+SOURCE
+
+ ↓
+
+SOURCE VERSION
+
+ ↓
+
+EXTRACTION
+
+ ↓
+
+ANALYSIS
+
+No important claim shall become authoritative without a traceable evidence path.
+
+END OF 77.23
+
+77.24 AI-GENERATED EVIDENCE
+
+AI-extracted evidence shall retain:
+
+model
+
+model_version
+
+prompt / instruction reference
+
+source
+
+location
+
+extraction_time
+
+confidence
+
+validation_status
+
+AI-assisted scientific work benefits from treating AI interactions and outputs as inspectable research-process artifacts rather than opaque operations. 
+
+END OF 77.24
+
+77.25 AI EXECUTION RECORD
+
+Every governance-sensitive AI operation shall record:
+
+agent_id
+
+model_id
+
+model_version
+
+system_configuration
+
+input_reference
+
+retrieved_context
+
+tool_calls
+
+outputs
+
+validation
+
+timestamp
+
+END OF 77.25
+
+77.26 TOOL EXECUTION PROVENANCE
+
+Agent
+
+ ↓
+
+Tool Request
+
+ ↓
+
+Authorization
+
+ ↓
+
+Tool
+
+ ↓
+
+Input
+
+ ↓
+
+Execution
+
+ ↓
+
+Output
+
+Each step shall be auditable.
+
+END OF 77.26
+
+77.27 RETRIEVAL PROVENANCE
+
+For RAG operations:
+
+Query
+
+↓
+
+Retriever
+
+↓
+
+Index Version
+
+↓
+
+Retrieved Objects
+
+↓
+
+Object Versions
+
+↓
+
+Ranking
+
+↓
+
+Context
+
+shall be retained where reproducibility or auditability requires it.
+
+END OF 77.27
+
+77.28 PROMPT PROVENANCE
+
+Prompts shall be versioned when they materially influence scientific output.
+
+prompt_id
+
+prompt_version
+
+template
+
+variables
+
+system_context
+
+model_version
+
+END OF 77.28
+
+77.29 KNOWLEDGE SNAPSHOT
+
+AI reasoning shall be reproducible against a defined knowledge state.
+
+knowledge_snapshot_id
+
+graph_version
+
+document_versions
+
+ontology_version
+
+embedding_index_version
+
+END OF 77.29
+
+77.30 RESEARCH ENVIRONMENT SNAPSHOT
+
+A reproducible execution may require a complete environment snapshot:
+
+Code
+
+Dependencies
+
+Models
+
+Data References
+
+Configuration
+
+Runtime
+
+Hardware
+
+Knowledge State
+
+END OF 77.30
+
+77.31 CONTAINER ASSURANCE
+
+Containerized workflows shall record:
+
+image_digest
+
+base_image
+
+packages
+
+runtime
+
+entrypoint
+
+configuration
+
+END OF 77.31
+
+77.32 DEPENDENCY ASSURANCE
+
+Every reproducible workflow shall identify dependencies.
+
+Workflow
+
+ ↓
+
+Package
+
+ ↓
+
+Version
+
+ ↓
+
+Source
+
+ ↓
+
+Integrity Hash
+
+END OF 77.32
+
+77.33 SOFTWARE BILL OF MATERIALS
+
+Where appropriate, GSIR shall maintain an SBOM for execution environments and an AI-specific inventory for model-related assets.
+
+AI supply-chain assurance increasingly requires tracking models, dependencies, runtime components and configuration rather than software packages alone. 
+
+END OF 77.33
+
+77.34 AI BILL OF MATERIALS
+
+The AI inventory shall include:
+
+Model
+
+Weights
+
+Training Data Reference
+
+Fine-Tuning Data
+
+Prompt Templates
+
+Libraries
+
+Dependencies
+
+Runtime
+
+Configuration
+
+Tools
+
+Agent Components
+
+END OF 77.34
+
+77.35 EXPERIMENT ASSURANCE
+
+An experiment shall produce:
+
+experiment_id
+
+protocol_version
+
+input_versions
+
+parameter_set
+
+instrument_versions
+
+environment
+
+execution
+
+outputs
+
+validation
+
+END OF 77.35
+
+77.36 INSTRUMENT ASSURANCE
+
+Scientific instruments shall record:
+
+instrument_id
+
+model
+
+firmware
+
+calibration
+
+configuration
+
+operator
+
+timestamp
+
+END OF 77.36
+
+77.37 CALIBRATION PROVENANCE
+
+Measurements shall link to the calibration state of the instrument.
+
+Measurement
+
+↓
+
+Instrument
+
+↓
+
+Calibration Version
+
+↓
+
+Calibration Record
+
+END OF 77.37
+
+77.38 DATA TRANSFORMATION ASSURANCE
+
+Each transformation shall record:
+
+Transformation ID
+
+Input
+
+Output
+
+Code
+
+Version
+
+Parameters
+
+Actor
+
+Timestamp
+
+Hash
+
+END OF 77.38
+
+77.39 TRANSFORMATION VERIFICATION
+
+A transformation may be verified by:
+
+Input Hash
+
++
+
+Code Version
+
++
+
+Configuration
+
++
+
+Output Hash
+
+END OF 77.39
+
+77.40 PIPELINE ASSURANCE
+
+Pipeline
+
+├── Step 1
+
+├── Step 2
+
+├── Step 3
+
+└── Step N
+
+Each step shall have independent provenance and status.
+
+END OF 77.40
+
+77.41 PARTIAL FAILURE
+
+A failed pipeline shall preserve successful intermediate execution records.
+
+Step 1 → SUCCESS
+
+Step 2 → SUCCESS
+
+Step 3 → FAILED
+
+Step 4 → NOT_EXECUTED
+
+END OF 77.41
+
+77.42 RESUMABLE EXECUTION
+
+A workflow may resume from a verified checkpoint.
+
+Verified Checkpoint
+
+↓
+
+Validate State
+
+↓
+
+Resume
+
+END OF 77.42
+
+77.43 CHECKPOINT ASSURANCE
+
+Each checkpoint shall contain:
+
+checkpoint_id
+
+workflow_version
+
+step
+
+input_state
+
+output_state
+
+environment
+
+hash
+
+timestamp
+
+END OF 77.43
+
+77.44 RESEARCH ARTIFACT REGISTRY
+
+The registry shall contain:
+
+Datasets
+
+Models
+
+Code
+
+Containers
+
+Configurations
+
+Results
+
+Reports
+
+Evidence
+
+Knowledge Snapshots
+
+END OF 77.44
+
+77.45 ARTIFACT IMMUTABILITY
+
+Published research artifacts shall be immutable.
+
+Changes shall create new versions rather than silently replacing the original.
+
+END OF 77.45
+
+77.46 VERSION ASSURANCE
+
+Every reproducibility-sensitive artifact shall identify:
+
+version
+
+parent_version
+
+created_at
+
+creator
+
+change_set
+
+content_hash
+
+END OF 77.46
+
+77.47 ASSURANCE ATTESTATION
+
+A successful validation may produce:
+
+attestation_id
+
+artifact_id
+
+validation_type
+
+validator
+
+validation_version
+
+timestamp
+
+result
+
+evidence
+
+END OF 77.47
+
+77.48 AUTOMATED ATTESTATION
+
+Automated checks may attest:
+
+Hash Valid
+
+Schema Valid
+
+Dependency Valid
+
+Policy Valid
+
+Workflow Valid
+
+Environment Captured
+
+Provenance Complete
+
+END OF 77.48
+
+77.49 HUMAN ATTESTATION
+
+Researchers may provide explicit attestations for:
+
+Scientific Interpretation
+
+Experimental Validity
+
+Methodological Correctness
+
+Evidence Sufficiency
+
+Publication Approval
+
+Automated verification shall not be treated as a substitute for scientific judgment.
+
+END OF 77.49
+
+77.50 ASSURANCE LEVEL
+
+Each research result may receive:
+
+UNVERIFIED
+
+PARTIALLY_VERIFIED
+
+AUTOMATICALLY_VERIFIED
+
+HUMAN_VERIFIED
+
+INDEPENDENTLY_REPRODUCED
+
+END OF 77.50
+
+77.51 ASSURANCE SCORE
+
+A composite score may be calculated from:
+
+Provenance
+
+Integrity
+
+Reproducibility
+
+Evidence
+
+Validation
+
+Environment Capture
+
+Policy Compliance
+
+The score shall never replace the underlying evidence.
+
+END OF 77.51
+
+77.52 ASSURANCE REPORT
+
+Every major research execution shall be capable of producing:
+
+Execution Summary
+
+Inputs
+
+Versions
+
+Environment
+
+Tools
+
+Models
+
+Transformations
+
+Outputs
+
+Validation
+
+Failures
+
+Evidence
+
+Integrity
+
+Reproducibility
+
+END OF 77.52
+
+77.53 RESEARCH AUDIT PACKAGE
+
+A complete audit package may contain:
+
+Research Object
+
+Metadata
+
+Provenance
+
+Code Reference
+
+Model Reference
+
+Dataset References
+
+Configuration
+
+Environment
+
+Execution Logs
+
+Results
+
+Validation
+
+Attestations
+
+END OF 77.53
+
+77.54 INDEPENDENT VERIFICATION
+
+An independent verifier shall be able to reconstruct the execution from the available authorized artifacts.
+
+Audit Package
+
+↓
+
+Independent Environment
+
+↓
+
+Re-execution
+
+↓
+
+Comparison
+
+↓
+
+Verification Result
+
+END OF 77.54
+
+77.55 BLIND REPRODUCTION
+
+Where scientifically appropriate, the verification system may hide the expected result from the reproducing researcher.
+
+Original Result
+
+       │
+
+       └── Hidden
+
+            ↓
+
+     Independent Execution
+
+            ↓
+
+        Comparison
+
+END OF 77.55
+
+77.56 REPRODUCTION FAILURE
+
+If reproduction fails, GSIR shall identify:
+
+Data Difference
+
+Code Difference
+
+Environment Difference
+
+Model Difference
+
+Configuration Difference
+
+Nondeterminism
+
+Unknown Cause
+
+END OF 77.56
+
+77.57 REPRODUCTION DIFF
+
+The system shall provide machine-readable differences.
+
+Expected
+
+Actual
+
+Difference Type
+
+Magnitude
+
+Location
+
+Possible Cause
+
+END OF 77.57
+
+77.58 SCIENTIFIC REPRODUCTION VS REPLICATION
+
+GSIR shall distinguish:
+
+REPRODUCTION
+
+Same underlying data / method / computational process
+
+REPLICATION
+
+Independent execution or independent study intended to test the result
+
+END OF 77.58
+
+77.59 RESULT LINEAGE
+
+A final result shall be traceable backward:
+
+Result
+
+↓
+
+Analysis
+
+↓
+
+Workflow
+
+↓
+
+Code
+
+↓
+
+Model
+
+↓
+
+Input Dataset
+
+↓
+
+Original Source
+
+END OF 77.59
+
+77.60 CLAIM LINEAGE
+
+Claim
+
+↓
+
+Result
+
+↓
+
+Analysis
+
+↓
+
+Evidence
+
+↓
+
+Source
+
+END OF 77.60
+
+77.61 KNOWLEDGE LINEAGE
+
+Knowledge
+
+↓
+
+Claim
+
+↓
+
+Evidence
+
+↓
+
+Source
+
+↓
+
+Source Version
+
+END OF 77.61
+
+77.62 MODEL LINEAGE
+
+Prediction
+
+↓
+
+Model Version
+
+↓
+
+Training / Fine-Tuning
+
+↓
+
+Training Dataset
+
+↓
+
+Source Data
+
+END OF 77.62
+
+77.63 AGENT LINEAGE
+
+Agent Decision
+
+↓
+
+Agent Version
+
+↓
+
+Model
+
+↓
+
+Prompt
+
+↓
+
+Retrieved Context
+
+↓
+
+Tools
+
+↓
+
+Tool Results
+
+↓
+
+Evidence
+
+END OF 77.63
+
+77.64 PROVENANCE QUERY ENGINE
+
+The system shall support queries such as:
+
+What produced this result?
+
+Which data influenced this claim?
+
+Which model generated this prediction?
+
+Which software version was used?
+
+Which dataset version was consumed?
+
+Who changed this configuration?
+
+Which external sources influenced the answer?
+
+END OF 77.64
+
+77.65 BACKWARD PROVENANCE
+
+Output
+
+↓
+
+Inputs
+
+↓
+
+Parent Objects
+
+↓
+
+Original Sources
+
+END OF 77.65
+
+77.66 FORWARD PROVENANCE
+
+Input
+
+↓
+
+Derived Objects
+
+↓
+
+Models
+
+↓
+
+Claims
+
+↓
+
+Publications
+
+END OF 77.66
+
+77.67 IMPACT ANALYSIS
+
+When an input is discovered to be defective:
+
+Defective Dataset
+
+↓
+
+Affected Workflows
+
+↓
+
+Affected Results
+
+↓
+
+Affected Claims
+
+↓
+
+Affected Publications
+
+GSIR shall identify affected downstream objects.
+
+END OF 77.67
+
+77.68 TRUST REVOCATION
+
+If an artifact becomes untrusted:
+
+Trusted
+
+↓
+
+Issue Detected
+
+↓
+
+Trust Revoked
+
+↓
+
+Dependent Objects Flagged
+
+↓
+
+Revalidation Required
+
+END OF 77.68
+
+77.69 MODEL TRUST REVOCATION
+
+If a model version is compromised or invalidated:
+
+Model V4
+
+↓
+
+REVOKED
+
+↓
+
+Predictions using V4
+
+↓
+
+Affected Results
+
+↓
+
+Revalidation Queue
+
+END OF 77.69
+
+77.70 DATA TRUST REVOCATION
+
+The same mechanism shall apply to datasets, documents, software, workflows and evidence.
+
+END OF 77.70
+
+77.71 ASSURANCE POLICY ENGINE
+
+Policies shall define minimum assurance requirements.
+
+Publication
+
+→ Human Verification Required
+
+Routine Analysis
+
+→ Automated Verification
+
+High-Risk Experiment
+
+→ Independent Verification
+
+Restricted Dataset
+
+→ Provenance + Access Verification
+
+END OF 77.71
+
+77.72 ASSURANCE GATES
+
+Critical workflows shall pass gates:
+
+GATE 1 — INPUT INTEGRITY
+
+GATE 2 — AUTHORIZATION
+
+GATE 3 — ENVIRONMENT
+
+GATE 4 — EXECUTION
+
+GATE 5 — OUTPUT INTEGRITY
+
+GATE 6 — SCIENTIFIC VALIDATION
+
+GATE 7 — PROVENANCE
+
+GATE 8 — REPRODUCIBILITY
+
+END OF 77.72
+
+77.73 FAILURE-CLOSED ASSURANCE
+
+For high-assurance operations:
+
+Verification Failure
+
+↓
+
+STOP
+
+The system shall not report a result as verified when required assurance checks have failed.
+
+END OF 77.73
+
+77.74 ASSURANCE EXCEPTIONS
+
+If a required verification cannot be performed:
+
+exception_id
+
+reason
+
+risk
+
+approver
+
+scope
+
+expiration
+
+shall be recorded.
+
+END OF 77.74
+
+77.75 ASSURANCE MONITORING
+
+The system shall continuously monitor:
+
+Broken Provenance
+
+Hash Mismatches
+
+Missing Dependencies
+
+Expired Artifacts
+
+Revoked Models
+
+Invalid Datasets
+
+Failed Reproduction
+
+Policy Violations
+
+END OF 77.75
+
+77.76 ASSURANCE DASHBOARD
+
+Verified Research
+
+Pending Verification
+
+Failed Verification
+
+Revoked Objects
+
+Reproduction Success
+
+Reproduction Failure
+
+Provenance Coverage
+
+Integrity Coverage
+
+END OF 77.76
+
+77.77 ASSURANCE METRICS
+
+Metrics shall include:
+
+Provenance Completeness
+
+Integrity Verification Rate
+
+Reproducibility Rate
+
+Verification Failure Rate
+
+Mean Verification Time
+
+Artifact Coverage
+
+Dependency Coverage
+
+Revocation Response Time
+
+END OF 77.77
+
+77.78 ASSURANCE STORAGE
+
+Assurance records shall be stored separately from mutable operational state while maintaining references to the authoritative research objects.
+
+END OF 77.78
+
+77.79 ASSURANCE API
+
+createTrustRecord()
+
+getTrustRecord()
+
+recordProvenance()
+
+getProvenance()
+
+traceBackward()
+
+traceForward()
+
+hashArtifact()
+
+verifyArtifact()
+
+captureEnvironment()
+
+compareExecutions()
+
+createAttestation()
+
+verifyAttestation()
+
+createReproduction()
+
+compareReproduction()
+
+revokeTrust()
+
+restoreTrust()
+
+generateAssuranceReport()
+
+END OF 77.79
+
+77.80 ASSURANCE EVENTS
+
+ArtifactRegistered
+
+HashCreated
+
+HashVerified
+
+HashMismatch
+
+ProvenanceRecorded
+
+ExecutionCaptured
+
+EnvironmentCaptured
+
+ValidationCompleted
+
+AttestationCreated
+
+ReproductionStarted
+
+ReproductionCompleted
+
+ReproductionFailed
+
+TrustRevoked
+
+TrustRestored
+
+END OF 77.80
+
+77.81 ASSURANCE + DATABASE
+
+The database shall preserve references between:
+
+Object
+
+Version
+
+Execution
+
+Artifact
+
+Provenance
+
+Validation
+
+Attestation
+
+Reproduction
+
+Trust Status
+
+END OF 77.81
+
+77.82 ASSURANCE + OBJECT STORAGE
+
+Object storage shall hold immutable or versioned artifacts.
+
+Database records shall hold:
+
+Artifact Identity
+
+Hash
+
+Version
+
+Location
+
+Integrity Status
+
+END OF 77.82
+
+77.83 ASSURANCE + KNOWLEDGE GRAPH
+
+Knowledge graph assertions shall reference:
+
+Source
+
+Evidence
+
+Claim
+
+Version
+
+Provenance
+
+Validation
+
+This prevents unsupported knowledge from becoming indistinguishable from verified knowledge.
+
+END OF 77.83
+
+77.84 ASSURANCE + SEARCH
+
+Search results may expose:
+
+Verification Status
+
+Provenance Coverage
+
+Trust Status
+
+Version
+
+so researchers can distinguish verified and unverified resources.
+
+END OF 77.84
+
+77.85 ASSURANCE + AI REASONING
+
+AI reasoning pipelines shall be able to distinguish:
+
+Verified Evidence
+
+Unverified Evidence
+
+Inferred Information
+
+Speculative Information
+
+Conflicting Evidence
+
+END OF 77.85
+
+77.86 ASSURANCE + SELF-IMPROVEMENT
+
+Self-improvement experiments shall produce reproducible records.
+
+Baseline
+
+↓
+
+Change
+
+↓
+
+Experiment
+
+↓
+
+Evaluation
+
+↓
+
+Comparison
+
+↓
+
+Decision
+
+No self-improvement change shall become production policy solely because an AI system proposed it.
+
+END OF 77.86
+
+77.87 ASSURANCE + MODEL EVALUATION
+
+Every model evaluation shall record:
+
+Model Version
+
+Dataset Version
+
+Evaluation Code
+
+Metrics
+
+Parameters
+
+Environment
+
+Results
+
+Statistical Method
+
+END OF 77.87
+
+77.88 ASSURANCE + SCIENTIFIC PUBLICATION
+
+A publication-ready result shall be linked to its underlying research objects.
+
+Publication
+
+↓
+
+Claims
+
+↓
+
+Results
+
+↓
+
+Experiments
+
+↓
+
+Data
+
+↓
+
+Code
+
+↓
+
+Environment
+
+END OF 77.88
+
+77.89 ASSURANCE + CITATION
+
+Citations shall identify the version of the research object used.
+
+Citation
+
+↓
+
+Persistent Identifier
+
+↓
+
+Version
+
+↓
+
+Integrity Reference
+
+END OF 77.89
+
+77.90 ASSURANCE + EXTERNAL VERIFICATION
+
+External validators shall receive only the artifacts authorized for verification.
+
+Verification access shall not bypass research-data governance.
+
+END OF 77.90
+
+77.91 ASSURANCE TESTING
+
+Tests shall cover:
+
+Hash Integrity
+
+Signature Verification
+
+Provenance Completeness
+
+Dependency Capture
+
+Environment Capture
+
+Deterministic Reproduction
+
+Nondeterministic Comparison
+
+Trust Revocation
+
+Impact Analysis
+
+Attestation
+
+Audit
+
+END OF 77.91
+
+77.92 ASSURANCE SECURITY TESTING
+
+Security tests shall attempt to detect:
+
+Provenance Tampering
+
+Artifact Replacement
+
+Hash Collision Handling
+
+Unauthorized Attestation
+
+Replay
+
+Fake Version
+
+Dependency Substitution
+
+Log Manipulation
+
+END OF 77.92
+
+77.93 ASSURANCE RECOVERY
+
+After infrastructure failure:
+
+Restore Artifact
+
+↓
+
+Verify Hash
+
+↓
+
+Restore Provenance
+
+↓
+
+Verify Relationships
+
+↓
+
+Restore Trust State
+
+END OF 77.93
+
+77.94 ASSURANCE DISASTER RECOVERY
+
+Recovery shall preserve:
+
+Research Objects
+
+Versions
+
+Provenance
+
+Integrity References
+
+Attestations
+
+Audit Records
+
+Trust Revocations
+
+END OF 77.94
+
+77.95 ASSURANCE COMPLETION CRITERIA
+
+The GSIR assurance architecture shall be considered complete when:
+
+- Every critical research object has an identity.
+
+- Every important artifact has integrity verification.
+
+- Every critical transformation has provenance.
+
+- Every reproducibility-sensitive execution captures its environment.
+
+- Models have versioned lineage.
+
+- Software dependencies are recorded.
+
+- AI operations have execution provenance.
+
+- Retrieval context can be traced where required.
+
+- Claims have evidence chains.
+
+- Results have computational lineage.
+
+- Reproduction can be executed independently.
+
+- Reproduction failures can be diagnosed.
+
+- Trust can be revoked.
+
+- Downstream impact can be calculated.
+
+- Verification status is explicit.
+
+- Human and automated verification are distinguished.
+
+- Assurance policies are versioned.
+
+- Critical failures stop trust-sensitive operations.
+
+- Audit packages can be generated.
+
+- Assurance records are themselves protected.
+
+END OF 77.95
+
+77.96 FINAL TRUST ARCHITECTURE
+
+                         GSIR RESEARCH
+
+                              │
+
+                              ▼
+
+                         RESEARCH INPUT
+
+                              │
+
+                              ▼
+
+                         DATA + CODE
+
+                              │
+
+                              ▼
+
+                         PROVENANCE
+
+                              │
+
+                              ▼
+
+                      EXECUTION ENVIRONMENT
+
+                              │
+
+                              ▼
+
+                         WORKFLOW / AI
+
+                              │
+
+                              ▼
+
+                           RESULT
+
+                              │
+
+                 ┌────────────┼────────────┐
+
+                 ▼            ▼            ▼
+
+             INTEGRITY    VALIDATION    EVIDENCE
+
+                 │            │            │
+
+                 └────────────┼────────────┘
+
+                              ▼
+
+                       REPRODUCTION
+
+                              │
+
+                              ▼
+
+                         ATTESTATION
+
+                              │
+
+                              ▼
+
+                       TRUST DECISION
+
+                              │
+
+                 ┌────────────┴────────────┐
+
+                 ▼                         ▼
+
+             TRUSTED                    REVOKED
+
+                 │                         │
+
+                 ▼                         ▼
+
+          RESEARCH USE              REVALIDATION
+
+END OF 77.96
+
+77.97 FINAL RESEARCH ASSURANCE PRINCIPLE
+
+GSIR shall never treat a scientific result as trustworthy merely because an AI model, researcher, workflow or database produced it.
+
+Trust shall be established through evidence:
+
+IDENTITY
+
++
+
+PROVENANCE
+
++
+
+INTEGRITY
+
++
+
+EXECUTION CONTEXT
+
++
+
+VALIDATION
+
++
+
+REPRODUCIBILITY
+
++
+
+ATTESTATION
+
+This architecture makes provenance and verification operational rather than documentary, which is particularly important as scientific systems increasingly combine data-intensive computing, AI models, automated workflows and multi-stage research pipelines. 
+
+END OF PART 77
+
+PART 78 — GSIR SCIENTIFIC WORKFLOW ORCHESTRATION AND EXECUTION ARCHITECTURE

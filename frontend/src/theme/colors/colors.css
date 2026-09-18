@@ -1,0 +1,68 @@
+/* theme/colors/colors.css */
+:root {
+  /* Core Semantics */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #9ca3af;
+  --color-text-inverse: #ffffff;
+
+  --color-border-default: #e5e7eb;
+  --color-border-focus: #3b82f6;
+
+  /* Actions & Brands */
+  --color-primary-base: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-active: #1e40af;
+  --color-primary-subtle: #eff6ff;
+
+  /* Semantic Feedback */
+  --color-success-base: #10b981;
+  --color-success-bg: #d1fae5;
+  --color-success-text: #065f46;
+
+  --color-warning-base: #f59e0b;
+  --color-warning-bg: #fef3c7;
+  --color-warning-text: #92400e;
+
+  --color-danger-base: #ef4444;
+  --color-danger-bg: #fee2e2;
+  --color-danger-text: #991b1b;
+
+  --color-info-base: #3b82f6;
+  --color-info-bg: #dbeafe;
+  --color-info-text: #1e40af;
+
+  /* States */
+  --color-disabled-bg: #f3f4f6;
+  --color-disabled-text: #9ca3af;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-primary: #111827;
+    --color-bg-secondary: #1f2937;
+    --color-surface: #1f2937;
+    --color-surface-elevated: #374151;
+    
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+    --color-text-muted: #6b7280;
+    --color-text-inverse: #111827;
+
+    --color-border-default: #374151;
+    --color-border-focus: #60a5fa;
+
+    --color-primary-base: #3b82f6;
+    --color-primary-hover: #60a5fa;
+    --color-primary-active: #2563eb;
+    --color-primary-subtle: #1e3a8a;
+
+    --color-disabled-bg: #374151;
+    --color-disabled-text: #6b7280;
+  }
+}

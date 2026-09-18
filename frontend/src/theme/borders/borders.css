@@ -1,0 +1,10 @@
+/* theme/borders/borders.css */
+:root {
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-full: 9999px;
+
+  --border-width-thin: 1px;
+  --border-width-thick: 2px;
+}

@@ -1,0 +1,31 @@
+.gsir-feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  text-align: center;
+  border-radius: var(--radius-md);
+}
+.gsir-feedback--loading {
+  color: var(--color-text-secondary);
+}
+.gsir-feedback--error {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border: var(--border-width-thin) solid var(--color-danger-base);
+}
+.gsir-feedback--empty {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: var(--border-width-thin) dashed var(--color-border-default);
+}
+.gsir-feedback__spinner {
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: var(--spacing-4);
+  border: 3px solid var(--color-border-default);
+  border-top-color: var(--color-primary-base);
+  border-radius: 50%;
+  animation: gsir-spin 1s linear infinite;
+}

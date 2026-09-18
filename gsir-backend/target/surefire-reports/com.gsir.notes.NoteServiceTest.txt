@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.gsir.notes.NoteServiceTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.590 s -- in com.gsir.notes.NoteServiceTest

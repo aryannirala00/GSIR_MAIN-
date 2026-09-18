@@ -1,0 +1,2405 @@
+﻿PART 70 — SCIENTIFIC KNOWLEDGE GRAPH PROVENANCE, LINEAGE, AND REPRODUCIBILITY ENGINE
+
+70.1 PURPOSE
+
+The GSIR Provenance and Lineage Engine shall maintain the complete history of how scientific knowledge is created, transformed, validated, updated, and consumed.
+
+Scientific knowledge graphs require explicit connections between assertions, evidence, sources, and provenance to support reproducibility and trustworthy knowledge discovery. 
+
+The engine shall answer:
+
+Where did this knowledge come from?
+
+What data produced it?
+
+Which process transformed it?
+
+Which model generated it?
+
+Which researcher or agent performed the operation?
+
+Which software version was used?
+
+Which evidence supports it?
+
+Which version of the knowledge existed at that time?
+
+Can the process be reproduced?
+
+END OF 70.1
+
+70.2 CORE PROVENANCE MODEL
+
+SOURCE
+
+   ↓
+
+INPUT ARTIFACT
+
+   ↓
+
+PROCESS / ACTIVITY
+
+   ↓
+
+OUTPUT ARTIFACT
+
+   ↓
+
+ANALYSIS
+
+   ↓
+
+RESULT
+
+   ↓
+
+CLAIM
+
+   ↓
+
+KNOWLEDGE GRAPH
+
+Every important transition shall be represented as provenance rather than being recorded only as an unstructured log.
+
+END OF 70.2
+
+70.3 PROVENANCE DIRECTORY
+
+backend/src/provenance/
+
+provenance.module.ts
+
+provenance.service.ts
+
+provenance.controller.ts
+
+provenance.repository.ts
+
+provenance.types.ts
+
+entities/
+
+activities/
+
+agents/
+
+artifacts/
+
+lineage/
+
+snapshots/
+
+replay/
+
+verification/
+
+audit/
+
+hashing/
+
+signatures/
+
+retention/
+
+queries/
+
+index.ts
+
+END OF 70.3
+
+70.4 PROVENANCE ENTITIES
+
+The provenance system shall primarily represent:
+
+ENTITY
+
+ACTIVITY
+
+AGENT
+
+ARTIFACT
+
+SOURCE
+
+DERIVATION
+
+These objects shall be connected into a provenance graph.
+
+END OF 70.4
+
+70.5 ARTIFACT
+
+An artifact represents a scientific object used or produced by a process.
+
+Examples:
+
+Raw Dataset
+
+Processed Dataset
+
+Document
+
+Image
+
+Experiment Result
+
+Model
+
+Prediction
+
+Code
+
+Configuration
+
+Report
+
+Knowledge Claim
+
+Graph Snapshot
+
+Each artifact shall have a stable identity and version.
+
+END OF 70.5
+
+70.6 ACTIVITY
+
+An activity represents an operation that transforms or analyzes artifacts.
+
+Examples:
+
+Document Extraction
+
+Data Cleaning
+
+Experiment
+
+Simulation
+
+Model Training
+
+Inference
+
+Statistical Analysis
+
+Knowledge Extraction
+
+Entity Resolution
+
+Validation
+
+Publication Generation
+
+END OF 70.6
+
+70.7 AGENT
+
+An agent represents the actor responsible for an activity.
+
+Agents may be:
+
+Human Researcher
+
+AI Agent
+
+AI Model
+
+Software Service
+
+Workflow
+
+Institution
+
+Instrument
+
+External System
+
+The provenance record shall distinguish the agent from the activity it performed.
+
+END OF 70.7
+
+70.8 SOURCE
+
+A source represents the origin of an artifact or knowledge statement.
+
+Publication
+
+Dataset Repository
+
+Scientific Instrument
+
+Experiment
+
+Researcher
+
+Institution
+
+External API
+
+Internal GSIR Artifact
+
+Source identity shall remain separate from artifact identity.
+
+END OF 70.8
+
+70.9 DERIVATION
+
+A derivation represents how one artifact or knowledge object was produced from another.
+
+Raw Data
+
+   ↓
+
+Cleaning
+
+   ↓
+
+Processed Data
+
+   ↓
+
+Analysis
+
+   ↓
+
+Result
+
+The complete chain shall remain traversable.
+
+END OF 70.9
+
+70.10 PROVENANCE RECORD
+
+provenance_id
+
+artifact_id
+
+activity_id
+
+agent_id
+
+source_id
+
+input_artifacts
+
+output_artifacts
+
+software_version
+
+model_version
+
+configuration
+
+parameters
+
+timestamp
+
+parent_provenance
+
+hash
+
+status
+
+END OF 70.10
+
+70.11 PROVENANCE GRAPH
+
+                 HUMAN
+
+                   │
+
+                   ▼
+
+SOURCE ───────► ACTIVITY
+
+                   │
+
+                   ▼
+
+                ARTIFACT
+
+                   │
+
+             ┌─────┴─────┐
+
+             ▼           ▼
+
+          ANALYSIS     RESULT
+
+             │           │
+
+             └─────┬─────┘
+
+                   ▼
+
+                 CLAIM
+
+                   │
+
+                   ▼
+
+             KNOWLEDGE GRAPH
+
+END OF 70.11
+
+70.12 END-TO-END EXPERIMENT LINEAGE
+
+GSIR shall support complete experiment lineage:
+
+Research Question
+
+↓
+
+Hypothesis
+
+↓
+
+Experimental Design
+
+↓
+
+Inputs
+
+↓
+
+Experiment
+
+↓
+
+Measurements
+
+↓
+
+Raw Data
+
+↓
+
+Processing
+
+↓
+
+Analysis
+
+↓
+
+Result
+
+↓
+
+Validation
+
+↓
+
+Claim
+
+↓
+
+Publication
+
+End-to-end provenance models are specifically designed to connect computational and non-computational experiment steps with their resulting data and findings. 
+
+END OF 70.12
+
+70.13 DATA LINEAGE
+
+Data lineage shall represent every major transformation.
+
+Dataset A
+
+↓
+
+Filter
+
+↓
+
+Dataset B
+
+↓
+
+Normalization
+
+↓
+
+Dataset C
+
+↓
+
+Feature Extraction
+
+↓
+
+Dataset D
+
+Each transformation shall identify the process and configuration used.
+
+END OF 70.13
+
+70.14 MODEL LINEAGE
+
+Model lineage shall represent:
+
+Training Dataset
+
+↓
+
+Preprocessing
+
+↓
+
+Training Configuration
+
+↓
+
+Training Run
+
+↓
+
+Model Version
+
+↓
+
+Evaluation
+
+↓
+
+Deployment
+
+↓
+
+Prediction
+
+This shall allow GSIR to determine exactly which model generated a scientific prediction.
+
+END OF 70.14
+
+70.15 AI REASONING LINEAGE
+
+AI-generated scientific reasoning shall preserve:
+
+User / Research Question
+
+↓
+
+Retrieved Knowledge
+
+↓
+
+Retrieved Evidence
+
+↓
+
+Prompt / Context
+
+↓
+
+Model
+
+↓
+
+Model Version
+
+↓
+
+Reasoning Execution
+
+↓
+
+Generated Result
+
+The system shall distinguish retrieved information from model-generated inference.
+
+END OF 70.15
+
+70.16 AGENT LINEAGE
+
+Every scientific agent execution shall have:
+
+agent_id
+
+agent_version
+
+task_id
+
+execution_id
+
+input_ids
+
+tool_calls
+
+retrieved_context
+
+outputs
+
+timestamp
+
+Agent-generated knowledge shall therefore remain attributable.
+
+END OF 70.16
+
+70.17 TOOL LINEAGE
+
+When an agent uses a tool:
+
+Agent
+
+↓
+
+Tool
+
+↓
+
+Input
+
+↓
+
+Execution
+
+↓
+
+Output
+
+the tool execution shall become part of the provenance chain.
+
+END OF 70.17
+
+70.18 SOFTWARE LINEAGE
+
+Scientific results shall retain:
+
+Repository
+
+Commit
+
+Release
+
+Package Versions
+
+Runtime
+
+Operating Environment
+
+Configuration
+
+where relevant.
+
+Scientific software metadata is important for understanding and reproducing computational research. 
+
+END OF 70.18
+
+70.19 ENVIRONMENT LINEAGE
+
+The execution environment shall be captured when required:
+
+Operating System
+
+Container Image
+
+Python Version
+
+Node Version
+
+GPU
+
+CUDA
+
+Libraries
+
+Dependencies
+
+Environment Variables
+
+Hardware Configuration
+
+Sensitive credentials shall never be stored in provenance.
+
+END OF 70.19
+
+70.20 CONFIGURATION LINEAGE
+
+Every reproducibility-sensitive execution shall preserve configuration.
+
+config_id
+
+configuration_hash
+
+parameters
+
+feature_flags
+
+model_settings
+
+workflow_settings
+
+Configuration changes shall produce distinct versions.
+
+END OF 70.20
+
+70.21 HASH-BASED INTEGRITY
+
+Important artifacts shall receive content hashes.
+
+Artifact
+
+↓
+
+Canonical Representation
+
+↓
+
+Hash
+
+The hash shall allow GSIR to detect accidental or unauthorized changes.
+
+END OF 70.21
+
+70.22 CONTENT IDENTITY
+
+Two artifacts with identical canonical content may be recognized as identical content even if stored at different locations.
+
+Artifact A
+
+Hash X
+
+Artifact B
+
+Hash X
+
+The system may identify them as the same content version while preserving their separate provenance contexts.
+
+END OF 70.22
+
+70.23 PROVENANCE INTEGRITY
+
+Provenance records shall themselves be protected against silent modification.
+
+Each provenance record shall contain:
+
+record_hash
+
+previous_record_hash
+
+created_at
+
+version
+
+where tamper-evident chaining is required.
+
+END OF 70.23
+
+70.24 IMMUTABLE PROVENANCE
+
+Historical provenance records shall normally be immutable.
+
+Corrections shall create:
+
+Original Record
+
+↓
+
+Correction Record
+
+rather than silently changing the historical record.
+
+END OF 70.24
+
+70.25 PROVENANCE VERSIONING
+
+Provenance V1
+
+↓
+
+Provenance V2
+
+↓
+
+Provenance V3
+
+The system shall preserve the history of provenance modifications.
+
+END OF 70.25
+
+70.26 PROVENANCE QUERY
+
+The system shall support:
+
+Who created this?
+
+What created this?
+
+Which inputs were used?
+
+Which model produced this?
+
+Which source produced the input?
+
+What changed?
+
+When did it change?
+
+END OF 70.26
+
+70.27 BACKWARD LINEAGE
+
+Backward traversal shall start from an output.
+
+Result
+
+↓
+
+Analysis
+
+↓
+
+Processed Dataset
+
+↓
+
+Raw Dataset
+
+↓
+
+Source
+
+This shall answer:
+
+“Where did this result come from?”
+
+END OF 70.27
+
+70.28 FORWARD LINEAGE
+
+Forward traversal shall start from an input.
+
+Dataset
+
+↓
+
+Processing
+
+↓
+
+Analysis
+
+↓
+
+Result
+
+↓
+
+Claim
+
+↓
+
+Publication
+
+This shall answer:
+
+“What knowledge was produced from this data?”
+
+END OF 70.28
+
+70.29 IMPACT ANALYSIS
+
+GSIR shall identify all downstream objects affected by an artifact change.
+
+Dataset Changed
+
+      ↓
+
+Processed Dataset
+
+      ↓
+
+Model
+
+      ↓
+
+Prediction
+
+      ↓
+
+Claim
+
+      ↓
+
+Publication
+
+This is required for controlled scientific updates.
+
+END OF 70.29
+
+70.30 DEPENDENCY GRAPH
+
+Every important artifact shall maintain dependency relationships.
+
+Artifact A
+
+ ├── depends on B
+
+ ├── depends on C
+
+ └── depends on D
+
+Dependency information shall be queryable independently from the main scientific graph.
+
+END OF 70.30
+
+70.31 REPRODUCIBILITY ENGINE
+
+Directory:
+
+backend/src/provenance/replay/
+
+Files:
+
+replay.service.ts
+
+replay-planner.ts
+
+environment-resolver.ts
+
+input-resolver.ts
+
+configuration-resolver.ts
+
+execution-runner.ts
+
+result-comparator.ts
+
+reproducibility-validator.ts
+
+index.ts
+
+END OF 70.31
+
+70.32 REPRODUCIBILITY WORKFLOW
+
+Original Execution
+
+↓
+
+Capture Provenance
+
+↓
+
+Store Inputs
+
+↓
+
+Store Environment
+
+↓
+
+Store Configuration
+
+↓
+
+Store Code / Model Version
+
+↓
+
+Reconstruct Environment
+
+↓
+
+Replay Execution
+
+↓
+
+Compare Results
+
+↓
+
+Generate Reproducibility Report
+
+END OF 70.32
+
+70.33 REPLAY MODES
+
+GSIR shall support:
+
+EXACT_REPLAY
+
+CONTROLLED_REPLAY
+
+UPDATED_INPUT_REPLAY
+
+UPDATED_MODEL_REPLAY
+
+UPDATED_CONFIGURATION_REPLAY
+
+Each replay shall explicitly state what changed from the original execution.
+
+END OF 70.33
+
+70.34 EXACT REPLAY
+
+Exact replay attempts to reproduce the original execution using:
+
+Same Inputs
+
+Same Code
+
+Same Model
+
+Same Configuration
+
+Same Environment
+
+END OF 70.34
+
+70.35 CONTROLLED REPLAY
+
+Controlled replay intentionally changes one or more variables.
+
+Original
+
+↓
+
+Change One Variable
+
+↓
+
+Replay
+
+↓
+
+Compare
+
+This shall support scientific sensitivity analysis.
+
+END OF 70.35
+
+70.36 REPRODUCIBILITY COMPARISON
+
+Results shall be compared using:
+
+Exact Equality
+
+Numerical Tolerance
+
+Statistical Similarity
+
+Structural Similarity
+
+Semantic Similarity
+
+The comparison method shall depend on the artifact type.
+
+END OF 70.36
+
+70.37 REPRODUCIBILITY STATUS
+
+REPRODUCED
+
+PARTIALLY_REPRODUCED
+
+NOT_REPRODUCED
+
+INCONCLUSIVE
+
+BLOCKED
+
+A failed replay shall not automatically imply that the original research was incorrect.
+
+END OF 70.37
+
+70.38 REPRODUCIBILITY FAILURE REASONS
+
+Possible causes:
+
+Missing Input
+
+Changed Source
+
+Missing Dependency
+
+Changed Software
+
+Changed Model
+
+Changed Hardware
+
+Non-Determinism
+
+Random Seed
+
+External Service Change
+
+Incomplete Provenance
+
+END OF 70.38
+
+70.39 RANDOMNESS CONTROL
+
+When scientific execution uses randomness, provenance shall capture:
+
+Random Seed
+
+Random Generator
+
+Sampling Configuration
+
+Parallelism
+
+where technically possible.
+
+END OF 70.39
+
+70.40 NON-DETERMINISTIC EXECUTION
+
+Some operations cannot guarantee identical results.
+
+GSIR shall therefore distinguish:
+
+Exact Reproduction
+
+Reproducible Process
+
+Statistically Reproducible Result
+
+rather than forcing every workflow into exact equality.
+
+END OF 70.40
+
+70.41 EXTERNAL DEPENDENCY TRACKING
+
+External services shall be recorded.
+
+External API
+
+↓
+
+Endpoint
+
+↓
+
+Request Version
+
+↓
+
+Response
+
+↓
+
+Timestamp
+
+Where legally and technically possible, the response or an immutable reference shall be retained.
+
+END OF 70.41
+
+70.42 DYNAMIC SOURCE HANDLING
+
+If a source changes over time:
+
+Source V1
+
+↓
+
+Source V2
+
+↓
+
+Source V3
+
+GSIR shall preserve the version used by the original process.
+
+Reproducibility depends on preserving or being able to retrieve the original inputs; dynamic sources can otherwise prevent exact reconstruction. 
+
+END OF 70.42
+
+70.43 PROVENANCE OF KNOWLEDGE EXTRACTION
+
+For AI extraction:
+
+Document
+
+↓
+
+Parser
+
+↓
+
+Text Segment
+
+↓
+
+AI Model
+
+↓
+
+Extraction
+
+↓
+
+Validation
+
+↓
+
+Knowledge
+
+Each extracted claim shall retain the source passage or artifact location from which it originated.
+
+END OF 70.43
+
+70.44 EXTRACTION LOCATION
+
+The provenance record shall identify:
+
+Document ID
+
+Document Version
+
+Page
+
+Section
+
+Paragraph
+
+Character Range
+
+Table
+
+Figure
+
+when available.
+
+This allows GSIR to navigate directly from knowledge back to source material.
+
+END OF 70.44
+
+70.45 CLAIM LINEAGE
+
+A claim shall be traceable through:
+
+Claim
+
+↓
+
+Evidence
+
+↓
+
+Source
+
+↓
+
+Original Artifact
+
+↓
+
+Acquisition
+
+and, if derived:
+
+Claim
+
+↓
+
+Inference
+
+↓
+
+Input Claims
+
+↓
+
+Evidence
+
+END OF 70.45
+
+70.46 INFERENCE LINEAGE
+
+Every derived inference shall record:
+
+Inference ID
+
+Rule
+
+Input Knowledge
+
+Input Evidence
+
+Algorithm
+
+Model
+
+Execution
+
+Output
+
+Confidence
+
+END OF 70.46
+
+70.47 MODEL-INFERENCE LINEAGE
+
+For AI-generated inference:
+
+Knowledge Context
+
+↓
+
+Prompt / Structured Input
+
+↓
+
+Model
+
+↓
+
+Model Version
+
+↓
+
+Inference Configuration
+
+↓
+
+Execution
+
+↓
+
+Output
+
+The resulting inference shall remain explicitly classified as derived.
+
+END OF 70.47
+
+70.48 PROVENANCE AND CONTRADICTION
+
+When two claims conflict, GSIR shall preserve separate provenance chains.
+
+Claim A
+
+↓
+
+Evidence A
+
+↓
+
+Source A
+
+Claim B
+
+↓
+
+Evidence B
+
+↓
+
+Source B
+
+The contradiction engine shall compare the chains rather than deleting one claim.
+
+END OF 70.48
+
+70.49 RETRACTION LINEAGE
+
+If a publication, dataset, claim, or result is retracted or invalidated:
+
+Original Knowledge
+
+↓
+
+Retraction Event
+
+↓
+
+Affected Claims
+
+↓
+
+Affected Relationships
+
+↓
+
+Affected Inferences
+
+Downstream dependencies shall be identified.
+
+END OF 70.49
+
+70.50 SUPERSESSION LINEAGE
+
+When newer evidence supersedes an older conclusion:
+
+Claim V1
+
+↓
+
+Superseded By
+
+↓
+
+Claim V2
+
+Both versions shall remain historically accessible.
+
+END OF 70.50
+
+70.51 PROVENANCE-AWARE UPDATES
+
+Knowledge updates shall propagate through dependency relationships.
+
+New Evidence
+
+↓
+
+Affected Claim
+
+↓
+
+Affected Inference
+
+↓
+
+Affected Hypothesis
+
+↓
+
+Affected Research Plan
+
+Only affected objects shall require re-evaluation where dependency analysis permits.
+
+END OF 70.51
+
+70.52 PROVENANCE IMPACT GRAPH
+
+                    SOURCE
+
+                      │
+
+                      ▼
+
+                    DATA
+
+                      │
+
+          ┌───────────┼───────────┐
+
+          ▼           ▼           ▼
+
+       MODEL A     MODEL B     MODEL C
+
+          │           │           │
+
+          ▼           ▼           ▼
+
+       RESULT A    RESULT B    RESULT C
+
+          │
+
+          ▼
+
+        CLAIM
+
+          │
+
+          ▼
+
+      KNOWLEDGE
+
+Impact analysis shall traverse this graph when upstream artifacts change.
+
+END OF 70.52
+
+70.53 PROVENANCE AUDIT
+
+Auditors shall be able to inspect:
+
+Creation
+
+Modification
+
+Validation
+
+Approval
+
+Execution
+
+Inference
+
+Publication
+
+Retraction
+
+Supersession
+
+of important scientific objects.
+
+END OF 70.53
+
+70.54 HUMAN ACTION PROVENANCE
+
+Human actions shall be recorded when scientifically relevant.
+
+Researcher
+
+↓
+
+Approved Claim
+
+↓
+
+Approval Timestamp
+
+↓
+
+Reason
+
+The system shall not record unnecessary personal information.
+
+END OF 70.54
+
+70.55 AI ACTION PROVENANCE
+
+AI actions shall record:
+
+Agent ID
+
+Model
+
+Model Version
+
+Task
+
+Input Context
+
+Tools
+
+Execution ID
+
+Output
+
+Validation State
+
+This creates accountability for autonomous research operations.
+
+END OF 70.55
+
+70.56 PROVENANCE TRUST LEVEL
+
+Provenance records shall have status:
+
+CAPTURED
+
+VALIDATED
+
+VERIFIED
+
+PARTIAL
+
+UNVERIFIED
+
+CORRUPTED
+
+A knowledge item with incomplete provenance shall be clearly identified.
+
+END OF 70.56
+
+70.57 PROVENANCE COMPLETENESS SCORE
+
+GSIR may calculate:
+
+Provenance Completeness
+
+=
+
+Available Required Provenance
+
+/
+
+Total Required Provenance
+
+This score shall describe documentation completeness, not scientific correctness.
+
+END OF 70.57
+
+70.58 PROVENANCE QUALITY
+
+Quality checks shall include:
+
+Missing Inputs
+
+Missing Outputs
+
+Missing Agent
+
+Missing Activity
+
+Missing Source
+
+Missing Version
+
+Broken Links
+
+Invalid Hash
+
+Invalid Timestamp
+
+END OF 70.58
+
+70.59 PROVENANCE REPAIR
+
+Repair shall never silently rewrite history.
+
+Broken Provenance
+
+↓
+
+Repair Proposal
+
+↓
+
+Validation
+
+↓
+
+Repair Record
+
+↓
+
+New Provenance Version
+
+END OF 70.59
+
+70.60 PROVENANCE STORAGE STRATEGY
+
+GSIR shall support storing provenance either:
+
+Inside the Knowledge Store
+
+or:
+
+In a Dedicated Provenance Store
+
+depending on scale and deployment requirements.
+
+A hybrid approach may separate large provenance histories from the operational graph while maintaining stable references between them. Provenance management systems have demonstrated both graph-level and relational approaches for storing and retrieving provenance. 
+
+END OF 70.60
+
+70.61 PROVENANCE RETENTION
+
+Retention policies shall distinguish:
+
+Active Provenance
+
+Historical Provenance
+
+Regulatory Provenance
+
+Research-Critical Provenance
+
+Temporary Execution Logs
+
+Research-critical provenance shall have substantially stronger retention requirements than temporary telemetry.
+
+END OF 70.61
+
+70.62 PROVENANCE ARCHIVING
+
+Archived provenance shall remain searchable through:
+
+Archive ID
+
+Original Object ID
+
+Original Version
+
+Archive Timestamp
+
+Storage Location
+
+Integrity Hash
+
+END OF 70.62
+
+70.63 PROVENANCE SECURITY
+
+The system shall protect provenance from:
+
+Unauthorized Modification
+
+Unauthorized Deletion
+
+False Attribution
+
+Source Manipulation
+
+Timestamp Manipulation
+
+Credential Exposure
+
+Cross-Project Leakage
+
+END OF 70.63
+
+70.64 PROVENANCE ACCESS CONTROL
+
+Permissions shall distinguish:
+
+Read Provenance
+
+Create Provenance
+
+Annotate Provenance
+
+Verify Provenance
+
+Export Provenance
+
+Modify Active Metadata
+
+Historical provenance shall have stricter modification controls.
+
+END OF 70.64
+
+70.65 PROVENANCE EXPORT
+
+GSIR shall support export of lineage for:
+
+Experiment
+
+Dataset
+
+Model
+
+Claim
+
+Publication
+
+Knowledge Subgraph
+
+Research Project
+
+Export shall preserve object identifiers and relationships.
+
+END OF 70.65
+
+70.66 REPRODUCIBILITY REPORT
+
+Each replay shall produce:
+
+Reproducibility Report
+
+├── Original Execution
+
+├── Replay Execution
+
+├── Inputs
+
+├── Environment
+
+├── Software
+
+├── Models
+
+├── Configuration
+
+├── Differences
+
+├── Output Comparison
+
+├── Status
+
+└── Explanation
+
+END OF 70.66
+
+70.67 PROVENANCE VISUALIZATION
+
+The frontend shall provide a lineage view:
+
+SOURCE
+
+  ↓
+
+DATA
+
+  ↓
+
+PROCESS
+
+  ↓
+
+RESULT
+
+  ↓
+
+CLAIM
+
+  ↓
+
+KNOWLEDGE
+
+Users shall be able to expand each node to inspect detailed provenance.
+
+END OF 70.67
+
+70.68 LINEAGE NAVIGATION
+
+Users shall be able to navigate:
+
+Backward
+
+Forward
+
+Across Dependencies
+
+Across Versions
+
+Across Experiments
+
+Across Publications
+
+without losing the current research context.
+
+END OF 70.68
+
+70.69 PROVENANCE EXPLANATION
+
+For an AI-generated answer, GSIR shall be able to produce:
+
+Answer
+
+↓
+
+Claims Used
+
+↓
+
+Evidence Used
+
+↓
+
+Sources
+
+↓
+
+Knowledge Versions
+
+↓
+
+Reasoning / Inference
+
+This creates an auditable answer lineage.
+
+END OF 70.69
+
+70.70 PROVENANCE + SCIENTIFIC MEMORY
+
+Long-term GSIR memory shall retain provenance together with knowledge.
+
+Memory
+
+├── Knowledge
+
+├── Evidence
+
+├── Source
+
+├── Provenance
+
+├── Version
+
+├── Confidence
+
+└── Validation
+
+Information without sufficient provenance shall remain lower-trust memory.
+
+END OF 70.70
+
+70.71 PROVENANCE + SELF-IMPROVEMENT
+
+The self-improvement system shall use provenance to evaluate:
+
+Which strategy produced the result?
+
+Which model performed best?
+
+Which data source was reliable?
+
+Which workflow failed?
+
+Which reasoning approach generated errors?
+
+This permits evidence-based improvement of GSIR itself.
+
+END OF 70.71
+
+70.72 PROVENANCE + RESEARCH AGENTS
+
+Agents shall be able to query lineage before using knowledge.
+
+Agent
+
+↓
+
+Knowledge
+
+↓
+
+Provenance Check
+
+↓
+
+Evidence Check
+
+↓
+
+Confidence Check
+
+↓
+
+Use / Reject
+
+This shall reduce the risk of propagating poorly supported knowledge.
+
+END OF 70.72
+
+70.73 PROVENANCE + MULTI-AGENT RESEARCH
+
+When multiple agents contribute:
+
+Agent A
+
+↓
+
+Finding A
+
+      \
+
+       \
+
+        → Shared Knowledge
+
+       /
+
+      /
+
+Agent B
+
+↓
+
+Finding B
+
+the graph shall preserve each contribution separately.
+
+END OF 70.73
+
+70.74 PROVENANCE + HUMAN REVIEW
+
+Human review shall be represented as an activity.
+
+Candidate Claim
+
+↓
+
+Human Review
+
+↓
+
+Decision
+
+↓
+
+Validated Claim
+
+The reviewer action shall not erase the original AI-generated provenance.
+
+END OF 70.74
+
+70.75 PROVENANCE + EXPERIMENT REPLICATION
+
+Replication experiments shall explicitly link to the original experiment.
+
+Original Experiment
+
+       │
+
+       ▼
+
+Original Result
+
+       │
+
+       ▼
+
+Replication Experiment
+
+       │
+
+       ▼
+
+Replication Result
+
+The system shall compare both provenance chains.
+
+END OF 70.75
+
+70.76 PROVENANCE + PUBLICATION
+
+Publication lineage shall include:
+
+Research Question
+
+↓
+
+Experiments
+
+↓
+
+Datasets
+
+↓
+
+Analyses
+
+↓
+
+Results
+
+↓
+
+Figures / Tables
+
+↓
+
+Claims
+
+↓
+
+Manuscript
+
+↓
+
+Publication
+
+This supports executable and reproducible scientific records.
+
+END OF 70.76
+
+70.77 PROVENANCE + DATASETS
+
+Dataset lineage shall answer:
+
+Where was this dataset obtained?
+
+How was it processed?
+
+Which experiments used it?
+
+Which models trained on it?
+
+Which publications used it?
+
+Which claims depend on it?
+
+END OF 70.77
+
+70.78 PROVENANCE + MODELS
+
+Model lineage shall answer:
+
+What data trained this model?
+
+Which code trained it?
+
+Which configuration was used?
+
+Which evaluation produced its score?
+
+Which predictions did it generate?
+
+Which scientific conclusions depend on those predictions?
+
+END OF 70.78
+
+70.79 PROVENANCE + SOFTWARE
+
+Research software lineage shall connect:
+
+Repository
+
+↓
+
+Commit
+
+↓
+
+Build
+
+↓
+
+Environment
+
+↓
+
+Workflow
+
+↓
+
+Result
+
+This is especially important when computational results depend on changing software ecosystems.
+
+END OF 70.79
+
+70.80 PROVENANCE + KNOWLEDGE GRAPH SNAPSHOTS
+
+Every trusted graph snapshot shall record:
+
+Snapshot ID
+
+Timestamp
+
+Ontology Version
+
+Graph Version
+
+Provenance Version
+
+Source Versions
+
+Index Versions
+
+This allows a historical knowledge state to be reconstructed.
+
+END OF 70.80
+
+70.81 HISTORICAL KNOWLEDGE RECONSTRUCTION
+
+GSIR shall support:
+
+Reconstruct Knowledge State
+
+at Time T
+
+using:
+
+Snapshot
+
++
+
+Graph Deltas
+
++
+
+Ontology Version
+
++
+
+Source Versions
+
++
+
+Provenance
+
+Dynamic scientific knowledge requires version-controlled and provenance-aware representations so that updates remain traceable rather than destroying historical context. 
+
+END OF 70.81
+
+70.82 PROVENANCE BENCHMARKING
+
+The provenance engine shall be evaluated using:
+
+Completeness
+
+Correctness
+
+Traceability
+
+Replay Success
+
+Lineage Query Latency
+
+Storage Efficiency
+
+Integrity Verification
+
+Recovery Success
+
+END OF 70.82
+
+70.83 PROVENANCE FAILURE TESTING
+
+The system shall test:
+
+Missing Input
+
+Missing Source
+
+Missing Version
+
+Corrupted Artifact
+
+Changed Model
+
+Changed Code
+
+Changed Configuration
+
+Unavailable Dependency
+
+Broken Provenance Link
+
+Partial Replay
+
+END OF 70.83
+
+70.84 PROVENANCE DISASTER RECOVERY
+
+Recovery shall restore:
+
+Artifacts
+
+Activities
+
+Agents
+
+Sources
+
+Lineage
+
+Versions
+
+Hashes
+
+Snapshots
+
+Audit Records
+
+A recovery operation shall verify integrity before declaring the knowledge state restored.
+
+END OF 70.84
+
+70.85 PROVENANCE API
+
+Core APIs:
+
+createProvenance()
+
+getProvenance()
+
+getLineage()
+
+getUpstreamLineage()
+
+getDownstreamLineage()
+
+recordActivity()
+
+recordArtifact()
+
+recordAgent()
+
+recordDerivation()
+
+createSnapshot()
+
+getSnapshot()
+
+compareSnapshots()
+
+startReplay()
+
+getReplayStatus()
+
+compareReplay()
+
+verifyIntegrity()
+
+getAuditHistory()
+
+END OF 70.85
+
+70.86 PROVENANCE EVENT TYPES
+
+ArtifactCreated
+
+ArtifactUpdated
+
+ActivityStarted
+
+ActivityCompleted
+
+AgentExecuted
+
+DerivationCreated
+
+ProvenanceRecorded
+
+ProvenanceVerified
+
+SnapshotCreated
+
+ReplayStarted
+
+ReplayCompleted
+
+ReplayFailed
+
+IntegrityViolationDetected
+
+END OF 70.86
+
+70.87 PROVENANCE EVENT FLOW
+
+Activity Started
+
+      ↓
+
+Input Captured
+
+      ↓
+
+Execution
+
+      ↓
+
+Output Captured
+
+      ↓
+
+Provenance Created
+
+      ↓
+
+Integrity Check
+
+      ↓
+
+Knowledge Update
+
+      ↓
+
+Audit Event
+
+END OF 70.87
+
+70.88 FINAL PROVENANCE ARCHITECTURE
+
+                         RESEARCH QUESTION
+
+                                │
+
+                                ▼
+
+                            HYPOTHESIS
+
+                                │
+
+                                ▼
+
+                           EXPERIMENT
+
+                                │
+
+                    ┌───────────┼───────────┐
+
+                    ▼           ▼           ▼
+
+                  DATA        CODE        MODEL
+
+                    │           │           │
+
+                    └───────────┼───────────┘
+
+                                ▼
+
+                            ACTIVITY
+
+                                │
+
+                                ▼
+
+                              RESULT
+
+                                │
+
+                                ▼
+
+                              CLAIM
+
+                                │
+
+                                ▼
+
+                         KNOWLEDGE GRAPH
+
+                                │
+
+                                ▼
+
+                           PROVENANCE
+
+                                │
+
+                    ┌───────────┼───────────┐
+
+                    ▼           ▼           ▼
+
+                 SOURCE      VERSION      AGENT
+
+                    │           │           │
+
+                    └───────────┼───────────┘
+
+                                ▼
+
+                         REPRODUCIBILITY
+
+                                │
+
+                                ▼
+
+                           VERIFICATION
+
+                                │
+
+                                ▼
+
+                         TRUSTED SCIENCE
+
+END OF 70.88
+
+70.89 FINAL ARCHITECTURAL REQUIREMENT
+
+The GSIR Provenance and Lineage Engine shall ensure that scientific knowledge is never represented only as an isolated conclusion.
+
+Every important conclusion shall remain connected to:
+
+SOURCE
+
+DATA
+
+METHOD
+
+PROCESS
+
+MODEL
+
+SOFTWARE
+
+AGENT
+
+EVIDENCE
+
+RESULT
+
+CLAIM
+
+VERSION
+
+TIME
+
+VALIDATION
+
+The system shall therefore make scientific knowledge traceable, reproducible, inspectable, versioned, and auditable.
+
+END OF PART 70.
+
+PART 71 — SCIENTIFIC WORKFLOW ORCHESTRATION AND EXECUTION ENGINE

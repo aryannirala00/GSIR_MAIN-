@@ -1,0 +1,2307 @@
+﻿PART 78 — GSIR SCIENTIFIC WORKFLOW ORCHESTRATION AND EXECUTION ARCHITECTURE
+
+78.1 PURPOSE
+
+The GSIR Workflow Orchestration Layer shall provide the execution infrastructure for scientific workflows, AI workflows, data-processing pipelines, experiments, simulations, evaluations and autonomous research tasks.
+
+The architecture shall capture the complete computational process, including data, code, parameters, environment, workflow and execution state, because these elements are fundamental to reproducible computational research. 
+
+END OF 78.1
+
+78.2 WORKFLOW ARCHITECTURE
+
+Research Intent
+
+      ↓
+
+Workflow Definition
+
+      ↓
+
+Validation
+
+      ↓
+
+Planning
+
+      ↓
+
+Scheduling
+
+      ↓
+
+Execution
+
+      ↓
+
+Monitoring
+
+      ↓
+
+Validation
+
+      ↓
+
+Provenance
+
+      ↓
+
+Result
+
+END OF 78.2
+
+78.3 WORKFLOW DIRECTORY
+
+backend/src/workflows/
+
+workflows.module.ts
+
+workflows.controller.ts
+
+workflows.service.ts
+
+workflows.repository.ts
+
+workflows.types.ts
+
+definitions/
+
+validation/
+
+planning/
+
+scheduler/
+
+execution/
+
+steps/
+
+dependencies/
+
+artifacts/
+
+checkpoints/
+
+retries/
+
+events/
+
+monitoring/
+
+provenance/
+
+resources/
+
+policies/
+
+templates/
+
+versions/
+
+recovery/
+
+index.ts
+
+END OF 78.3
+
+78.4 WORKFLOW OBJECT
+
+workflow_id
+
+workflow_version
+
+name
+
+description
+
+owner_id
+
+project_id
+
+status
+
+definition
+
+inputs
+
+outputs
+
+policies
+
+created_at
+
+updated_at
+
+END OF 78.4
+
+78.5 WORKFLOW VERSIONING
+
+Every material workflow modification shall create a new version.
+
+Workflow V1
+
+    ↓
+
+Workflow V2
+
+    ↓
+
+Workflow V3
+
+Historical executions shall remain linked to the exact workflow version used.
+
+END OF 78.5
+
+78.6 WORKFLOW DEFINITION
+
+A workflow shall define:
+
+Inputs
+
+Steps
+
+Dependencies
+
+Parameters
+
+Conditions
+
+Outputs
+
+Resources
+
+Policies
+
+Failure Behavior
+
+Retry Behavior
+
+END OF 78.6
+
+78.7 WORKFLOW GRAPH
+
+GSIR shall represent workflows as directed execution graphs.
+
+       ┌───────┐
+
+       │ INPUT │
+
+       └───┬───┘
+
+           ↓
+
+       ┌───────┐
+
+       │ STEP1 │
+
+       └───┬───┘
+
+           ↓
+
+      ┌────┴────┐
+
+      ↓         ↓
+
+   STEP2      STEP3
+
+      │         │
+
+      └────┬────┘
+
+           ↓
+
+        STEP4
+
+           ↓
+
+         OUTPUT
+
+END OF 78.7
+
+78.8 WORKFLOW NODE
+
+Each node shall contain:
+
+node_id
+
+type
+
+operation
+
+inputs
+
+outputs
+
+parameters
+
+dependencies
+
+resource_requirements
+
+timeout
+
+retry_policy
+
+failure_policy
+
+END OF 78.8
+
+78.9 WORKFLOW EDGE
+
+Edges shall describe dependencies.
+
+node_A
+
+   ↓
+
+node_B
+
+Node B shall not execute until its required dependency conditions are satisfied.
+
+END OF 78.9
+
+78.10 NODE TYPES
+
+GSIR shall support node types including:
+
+DATA_INGESTION
+
+DATA_TRANSFORM
+
+ANALYSIS
+
+SIMULATION
+
+MODEL_INFERENCE
+
+MODEL_TRAINING
+
+RETRIEVAL
+
+AI_REASONING
+
+TOOL_EXECUTION
+
+EXPERIMENT
+
+VALIDATION
+
+HUMAN_REVIEW
+
+EXPORT
+
+PUBLICATION
+
+END OF 78.10
+
+78.11 WORKFLOW INPUTS
+
+Inputs shall be explicitly declared.
+
+input_id
+
+type
+
+schema
+
+source
+
+version
+
+classification
+
+required
+
+validation_rules
+
+END OF 78.11
+
+78.12 WORKFLOW OUTPUTS
+
+Outputs shall define:
+
+output_id
+
+type
+
+schema
+
+destination
+
+classification
+
+validation
+
+retention
+
+END OF 78.12
+
+78.13 PARAMETER MANAGEMENT
+
+All important parameters shall be explicitly recorded rather than hidden inside execution code. This supports reproducibility because different parameter values or defaults can change scientific results. 
+
+END OF 78.13
+
+78.14 PARAMETER RECORD
+
+parameter_id
+
+name
+
+value
+
+type
+
+default_value
+
+source
+
+workflow_version
+
+validated
+
+END OF 78.14
+
+78.15 PARAMETER VALIDATION
+
+Before execution:
+
+Parameter
+
+↓
+
+Type Check
+
+↓
+
+Range Check
+
+↓
+
+Dependency Check
+
+↓
+
+Policy Check
+
+↓
+
+Validated Parameter
+
+END OF 78.15
+
+78.16 WORKFLOW VALIDATION
+
+A workflow shall be validated before scheduling.
+
+Validation shall check:
+
+Schema
+
+Dependencies
+
+Cycles
+
+Inputs
+
+Outputs
+
+Parameters
+
+Permissions
+
+Resources
+
+Policies
+
+Tool Availability
+
+END OF 78.16
+
+78.17 CYCLE DETECTION
+
+Invalid cyclic dependencies shall be rejected unless the workflow explicitly defines an iterative loop.
+
+A → B → C → A
+
+shall not be accepted as an ordinary DAG workflow.
+
+END OF 78.17
+
+78.18 ITERATIVE WORKFLOWS
+
+Scientific optimization and AI research may require loops.
+
+Initialize
+
+   ↓
+
+Run
+
+   ↓
+
+Evaluate
+
+   ↓
+
+Improve
+
+   ↓
+
+Stop?
+
+ ├─ NO → Run
+
+ └─ YES → Output
+
+Iteration limits shall be explicitly defined.
+
+END OF 78.18
+
+78.19 LOOP SAFETY
+
+Every iterative workflow shall have:
+
+maximum_iterations
+
+maximum_runtime
+
+resource_budget
+
+termination_condition
+
+failure_condition
+
+END OF 78.19
+
+78.20 WORKFLOW PLANNER
+
+The planner shall convert the validated workflow into an executable plan.
+
+Workflow Definition
+
+↓
+
+Dependency Resolution
+
+↓
+
+Execution Plan
+
+↓
+
+Scheduler
+
+END OF 78.20
+
+78.21 EXECUTION PLAN
+
+execution_plan_id
+
+workflow_id
+
+workflow_version
+
+ordered_steps
+
+parallel_groups
+
+resource_requirements
+
+execution_constraints
+
+END OF 78.21
+
+78.22 PARALLEL EXECUTION
+
+Independent nodes shall be executed concurrently where resources and policies permit.
+
+        STEP1
+
+          ↓
+
+     ┌────┴────┐
+
+     ↓         ↓
+
+   STEP2     STEP3
+
+     │         │
+
+     └────┬────┘
+
+          ↓
+
+        STEP4
+
+END OF 78.22
+
+78.23 RESOURCE SCHEDULING
+
+The scheduler shall consider:
+
+CPU
+
+Memory
+
+GPU
+
+Storage
+
+Network
+
+Specialized Instruments
+
+Model Availability
+
+Cost
+
+Priority
+
+Tenant Limits
+
+END OF 78.23
+
+78.24 RESOURCE-AWARE EXECUTION
+
+Workflow Step
+
+↓
+
+Resource Requirement
+
+↓
+
+Available Resources
+
+↓
+
+Policy Check
+
+↓
+
+Schedule
+
+END OF 78.24
+
+78.25 PRIORITY
+
+Workflow priority may depend on:
+
+User Priority
+
+Project Priority
+
+Research Urgency
+
+Deadline
+
+Resource Class
+
+System Policy
+
+END OF 78.25
+
+78.26 FAIR SCHEDULING
+
+The scheduler shall prevent one workflow or tenant from monopolizing shared resources.
+
+END OF 78.26
+
+78.27 EXECUTION INSTANCE
+
+Every workflow execution shall have:
+
+execution_id
+
+workflow_id
+
+workflow_version
+
+initiator
+
+status
+
+start_time
+
+end_time
+
+resource_usage
+
+result
+
+END OF 78.27
+
+78.28 EXECUTION STATES
+
+CREATED
+
+VALIDATING
+
+QUEUED
+
+PLANNED
+
+RUNNING
+
+PAUSED
+
+WAITING
+
+COMPLETED
+
+FAILED
+
+CANCELLED
+
+TIMED_OUT
+
+RECOVERING
+
+END OF 78.28
+
+78.29 STEP STATES
+
+PENDING
+
+READY
+
+RUNNING
+
+SUCCESS
+
+FAILED
+
+SKIPPED
+
+CANCELLED
+
+RETRYING
+
+BLOCKED
+
+END OF 78.29
+
+78.30 EXECUTION STATE MACHINE
+
+CREATED
+
+  ↓
+
+VALIDATING
+
+  ↓
+
+QUEUED
+
+  ↓
+
+RUNNING
+
+  ├──→ PAUSED
+
+  │      ↓
+
+  │    RUNNING
+
+  │
+
+  ├──→ FAILED
+
+  │
+
+  ├──→ CANCELLED
+
+  │
+
+  └──→ COMPLETED
+
+END OF 78.30
+
+78.31 EXECUTION ENGINE
+
+The execution engine shall:
+
+Load Plan
+
+↓
+
+Resolve Inputs
+
+↓
+
+Prepare Environment
+
+↓
+
+Execute Steps
+
+↓
+
+Capture Outputs
+
+↓
+
+Record Events
+
+↓
+
+Validate Results
+
+↓
+
+Persist Provenance
+
+END OF 78.31
+
+78.32 STEP EXECUTOR
+
+Each step shall execute through a controlled executor.
+
+Step Definition
+
+↓
+
+Executor Selection
+
+↓
+
+Resource Allocation
+
+↓
+
+Execution
+
+↓
+
+Output Validation
+
+END OF 78.32
+
+78.33 EXECUTOR TYPES
+
+LOCAL_EXECUTOR
+
+CONTAINER_EXECUTOR
+
+PYTHON_EXECUTOR
+
+SQL_EXECUTOR
+
+MODEL_EXECUTOR
+
+API_EXECUTOR
+
+TOOL_EXECUTOR
+
+INSTRUMENT_EXECUTOR
+
+REMOTE_EXECUTOR
+
+END OF 78.33
+
+78.34 SANDBOXED EXECUTION
+
+Untrusted or externally supplied code shall execute in isolated environments.
+
+Workflow
+
+↓
+
+Sandbox
+
+↓
+
+Restricted Resources
+
+↓
+
+Execution
+
+↓
+
+Destroyed / Recycled Environment
+
+END OF 78.34
+
+78.35 TOOL EXECUTION
+
+AI tools shall execute through the workflow control layer rather than directly bypassing orchestration policies.
+
+Agent
+
+↓
+
+Tool Request
+
+↓
+
+Authorization
+
+↓
+
+Scheduler
+
+↓
+
+Tool Executor
+
+↓
+
+Result
+
+END OF 78.35
+
+78.36 EXTERNAL API EXECUTION
+
+External API calls shall record:
+
+provider
+
+endpoint_reference
+
+request_schema
+
+request_hash
+
+response_hash
+
+model
+
+latency
+
+cost
+
+status
+
+Sensitive request contents shall follow data-governance policy.
+
+END OF 78.36
+
+78.37 MODEL EXECUTION
+
+Model execution shall record:
+
+model_id
+
+model_version
+
+runtime
+
+parameters
+
+input_reference
+
+output_reference
+
+hardware
+
+latency
+
+token_usage
+
+cost
+
+END OF 78.37
+
+78.38 EXPERIMENT EXECUTION
+
+Experiment workflows shall additionally record:
+
+protocol
+
+instrument
+
+operator
+
+sample
+
+conditions
+
+parameters
+
+measurements
+
+calibration
+
+END OF 78.38
+
+78.39 HUMAN-IN-THE-LOOP
+
+A workflow may pause for human intervention.
+
+Workflow
+
+↓
+
+Human Review
+
+↓
+
+APPROVE / REJECT / MODIFY
+
+↓
+
+Resume
+
+END OF 78.39
+
+78.40 HUMAN REVIEW OBJECT
+
+review_id
+
+execution_id
+
+reviewer
+
+request
+
+decision
+
+comment
+
+timestamp
+
+END OF 78.40
+
+78.41 APPROVAL GATES
+
+Critical operations may require approval before continuing.
+
+Analysis
+
+↓
+
+Approval Gate
+
+↓
+
+Approved
+
+↓
+
+Publication
+
+END OF 78.41
+
+78.42 WORKFLOW POLICIES
+
+Workflow execution shall evaluate:
+
+Data Policy
+
+Security Policy
+
+Resource Policy
+
+AI Policy
+
+Cost Policy
+
+Research Policy
+
+Export Policy
+
+END OF 78.42
+
+78.43 POLICY FAILURE
+
+If a required policy fails:
+
+Policy Check
+
+↓
+
+DENIED
+
+↓
+
+Workflow Blocked
+
+The execution engine shall not bypass the denial.
+
+END OF 78.43
+
+78.44 RETRY ENGINE
+
+Transient failures may be retried according to policy.
+
+Failure
+
+↓
+
+Classify
+
+├── Transient → Retry
+
+└── Permanent → Fail
+
+END OF 78.44
+
+78.45 RETRY POLICY
+
+max_attempts
+
+backoff
+
+retryable_errors
+
+non_retryable_errors
+
+jitter
+
+END OF 78.45
+
+78.46 EXPONENTIAL BACKOFF
+
+For appropriate transient failures:
+
+delay = base_delay × 2^attempt
+
+with a maximum delay limit.
+
+END OF 78.46
+
+78.47 IDEMPOTENCY
+
+Operations that may be retried shall use idempotency controls where possible.
+
+operation_id
+
+idempotency_key
+
+execution_attempt
+
+END OF 78.47
+
+78.48 CHECKPOINTING
+
+Long-running workflows shall support checkpoints.
+
+Step 1
+
+↓
+
+Step 2
+
+↓
+
+CHECKPOINT
+
+↓
+
+Step 3
+
+↓
+
+Step 4
+
+END OF 78.48
+
+78.49 CHECKPOINT RECOVERY
+
+After failure:
+
+Failure
+
+↓
+
+Locate Latest Valid Checkpoint
+
+↓
+
+Verify Checkpoint
+
+↓
+
+Resume
+
+END OF 78.49
+
+78.50 INTERMEDIATE ARTIFACTS
+
+Important intermediate results shall be preserved when required for:
+
+Debugging
+
+Reproducibility
+
+Recovery
+
+Validation
+
+Scientific Interpretation
+
+Workflow provenance recommendations specifically support retaining intermediate results where practical because they improve understandability and reuse. 
+
+END OF 78.50
+
+78.51 EXECUTION LOGGING
+
+Every execution shall generate structured logs:
+
+timestamp
+
+execution_id
+
+step_id
+
+event
+
+status
+
+duration
+
+resource_usage
+
+error
+
+END OF 78.51
+
+78.52 EVENT STREAM
+
+Workflow events shall include:
+
+WorkflowCreated
+
+WorkflowValidated
+
+WorkflowQueued
+
+WorkflowStarted
+
+StepStarted
+
+StepCompleted
+
+StepFailed
+
+StepRetried
+
+CheckpointCreated
+
+HumanReviewRequested
+
+WorkflowPaused
+
+WorkflowResumed
+
+WorkflowCompleted
+
+WorkflowFailed
+
+WorkflowCancelled
+
+END OF 78.52
+
+78.53 MONITORING
+
+The monitoring layer shall track:
+
+Execution Status
+
+Step Status
+
+CPU
+
+Memory
+
+GPU
+
+Storage
+
+Network
+
+Latency
+
+Cost
+
+Errors
+
+Queue Depth
+
+END OF 78.53
+
+78.54 REAL-TIME EXECUTION VIEW
+
+Authorized users shall be able to see:
+
+Workflow
+
+├── Step 1 ✓
+
+├── Step 2 ✓
+
+├── Step 3 ● Running
+
+├── Step 4 ○ Waiting
+
+└── Step 5 ○ Pending
+
+END OF 78.54
+
+78.55 COST TRACKING
+
+Each execution shall estimate and record:
+
+Compute Cost
+
+GPU Cost
+
+Model Cost
+
+API Cost
+
+Storage Cost
+
+Data Transfer Cost
+
+Instrument Cost
+
+END OF 78.55
+
+78.56 COST BUDGET
+
+Workflows may define:
+
+maximum_cost
+
+maximum_compute
+
+maximum_tokens
+
+maximum_api_calls
+
+END OF 78.56
+
+78.57 COST ENFORCEMENT
+
+Current Cost
+
+↓
+
+Budget
+
+↓
+
+Within Limit → Continue
+
+Over Limit → Pause / Stop
+
+END OF 78.57
+
+78.58 TIMEOUT MANAGEMENT
+
+Each step may have a timeout.
+
+Step Started
+
+↓
+
+Timer
+
+↓
+
+Timeout?
+
+├── NO → Continue
+
+└── YES → Timeout Handler
+
+END OF 78.58
+
+78.59 CANCELLATION
+
+Cancellation shall propagate safely.
+
+Cancel Workflow
+
+↓
+
+Stop New Steps
+
+↓
+
+Signal Running Steps
+
+↓
+
+Release Resources
+
+↓
+
+Persist State
+
+↓
+
+CANCELLED
+
+END OF 78.59
+
+78.60 GRACEFUL SHUTDOWN
+
+Running workflows shall receive controlled termination signals where possible.
+
+Intermediate state shall be persisted before termination.
+
+END OF 78.60
+
+78.61 FAILURE CLASSIFICATION
+
+Failures shall be categorized:
+
+VALIDATION_ERROR
+
+AUTHORIZATION_ERROR
+
+RESOURCE_ERROR
+
+DEPENDENCY_ERROR
+
+DATA_ERROR
+
+TOOL_ERROR
+
+MODEL_ERROR
+
+NETWORK_ERROR
+
+TIMEOUT
+
+SYSTEM_ERROR
+
+SCIENTIFIC_VALIDATION_FAILURE
+
+END OF 78.61
+
+78.62 ERROR PROPAGATION
+
+A failed dependency shall automatically affect dependent nodes.
+
+STEP A → FAILED
+
+   ↓
+
+STEP B → BLOCKED
+
+   ↓
+
+STEP C → BLOCKED
+
+END OF 78.62
+
+78.63 PARTIAL SUCCESS
+
+Workflows may complete partially where policy allows.
+
+The final status shall clearly distinguish:
+
+COMPLETE
+
+PARTIAL_SUCCESS
+
+FAILED
+
+END OF 78.63
+
+78.64 WORKFLOW RESUME
+
+A paused workflow shall resume from a validated state rather than blindly restarting every operation.
+
+END OF 78.64
+
+78.65 WORKFLOW CLONING
+
+Researchers may clone an existing workflow.
+
+Original Workflow V3
+
+        ↓
+
+Clone
+
+        ↓
+
+New Workflow V1
+
+The clone shall preserve provenance to its source workflow.
+
+END OF 78.65
+
+78.66 WORKFLOW TEMPLATES
+
+Reusable templates shall support common research patterns:
+
+Data Analysis
+
+Model Evaluation
+
+Simulation
+
+RAG Research
+
+Experiment
+
+Parameter Sweep
+
+Optimization
+
+Benchmark
+
+Publication
+
+END OF 78.66
+
+78.67 PARAMETER SWEEP
+
+Parameters
+
+   ↓
+
+Generate Variants
+
+   ↓
+
+┌────┬────┬────┐
+
+V1   V2   V3   ...
+
+└────┴────┴────┘
+
+   ↓
+
+Parallel Execution
+
+   ↓
+
+Aggregate Results
+
+END OF 78.67
+
+78.68 EXPERIMENT MATRIX
+
+GSIR shall support:
+
+factor_A
+
+factor_B
+
+factor_C
+
+replicates
+
+random_seed
+
+and automatically generate controlled execution combinations.
+
+END OF 78.68
+
+78.69 OPTIMIZATION WORKFLOW
+
+Initialize
+
+↓
+
+Evaluate
+
+↓
+
+Select
+
+↓
+
+Modify Parameters
+
+↓
+
+Evaluate Again
+
+↓
+
+Converged?
+
+├── NO → Continue
+
+└── YES → Final Result
+
+END OF 78.69
+
+78.70 WORKFLOW COMPOSITION
+
+A workflow shall be composable from smaller workflows.
+
+Workflow A
+
+     ↓
+
+Workflow B
+
+     ↓
+
+Workflow C
+
+Reusable components shall retain independent versions and provenance.
+
+END OF 78.70
+
+78.71 SUBWORKFLOW
+
+subworkflow_id
+
+workflow_id
+
+workflow_version
+
+input_mapping
+
+output_mapping
+
+execution_policy
+
+END OF 78.71
+
+78.72 WORKFLOW DEPENDENCY GRAPH
+
+GSIR shall maintain dependencies between:
+
+Workflow
+
+Code
+
+Dataset
+
+Model
+
+Tool
+
+Environment
+
+Configuration
+
+END OF 78.72
+
+78.73 IMPACT ANALYSIS
+
+If a dependency changes:
+
+Changed Model
+
+↓
+
+Dependent Workflows
+
+↓
+
+Affected Executions
+
+↓
+
+Potentially Affected Results
+
+The system shall identify impacted research objects.
+
+END OF 78.73
+
+78.74 WORKFLOW REVALIDATION
+
+A workflow may require revalidation when:
+
+Code Changes
+
+Model Changes
+
+Dataset Changes
+
+Dependency Changes
+
+Policy Changes
+
+Environment Changes
+
+END OF 78.74
+
+78.75 WORKFLOW REPRODUCTION
+
+A previous execution shall be reproducible using its captured:
+
+Workflow Version
+
+Input Versions
+
+Parameters
+
+Code
+
+Model
+
+Environment
+
+These elements align with established computational reproducibility requirements. 
+
+END OF 78.75
+
+78.76 WORKFLOW PROVENANCE
+
+The workflow engine shall automatically capture:
+
+Who
+
+What
+
+When
+
+Where
+
+Which Data
+
+Which Code
+
+Which Model
+
+Which Parameters
+
+Which Environment
+
+Which Outputs
+
+END OF 78.76
+
+78.77 WORKFLOW SECURITY
+
+Workflow execution shall enforce:
+
+Identity
+
+Authorization
+
+Sandboxing
+
+Resource Limits
+
+Network Policy
+
+Secret Management
+
+Data Classification
+
+Tool Permissions
+
+END OF 78.77
+
+78.78 SECRET MANAGEMENT
+
+Secrets shall never be embedded directly in workflow definitions.
+
+Workflow
+
+↓
+
+Secret Reference
+
+↓
+
+Secret Manager
+
+↓
+
+Runtime Injection
+
+END OF 78.78
+
+78.79 NETWORK CONTROL
+
+Executors may be restricted to approved destinations.
+
+Executor
+
+├── Approved API → ALLOW
+
+├── Approved Storage → ALLOW
+
+└── Unknown Destination → DENY
+
+END OF 78.79
+
+78.80 WORKFLOW ISOLATION
+
+Concurrent workflows shall have isolated execution contexts where required.
+
+Workflow A → Environment A
+
+Workflow B → Environment B
+
+END OF 78.80
+
+78.81 MULTI-TENANT EXECUTION
+
+The scheduler shall preserve tenant boundaries across:
+
+Queue
+
+Worker
+
+Storage
+
+Logs
+
+Artifacts
+
+Cache
+
+Execution Environment
+
+END OF 78.81
+
+78.82 WORKER ARCHITECTURE
+
+                 SCHEDULER
+
+                     │
+
+          ┌──────────┼──────────┐
+
+          ▼          ▼          ▼
+
+       WORKER A   WORKER B   WORKER C
+
+          │          │          │
+
+       EXECUTOR   EXECUTOR   EXECUTOR
+
+END OF 78.82
+
+78.83 WORKER REGISTRATION
+
+Workers shall register:
+
+worker_id
+
+capabilities
+
+CPU
+
+memory
+
+GPU
+
+supported_executors
+
+location
+
+tenant_scope
+
+status
+
+END OF 78.83
+
+78.84 CAPABILITY MATCHING
+
+Workflow Requirement
+
+↓
+
+Worker Capabilities
+
+↓
+
+Compatible Workers
+
+↓
+
+Scheduler Selection
+
+END OF 78.84
+
+78.85 WORKER HEALTH
+
+Workers shall periodically report:
+
+Heartbeat
+
+Capacity
+
+Load
+
+Health
+
+Software Version
+
+Executor Availability
+
+END OF 78.85
+
+78.86 WORKER FAILURE
+
+If a worker fails:
+
+Worker Failure
+
+↓
+
+Detect
+
+↓
+
+Mark Unavailable
+
+↓
+
+Recover Checkpoint
+
+↓
+
+Reschedule
+
+END OF 78.86
+
+78.87 QUEUE ARCHITECTURE
+
+Incoming Workflow
+
+       ↓
+
+Priority Queue
+
+       ↓
+
+Scheduler
+
+       ↓
+
+Worker Queue
+
+       ↓
+
+Executor
+
+END OF 78.87
+
+78.88 QUEUE FAIRNESS
+
+Queue management shall prevent starvation of lower-priority research tasks while respecting legitimate priority rules.
+
+END OF 78.88
+
+78.89 SCHEDULER OPTIMIZATION
+
+Scheduling may optimize:
+
+Latency
+
+Cost
+
+Resource Utilization
+
+Data Locality
+
+Energy
+
+GPU Availability
+
+Priority
+
+END OF 78.89
+
+78.90 DATA LOCALITY
+
+Where practical, the scheduler should execute computation near the required data to reduce transfer cost and latency.
+
+Dataset
+
+↓
+
+Eligible Workers Near Dataset
+
+↓
+
+Execution
+
+END OF 78.90
+
+78.91 WORKFLOW API
+
+createWorkflow()
+
+getWorkflow()
+
+updateWorkflow()
+
+versionWorkflow()
+
+validateWorkflow()
+
+planWorkflow()
+
+startWorkflow()
+
+pauseWorkflow()
+
+resumeWorkflow()
+
+cancelWorkflow()
+
+getExecution()
+
+getStepStatus()
+
+retryStep()
+
+retryWorkflow()
+
+createCheckpoint()
+
+restoreCheckpoint()
+
+cloneWorkflow()
+
+createTemplate()
+
+generateExecutionReport()
+
+generateProvenance()
+
+END OF 78.91
+
+78.92 WORKFLOW EVENTS
+
+WorkflowCreated
+
+WorkflowUpdated
+
+WorkflowVersioned
+
+WorkflowValidated
+
+ExecutionCreated
+
+ExecutionStarted
+
+ExecutionPaused
+
+ExecutionResumed
+
+ExecutionCancelled
+
+ExecutionCompleted
+
+ExecutionFailed
+
+StepStarted
+
+StepCompleted
+
+StepFailed
+
+StepRetried
+
+CheckpointCreated
+
+WorkerAssigned
+
+WorkerFailed
+
+WorkflowRecovered
+
+END OF 78.92
+
+78.93 WORKFLOW DATABASE ENTITIES
+
+workflows
+
+workflow_versions
+
+workflow_nodes
+
+workflow_edges
+
+workflow_inputs
+
+workflow_outputs
+
+workflow_parameters
+
+workflow_executions
+
+workflow_steps
+
+workflow_checkpoints
+
+workflow_events
+
+workflow_artifacts
+
+workflow_reviews
+
+workflow_templates
+
+END OF 78.93
+
+78.94 WORKFLOW STORAGE
+
+Large artifacts shall remain in object storage.
+
+The workflow database shall store references rather than unnecessarily duplicating large scientific objects.
+
+END OF 78.94
+
+78.95 WORKFLOW + ASSURANCE
+
+Every execution shall connect directly to the assurance architecture.
+
+Workflow
+
+↓
+
+Execution
+
+↓
+
+Provenance
+
+↓
+
+Integrity
+
+↓
+
+Validation
+
+↓
+
+Reproduction
+
+This ensures that workflow orchestration and research assurance remain connected rather than becoming independent systems.
+
+END OF 78.95
+
+78.96 WORKFLOW + GOVERNANCE
+
+Every workflow execution shall pass the governance controls established in Part 76.
+
+Workflow
+
+↓
+
+Governance
+
+↓
+
+Authorization
+
+↓
+
+Policy
+
+↓
+
+Execution
+
+END OF 78.96
+
+78.97 WORKFLOW + AI
+
+AI agents shall be able to create or modify workflows only within their authorized scope.
+
+AI Agent
+
+↓
+
+Research Goal
+
+↓
+
+Workflow Proposal
+
+↓
+
+Validation
+
+↓
+
+Policy
+
+↓
+
+Approval if Required
+
+↓
+
+Execution
+
+END OF 78.97
+
+78.98 WORKFLOW + SELF-IMPROVEMENT
+
+The self-improvement architecture may use workflows to evaluate proposed changes.
+
+Baseline
+
+↓
+
+Proposed Change
+
+↓
+
+Controlled Workflow
+
+↓
+
+Evaluation
+
+↓
+
+Comparison
+
+↓
+
+Decision
+
+A proposed improvement shall not directly modify production behavior without passing the required validation and approval gates.
+
+END OF 78.98
+
+78.99 WORKFLOW COMPLETION CRITERIA
+
+The GSIR workflow architecture shall be considered complete when:
+
+- Workflows are versioned.
+
+- Workflow graphs are validated.
+
+- Dependencies are explicit.
+
+- Parameters are recorded.
+
+- Inputs and outputs are typed.
+
+- Execution plans are generated.
+
+- Resource-aware scheduling exists.
+
+- Parallel execution exists.
+
+- Worker capabilities are tracked.
+
+- Execution states are explicit.
+
+- Step states are explicit.
+
+- Sandboxed execution exists.
+
+- AI tool execution is controlled.
+
+- External API execution is controlled.
+
+- Model execution is traceable.
+
+- Human approval gates are supported.
+
+- Retry policies exist.
+
+- Idempotency is supported.
+
+- Checkpointing exists.
+
+- Recovery exists.
+
+- Cancellation exists.
+
+- Timeouts exist.
+
+- Structured execution events exist.
+
+- Monitoring exists.
+
+- Cost tracking exists.
+
+- Cost budgets exist.
+
+- Multi-tenant isolation exists where required.
+
+- Workflow provenance is automatic.
+
+- Execution environments are captured.
+
+- Intermediate artifacts can be retained.
+
+- Workflow cloning exists.
+
+- Workflow templates exist.
+
+- Parameter sweeps are supported.
+
+- Optimization workflows are supported.
+
+- Subworkflows are supported.
+
+- Dependency impact analysis exists.
+
+- Revalidation is supported.
+
+- Reproduction is supported.
+
+- Governance is enforced.
+
+- Assurance is connected.
+
+- AI workflow creation is controlled.
+
+- Self-improvement workflows are isolated and evaluated.
+
+- Worker failures can be recovered.
+
+- Execution reports can be generated.
+
+- Complete workflow provenance can be queried.
+
+END OF 78.99
+
+78.100 FINAL WORKFLOW PRINCIPLE
+
+The GSIR workflow engine shall transform scientific intent into controlled, observable, reproducible execution.
+
+SCIENTIFIC INTENT
+
+        ↓
+
+WORKFLOW
+
+        ↓
+
+VALIDATION
+
+        ↓
+
+PLAN
+
+        ↓
+
+SCHEDULE
+
+        ↓
+
+EXECUTE
+
+        ↓
+
+OBSERVE
+
+        ↓
+
+VALIDATE
+
+        ↓
+
+PROVENANCE
+
+        ↓
+
+ASSURE
+
+        ↓
+
+SCIENTIFIC RESULT
+
+The workflow system shall therefore function as the execution backbone connecting GSIR's data, AI, experiments, tools, governance, provenance, assurance and research-intelligence layers.
+
+END OF PART 78

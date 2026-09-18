@@ -1,0 +1,8 @@
+ALTER TABLE conversations ADD COLUMN model_id VARCHAR(255);
+ALTER TABLE conversations ADD COLUMN archived_at TIMESTAMPTZ;
+ALTER TABLE conversations ADD COLUMN metadata JSONB;
+
+ALTER TABLE messages ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+ALTER TABLE messages ADD COLUMN model_id VARCHAR(255);
+ALTER TABLE messages ADD COLUMN metadata JSONB;
+
